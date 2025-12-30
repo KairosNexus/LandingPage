@@ -1,345 +1,703 @@
 /**
  * Kairos Nexus Global - Interactive Features
  * Premium Landing Page JavaScript
+ * @version 2.0.0
+ * @author Kairos Nexus Global
+ * @license Proprietary
  */
 
 (function () {
   'use strict';
 
   // ===================================
-  // COUNTDOWN TIMER
+  // CONFIGURATION
   // ===================================
 
-  const LAUNCH_DATE = new Date('January 15, 2026 00:00:00 GMT-0600').getTime();
+  /**
+   * Application configuration constants
+   * @readonly
+   */
+  const CONFIG = Object.freeze({
+    // Launch date for countdown timer
+    LAUNCH_DATE: new Date('January 15, 2026 00:00:00 GMT-0600'),
 
-  function updateCountdown() {
-    const now = new Date().getTime();
-    const distance = LAUNCH_DATE - now;
+    // Typewriter animation settings
+    TYPEWRITER: {
+      SPEED_NORMAL: 60,
+      SPEED_SLOW: 80,
+      CURSOR_HIDE_DELAY: 2000,
+      START_DELAY: 500
+    },
 
-    if (distance < 0) {
-      // Launch has happened
-      document.getElementById('days').textContent = '000';
-      document.getElementById('hours').textContent = '00';
-      document.getElementById('minutes').textContent = '00';
-      document.getElementById('seconds').textContent = '00';
-      return;
+    // Scroll behavior settings
+    SCROLL: {
+      THRESHOLD: 50,
+      THROTTLE_MS: 16 // ~60fps
+    },
+
+    // Storage keys
+    STORAGE: {
+      THEME_KEY: 'kairos-theme'
+    },
+
+    // Intersection observer settings
+    OBSERVER: {
+      ROOT_MARGIN: '0px 0px -100px 0px',
+      THRESHOLD: 0.1
     }
+  });
 
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  // ===================================
+  // UTILITY FUNCTIONS
+  // ===================================
 
-    // Update DOM with padded values
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    const secondsEl = document.getElementById('seconds');
-
-    if (daysEl) daysEl.textContent = String(days).padStart(3, '0');
-    if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
-    if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
-    if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+  /**
+   * Safely query a DOM element
+   * @param {string} selector - CSS selector
+   * @param {Element} [context=document] - Context to search within
+   * @returns {Element|null} The found element or null
+   */
+  function $(selector, context = document) {
+    try {
+      return context.querySelector(selector);
+    } catch (error) {
+      console.error(`[Kairos] Failed to select: ${selector}`, error);
+      return null;
+    }
   }
 
-  // Initialize countdown
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-
-  // ===================================
-  // TYPEWRITER ANIMATION
-  // ===================================
-
-  function typeWriter(elementId, text, speed, callback) {
-    const element = document.getElementById(elementId);
-    if (!element) {
-      if (callback) callback();
-      return;
+  /**
+   * Safely query multiple DOM elements
+   * @param {string} selector - CSS selector
+   * @param {Element} [context=document] - Context to search within
+   * @returns {NodeListOf<Element>} The found elements
+   */
+  function $$(selector, context = document) {
+    try {
+      return context.querySelectorAll(selector);
+    } catch (error) {
+      console.error(`[Kairos] Failed to select all: ${selector}`, error);
+      return [];
     }
+  }
 
-    let i = 0;
-    element.textContent = '';
+  /**
+   * Throttle function execution
+   * @param {Function} func - Function to throttle
+   * @param {number} limit - Minimum time between calls in ms
+   * @returns {Function} Throttled function
+   */
+  function throttle(func, limit) {
+    let inThrottle = false;
+    return function (...args) {
+      if (!inThrottle) {
+        func.apply(this, args);
+        inThrottle = true;
+        setTimeout(() => { inThrottle = false; }, limit);
+      }
+    };
+  }
 
-    function type() {
-      if (i < text.length) {
-        element.textContent += text.charAt(i);
-        i++;
-        setTimeout(type, speed);
-      } else if (callback) {
-        callback();
+  /**
+   * Debounce function execution
+   * @param {Function} func - Function to debounce
+   * @param {number} wait - Time to wait in ms
+   * @returns {Function} Debounced function
+   */
+  function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+
+  /**
+   * Check if an element exists
+   * @param {Element|null} element - Element to check
+   * @returns {boolean} True if element exists
+   */
+  function exists(element) {
+    return element !== null && element !== undefined;
+  }
+
+  /**
+   * Pad a number with leading zeros
+   * @param {number} num - Number to pad
+   * @param {number} [length=2] - Desired length
+   * @returns {string} Padded string
+   */
+  function padNumber(num, length = 2) {
+    return String(num).padStart(length, '0');
+  }
+
+  // ===================================
+  // FEATURE DETECTION
+  // ===================================
+
+  /**
+   * Browser feature support flags
+   * @readonly
+   */
+  const SUPPORTS = Object.freeze({
+    intersectionObserver: 'IntersectionObserver' in window,
+    localStorage: (() => {
+      try {
+        const test = '__kairos_test__';
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    })(),
+    matchMedia: 'matchMedia' in window,
+    reducedMotion: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+  });
+
+  // ===================================
+  // COUNTDOWN TIMER MODULE
+  // ===================================
+
+  /**
+   * Countdown timer controller
+   */
+  const CountdownTimer = {
+    elements: {
+      days: null,
+      hours: null,
+      minutes: null,
+      seconds: null
+    },
+    intervalId: null,
+    prevValues: { days: '', hours: '', minutes: '', seconds: '' },
+
+    /**
+     * Initialize the countdown timer
+     */
+    init() {
+      this.elements = {
+        days: $('#days'),
+        hours: $('#hours'),
+        minutes: $('#minutes'),
+        seconds: $('#seconds')
+      };
+
+      if (!Object.values(this.elements).every(exists)) {
+        console.warn('[Kairos] Countdown elements not found');
+        return;
+      }
+
+      this.update();
+      this.intervalId = setInterval(() => this.update(), 1000);
+    },
+
+    /**
+     * Update countdown display
+     */
+    update() {
+      const now = Date.now();
+      const distance = CONFIG.LAUNCH_DATE.getTime() - now;
+
+      if (distance < 0) {
+        this.displayTime(0, 0, 0, 0);
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+          this.intervalId = null;
+        }
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      this.displayTime(days, hours, minutes, seconds);
+    },
+
+    /**
+     * Display time values with animation
+     * @param {number} days 
+     * @param {number} hours 
+     * @param {number} minutes 
+     * @param {number} seconds 
+     */
+    displayTime(days, hours, minutes, seconds) {
+      const values = {
+        days: padNumber(days, 3),
+        hours: padNumber(hours),
+        minutes: padNumber(minutes),
+        seconds: padNumber(seconds)
+      };
+
+      Object.entries(values).forEach(([unit, value]) => {
+        const el = this.elements[unit];
+        if (el && el.textContent !== value) {
+          el.textContent = value;
+
+          // Subtle scale animation (skip if reduced motion)
+          if (!SUPPORTS.reducedMotion) {
+            el.style.transform = 'scale(1.05)';
+            setTimeout(() => { el.style.transform = 'scale(1)'; }, 150);
+          }
+        }
+      });
+    },
+
+    /**
+     * Clean up timer
+     */
+    destroy() {
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+        this.intervalId = null;
       }
     }
+  };
 
-    type();
-  }
+  // ===================================
+  // TYPEWRITER MODULE
+  // ===================================
 
-  function startTypewriterSequence() {
-    const cursor = document.querySelector('.cursor');
+  /**
+   * Typewriter animation controller
+   */
+  const Typewriter = {
+    cursor: null,
 
-    // Type line 1: "Where Opportunity"
-    typeWriter('typewriter-line1', 'Where Opportunity', 60, function () {
-      // Type line 2: "Meets "
-      typeWriter('typewriter-line2', 'Meets ', 60, function () {
-        // Type line 3: "Ambition"
-        typeWriter('typewriter-line3', 'Ambition', 80, function () {
-          // Hide cursor after typing complete
-          setTimeout(() => {
-            if (cursor) cursor.classList.add('hidden');
-          }, 2000);
+    /**
+     * Initialize typewriter effect
+     */
+    init() {
+      this.cursor = $('.cursor');
+
+      // Skip animation if user prefers reduced motion
+      if (SUPPORTS.reducedMotion) {
+        this.showAllText();
+        return;
+      }
+
+      setTimeout(() => this.startSequence(), CONFIG.TYPEWRITER.START_DELAY);
+    },
+
+    /**
+     * Type text into an element
+     * @param {string} elementId - ID of element to type into
+     * @param {string} text - Text to type
+     * @param {number} speed - Typing speed in ms
+     * @returns {Promise<void>}
+     */
+    type(elementId, text, speed) {
+      return new Promise((resolve) => {
+        const element = $(`#${elementId}`);
+        if (!element) {
+          resolve();
+          return;
+        }
+
+        let i = 0;
+        element.textContent = '';
+
+        const typeChar = () => {
+          if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(typeChar, speed);
+          } else {
+            resolve();
+          }
+        };
+
+        typeChar();
+      });
+    },
+
+    /**
+     * Start the typewriter sequence
+     */
+    async startSequence() {
+      try {
+        await this.type('typewriter-line1', 'Where Opportunity', CONFIG.TYPEWRITER.SPEED_NORMAL);
+        await this.type('typewriter-line2', 'Meets ', CONFIG.TYPEWRITER.SPEED_NORMAL);
+        await this.type('typewriter-line3', 'Ambition', CONFIG.TYPEWRITER.SPEED_SLOW);
+
+        // Hide cursor after completion
+        setTimeout(() => {
+          if (this.cursor) {
+            this.cursor.classList.add('hidden');
+          }
+        }, CONFIG.TYPEWRITER.CURSOR_HIDE_DELAY);
+      } catch (error) {
+        console.error('[Kairos] Typewriter error:', error);
+        this.showAllText();
+      }
+    },
+
+    /**
+     * Show all text immediately (for reduced motion or error fallback)
+     */
+    showAllText() {
+      const texts = [
+        ['typewriter-line1', 'Where Opportunity'],
+        ['typewriter-line2', 'Meets '],
+        ['typewriter-line3', 'Ambition']
+      ];
+
+      texts.forEach(([id, text]) => {
+        const el = $(`#${id}`);
+        if (el) el.textContent = text;
+      });
+
+      if (this.cursor) {
+        this.cursor.classList.add('hidden');
+      }
+    }
+  };
+
+  // ===================================
+  // THEME CONTROLLER MODULE
+  // ===================================
+
+  /**
+   * Theme (dark/light mode) controller
+   */
+  const ThemeController = {
+    htmlElement: document.documentElement,
+    toggleButtons: [],
+
+    /**
+     * Initialize theme controller
+     */
+    init() {
+      this.toggleButtons = [
+        $('#themeToggle'),
+        $('#mobileThemeToggle')
+      ].filter(exists);
+
+      // Apply saved or preferred theme
+      this.setTheme(this.getPreferredTheme());
+
+      // Add event listeners
+      this.toggleButtons.forEach(btn => {
+        btn.addEventListener('click', () => this.toggle());
+      });
+
+      // Listen for system preference changes
+      if (SUPPORTS.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: light)')
+          .addEventListener('change', (e) => {
+            if (!this.getSavedTheme()) {
+              this.setTheme(e.matches ? 'light' : 'dark');
+            }
+          });
+      }
+    },
+
+    /**
+     * Get the user's preferred theme
+     * @returns {'light' | 'dark'}
+     */
+    getPreferredTheme() {
+      const saved = this.getSavedTheme();
+      if (saved) return saved;
+
+      if (SUPPORTS.matchMedia) {
+        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      }
+
+      return 'dark';
+    },
+
+    /**
+     * Get saved theme from storage
+     * @returns {string|null}
+     */
+    getSavedTheme() {
+      if (!SUPPORTS.localStorage) return null;
+      return localStorage.getItem(CONFIG.STORAGE.THEME_KEY);
+    },
+
+    /**
+     * Set the current theme
+     * @param {'light' | 'dark'} theme
+     */
+    setTheme(theme) {
+      if (theme === 'light') {
+        this.htmlElement.setAttribute('data-theme', 'light');
+      } else {
+        this.htmlElement.removeAttribute('data-theme');
+      }
+
+      if (SUPPORTS.localStorage) {
+        localStorage.setItem(CONFIG.STORAGE.THEME_KEY, theme);
+      }
+    },
+
+    /**
+     * Toggle between light and dark themes
+     */
+    toggle() {
+      const current = this.htmlElement.getAttribute('data-theme');
+      this.setTheme(current === 'light' ? 'dark' : 'light');
+    }
+  };
+
+  // ===================================
+  // NAVIGATION MODULE
+  // ===================================
+
+  /**
+   * Navigation controller (sticky nav, mobile menu)
+   */
+  const Navigation = {
+    navbar: null,
+    mobileMenu: null,
+    menuToggle: null,
+    menuClose: null,
+    mobileLinks: [],
+
+    /**
+     * Initialize navigation
+     */
+    init() {
+      this.navbar = $('#navbar');
+      this.mobileMenu = $('#mobileMenu');
+      this.menuToggle = $('#menuToggle');
+      this.menuClose = $('#menuClose');
+      this.mobileLinks = $$('.mobile-link');
+
+      this.initStickyNav();
+      this.initMobileMenu();
+      this.initSmoothScroll();
+    },
+
+    /**
+     * Initialize sticky navigation behavior
+     */
+    initStickyNav() {
+      if (!this.navbar) return;
+
+      const handleScroll = throttle(() => {
+        if (window.scrollY > CONFIG.SCROLL.THRESHOLD) {
+          this.navbar.classList.add('scrolled');
+        } else {
+          this.navbar.classList.remove('scrolled');
+        }
+      }, CONFIG.SCROLL.THROTTLE_MS);
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+    },
+
+    /**
+     * Initialize mobile menu
+     */
+    initMobileMenu() {
+      if (this.menuToggle) {
+        this.menuToggle.addEventListener('click', () => this.openMobileMenu());
+      }
+
+      if (this.menuClose) {
+        this.menuClose.addEventListener('click', () => this.closeMobileMenu());
+      }
+
+      this.mobileLinks.forEach(link => {
+        link.addEventListener('click', () => this.closeMobileMenu());
+      });
+
+      // Close on escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.mobileMenu?.classList.contains('active')) {
+          this.closeMobileMenu();
+        }
+      });
+    },
+
+    /**
+     * Open mobile menu
+     */
+    openMobileMenu() {
+      if (this.mobileMenu) {
+        this.mobileMenu.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        // Focus first link for accessibility
+        const firstLink = this.mobileMenu.querySelector('a');
+        if (firstLink) firstLink.focus();
+      }
+    },
+
+    /**
+     * Close mobile menu
+     */
+    closeMobileMenu() {
+      if (this.mobileMenu) {
+        this.mobileMenu.classList.remove('active');
+        document.body.style.overflow = '';
+
+        // Return focus to menu toggle
+        if (this.menuToggle) this.menuToggle.focus();
+      }
+    },
+
+    /**
+     * Initialize smooth scrolling for anchor links
+     */
+    initSmoothScroll() {
+      $$('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', (e) => {
+          const href = anchor.getAttribute('href');
+          if (href === '#') return;
+
+          const target = $(href);
+          if (target) {
+            e.preventDefault();
+            const navbarHeight = this.navbar?.offsetHeight ?? 0;
+            const targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight - 20;
+
+            window.scrollTo({
+              top: targetPosition,
+              behavior: SUPPORTS.reducedMotion ? 'auto' : 'smooth'
+            });
+          }
         });
       });
-    });
-  }
-
-  // Start typewriter when page loads
-  window.addEventListener('load', function () {
-    // Small delay to let page render first
-    setTimeout(startTypewriterSequence, 500);
-  });
-
-  // ===================================
-  // THEME TOGGLE (Dark/Light Mode)
-  // ===================================
-
-  const themeToggle = document.getElementById('themeToggle');
-  const mobileThemeToggle = document.getElementById('mobileThemeToggle');
-  const htmlElement = document.documentElement;
-
-  // Check for saved theme preference or default to system preference
-  function getPreferredTheme() {
-    const savedTheme = localStorage.getItem('kairos-theme');
-    if (savedTheme) {
-      return savedTheme;
     }
-    // Check system preference
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  }
-
-  // Apply theme
-  function setTheme(theme) {
-    if (theme === 'light') {
-      htmlElement.setAttribute('data-theme', 'light');
-    } else {
-      htmlElement.removeAttribute('data-theme');
-    }
-    localStorage.setItem('kairos-theme', theme);
-  }
-
-  // Toggle theme
-  function toggleTheme() {
-    const currentTheme = htmlElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-  }
-
-  // Initialize theme
-  setTheme(getPreferredTheme());
-
-  // Add event listeners
-  if (themeToggle) {
-    themeToggle.addEventListener('click', toggleTheme);
-  }
-
-  if (mobileThemeToggle) {
-    mobileThemeToggle.addEventListener('click', toggleTheme);
-  }
-
-  // Listen for system preference changes
-  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
-    if (!localStorage.getItem('kairos-theme')) {
-      setTheme(e.matches ? 'light' : 'dark');
-    }
-  });
-
-  // ===================================
-  // STICKY NAVIGATION
-  // ===================================
-
-  const navbar = document.getElementById('navbar');
-  let lastScrollY = window.scrollY;
-
-  function handleScroll() {
-    const currentScrollY = window.scrollY;
-
-    // Add/remove scrolled class for background
-    if (currentScrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-
-    lastScrollY = currentScrollY;
-  }
-
-  window.addEventListener('scroll', handleScroll, { passive: true });
-
-  // ===================================
-  // MOBILE MENU
-  // ===================================
-
-  const menuToggle = document.getElementById('menuToggle');
-  const menuClose = document.getElementById('menuClose');
-  const mobileMenu = document.getElementById('mobileMenu');
-  const mobileLinks = document.querySelectorAll('.mobile-link');
-
-  function openMobileMenu() {
-    mobileMenu.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeMobileMenu() {
-    mobileMenu.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  if (menuToggle) {
-    menuToggle.addEventListener('click', openMobileMenu);
-  }
-
-  if (menuClose) {
-    menuClose.addEventListener('click', closeMobileMenu);
-  }
-
-  // Close menu when clicking a link
-  mobileLinks.forEach(link => {
-    link.addEventListener('click', closeMobileMenu);
-  });
-
-  // ===================================
-  // SCROLL ANIMATIONS
-  // ===================================
-
-  const animatedElements = document.querySelectorAll('.animate-on-scroll');
-
-  const observerOptions = {
-    root: null,
-    rootMargin: '0px 0px -100px 0px',
-    threshold: 0.1
   };
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        // Optionally unobserve after animation
-        // observer.unobserve(entry.target);
+  // ===================================
+  // SCROLL ANIMATIONS MODULE
+  // ===================================
+
+  /**
+   * Scroll-triggered animations controller
+   */
+  const ScrollAnimations = {
+    observer: null,
+
+    /**
+     * Initialize scroll animations
+     */
+    init() {
+      if (!SUPPORTS.intersectionObserver) {
+        // Fallback: show all elements immediately
+        $$('.animate-on-scroll').forEach(el => el.classList.add('visible'));
+        return;
       }
-    });
-  }, observerOptions);
 
-  animatedElements.forEach(el => observer.observe(el));
-
-  // ===================================
-  // SMOOTH SCROLL FOR ANCHOR LINKS
-  // ===================================
-
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      const href = this.getAttribute('href');
-
-      // Skip if it's just "#"
-      if (href === '#') return;
-
-      const target = document.querySelector(href);
-
-      if (target) {
-        e.preventDefault();
-
-        const navbarHeight = navbar ? navbar.offsetHeight : 0;
-        const targetPosition = target.getBoundingClientRect().top + window.scrollY - navbarHeight - 20;
-
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth'
-        });
-      }
-    });
-  });
-
-  // ===================================
-  // DIGIT FLIP ANIMATION (subtle pulse)
-  // ===================================
-
-  let prevValues = {
-    days: '',
-    hours: '',
-    minutes: '',
-    seconds: ''
-  };
-
-  function addFlipAnimation() {
-    ['days', 'hours', 'minutes', 'seconds'].forEach(unit => {
-      const el = document.getElementById(unit);
-      if (el && el.textContent !== prevValues[unit]) {
-        el.style.transform = 'scale(1.05)';
-        setTimeout(() => {
-          el.style.transform = 'scale(1)';
-        }, 150);
-        prevValues[unit] = el.textContent;
-      }
-    });
-  }
-
-  // Run flip animation check every second
-  setInterval(addFlipAnimation, 1000);
-
-  // ===================================
-  // BUTTON RIPPLE EFFECT
-  // ===================================
-
-  document.querySelectorAll('.btn').forEach(button => {
-    button.addEventListener('click', function (e) {
-      // Only add ripple if clicking on external link
-      if (this.getAttribute('href') && this.getAttribute('href').startsWith('http')) {
-        return; // Let the browser handle the navigation
-      }
-    });
-  });
-
-  // ===================================
-  // PARALLAX SUBTLE EFFECT FOR HERO
-  // ===================================
-
-  const hero = document.querySelector('.hero');
-
-  if (hero) {
-    window.addEventListener('scroll', () => {
-      const scrolled = window.scrollY;
-      if (scrolled < window.innerHeight) {
-        const heroContent = hero.querySelector('.hero-content');
-        if (heroContent) {
-          heroContent.style.transform = `translateY(${scrolled * 0.1}px)`;
-          heroContent.style.opacity = 1 - (scrolled * 0.001);
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        {
+          root: null,
+          rootMargin: CONFIG.OBSERVER.ROOT_MARGIN,
+          threshold: CONFIG.OBSERVER.THRESHOLD
         }
+      );
+
+      $$('.animate-on-scroll').forEach(el => this.observer.observe(el));
+    },
+
+    /**
+     * Clean up observer
+     */
+    destroy() {
+      if (this.observer) {
+        this.observer.disconnect();
+        this.observer = null;
       }
-    }, { passive: true });
+    }
+  };
+
+  // ===================================
+  // PARALLAX MODULE
+  // ===================================
+
+  /**
+   * Subtle parallax effect for hero section
+   */
+  const Parallax = {
+    hero: null,
+    heroContent: null,
+    rafId: null,
+
+    /**
+     * Initialize parallax effect
+     */
+    init() {
+      // Skip if reduced motion preferred
+      if (SUPPORTS.reducedMotion) return;
+
+      this.hero = $('.hero');
+      this.heroContent = this.hero?.querySelector('.hero-content');
+
+      if (!this.heroContent) return;
+
+      const handleScroll = throttle(() => {
+        const scrolled = window.scrollY;
+        if (scrolled < window.innerHeight) {
+          requestAnimationFrame(() => {
+            this.heroContent.style.transform = `translateY(${scrolled * 0.1}px)`;
+            this.heroContent.style.opacity = Math.max(0, 1 - (scrolled * 0.001));
+          });
+        }
+      }, CONFIG.SCROLL.THROTTLE_MS);
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+    }
+  };
+
+  // ===================================
+  // INITIALIZATION
+  // ===================================
+
+  /**
+   * Application initialization
+   */
+  function init() {
+    try {
+      // Initialize all modules
+      CountdownTimer.init();
+      ThemeController.init();
+      Navigation.init();
+      ScrollAnimations.init();
+      Parallax.init();
+
+      // Typewriter starts on window load
+      window.addEventListener('load', () => {
+        Typewriter.init();
+        document.body.classList.add('loaded');
+
+        // Trigger hero animations
+        $$('.hero .animate-on-scroll').forEach((el, index) => {
+          setTimeout(() => el.classList.add('visible'), index * 100);
+        });
+      });
+
+      // Console branding
+      if (typeof console !== 'undefined' && console.log) {
+        console.log(
+          '%c KAIROS NEXUS GLOBAL ',
+          'background: linear-gradient(135deg, #DE028E, #2C3177); color: white; font-size: 20px; font-weight: bold; padding: 10px 20px; border-radius: 5px;'
+        );
+        console.log('%c Where Opportunity Meets Ambition', 'color: #DE028E; font-size: 14px;');
+        console.log('%c Launching January 15, 2026', 'color: #888; font-size: 12px;');
+      }
+    } catch (error) {
+      console.error('[Kairos] Initialization error:', error);
+    }
   }
 
-  // ===================================
-  // PRELOADER (optional - runs on load)
-  // ===================================
-
-  window.addEventListener('load', () => {
-    document.body.classList.add('loaded');
-
-    // Trigger initial animations for hero elements
-    const heroElements = document.querySelectorAll('.hero .animate-on-scroll');
-    heroElements.forEach((el, index) => {
-      setTimeout(() => {
-        el.classList.add('visible');
-      }, index * 100);
-    });
-  });
-
-  // ===================================
-  // CONSOLE BRANDING
-  // ===================================
-
-  console.log(
-    '%c KAIROS NEXUS GLOBAL ',
-    'background: linear-gradient(135deg, #DE028E, #2C3177); color: white; font-size: 20px; font-weight: bold; padding: 10px 20px; border-radius: 5px;'
-  );
-  console.log('%c Where Opportunity Meets Ambition', 'color: #DE028E; font-size: 14px;');
-  console.log('%c Launching January 15, 2026', 'color: #888; font-size: 12px;');
+  // Start the application
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
 })();
