@@ -262,9 +262,17 @@
     showLaunchButtons() {
       const waitlistForm = $('#waitlistForm');
       const launchButtons = $('#launchButtons');
+      const countdownWrapper = $('.countdown-wrapper');
+      const heroBadge = $('.hero-badge');
 
       if (waitlistForm) waitlistForm.style.display = 'none';
       if (launchButtons) launchButtons.style.display = 'flex';
+      if (countdownWrapper) countdownWrapper.style.display = 'none';
+
+      // Update hero badge to show launched status
+      if (heroBadge) {
+        heroBadge.innerHTML = '<span class="dot"></span> We Have Launched!';
+      }
     }
   };
 
