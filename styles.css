@@ -666,6 +666,18 @@ button {
   margin-top: var(--spacing-sm);
 }
 
+.waitlist-count {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.waitlist-count strong {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
 .waitlist-success {
   display: flex;
   flex-direction: column;
