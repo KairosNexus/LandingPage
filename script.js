@@ -205,6 +205,7 @@
           clearInterval(this.intervalId);
           this.intervalId = null;
         }
+        this.showLaunchButtons();
         return;
       }
 
@@ -252,6 +253,119 @@
       if (this.intervalId) {
         clearInterval(this.intervalId);
         this.intervalId = null;
+      }
+    },
+
+    /**
+     * Show launch buttons and hide waitlist form
+     */
+    showLaunchButtons() {
+      const waitlistForm = $('#waitlistForm');
+      const launchButtons = $('#launchButtons');
+
+      if (waitlistForm) waitlistForm.style.display = 'none';
+      if (launchButtons) launchButtons.style.display = 'flex';
+    }
+  };
+
+  // ===================================
+  // WAITLIST FORM MODULE
+  // ===================================
+
+  /**
+   * Waitlist form handler
+   */
+  const WaitlistForm = {
+    form: null,
+    emailInput: null,
+    successMessage: null,
+    submitButton: null,
+    honeypotField: null,
+
+    /**
+     * Initialize waitlist form
+     */
+    init() {
+      this.form = $('#heroWaitlistForm');
+      this.emailInput = $('#waitlistEmail');
+      this.successMessage = $('#waitlistSuccess');
+      this.submitButton = this.form?.querySelector('button[type="submit"]');
+      this.honeypotField = $('#websiteHoneypot');
+
+      if (!this.form) return;
+
+      this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+    },
+
+    /**
+     * Handle form submission
+     * @param {Event} e - Submit event
+     */
+    async handleSubmit(e) {
+      e.preventDefault();
+
+      // Bot detection: if honeypot field is filled, silently reject
+      if (this.honeypotField?.value) {
+        console.warn('[Kairos] Bot detected via honeypot');
+        // Show fake success to not alert the bot
+        if (this.form && this.successMessage) {
+          this.form.style.display = 'none';
+          this.successMessage.style.display = 'flex';
+        }
+        return;
+      }
+
+      const email = this.emailInput?.value?.trim();
+      if (!email) return;
+
+      // Disable button and show loading state
+      if (this.submitButton) {
+        this.submitButton.disabled = true;
+        this.submitButton.innerHTML = 'Joining...';
+      }
+
+      try {
+        const response = await fetch('https://api.kairosng.com/api/v1/default/waitlist', {
+          method: 'POST',
+          headers: {
+            'Accept': '*/*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Show success message
+        if (this.form && this.successMessage) {
+          this.form.style.display = 'none';
+          this.successMessage.style.display = 'flex';
+        }
+
+        // Store in localStorage to remember submission
+        if (SUPPORTS.localStorage) {
+          localStorage.setItem('kairos-waitlist-email', email);
+        }
+
+        console.log('[Kairos] Waitlist signup successful:', email);
+      } catch (error) {
+        console.error('[Kairos] Waitlist signup failed:', error);
+
+        // Re-enable button and show error
+        if (this.submitButton) {
+          this.submitButton.disabled = false;
+          this.submitButton.innerHTML = `
+            Join Waitlist
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          `;
+        }
+
+        // Show error to user
+        alert('Failed to join waitlist. Please try again.');
       }
     }
   };
@@ -663,6 +777,7 @@
     try {
       // Initialize all modules
       CountdownTimer.init();
+      WaitlistForm.init();
       ThemeController.init();
       Navigation.init();
       ScrollAnimations.init();
