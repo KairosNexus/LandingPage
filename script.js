@@ -333,7 +333,7 @@
       }
 
       try {
-        const response = await fetch('https://api-stage.kairosng.com/api/v1/default/waitlist', {
+        const response = await fetch('https://api.kairosng.com/api/v1/default/waitlist', {
           method: 'POST',
           headers: {
             'Accept': '*/*',
