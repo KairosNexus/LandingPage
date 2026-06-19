@@ -11,6 +11,8 @@ Kairos is a premium bridge between high-quality remote talent and serious global
 - **Theming:** [next-themes](https://github.com/pacocoursey/next-themes) (System-aware Dark/Light mode)
 - **Language:** TypeScript
 
+
+
 ## ✨ Key Features
 
 ### 1. Dual-Intent Landing Experience
