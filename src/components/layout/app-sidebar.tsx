@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Briefcase, Medal, Settings, LogOut, User, Menu, X, Building } from "lucide-react";
+import { Home, Briefcase, Medal, Settings, LogOut, User, Menu, X, Database } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarItem } from "@/components/ui/sidebar";
 import { useAuth } from "@/components/providers/auth-provider";
 import { UserRole } from "@/lib/api";
@@ -31,14 +31,7 @@ export function AppSidebar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
   if (!user) return null;
-
-  const isCompany = user.role === "COMPANY" || user.role === "ADMIN" || user.role === "SUPERADMIN";
-  const isTalent = user.role === "STUDENT";
 
   const filteredNavItems = navItems.filter(item => {
     if (!item.roles) return true;
@@ -63,7 +56,7 @@ export function AppSidebar() {
       <SidebarContent className="flex-1">
         <div className="space-y-1 px-3 py-4">
           {filteredNavItems.map((item) => (
-            <Link key={item.href} href={item.href} passHref>
+            <Link key={item.href} href={item.href} passHref onClick={() => setMobileOpen(false)}>
               <SidebarItem active={pathname === item.href}>
                 <item.icon className="w-5 h-5 flex-shrink-0" />
                 <span>{item.name}</span>
