@@ -42,6 +42,7 @@ export function Header({ intent, setIntent }: HeaderProps) {
   const navLinks = [
     { name: "About", href: "/about" },
     { name: "How It Works", href: "/how-it-works" },
+    { name: "Blog", href: "/blog" },
   ];
 
   const getSignupText = () => intent === "talent" ? "Join as Talent" : "Start Hiring";

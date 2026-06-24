@@ -24,6 +24,7 @@ export default function JobsPage() {
         search: searchQuery || undefined,
         jobType: selectedCategory !== "All" ? selectedCategory : undefined,
         locationType: selectedType !== "All" ? selectedType : undefined,
+        country: "US",
         page: pageNum,
         limit: 20,
       });
@@ -199,7 +200,7 @@ export default function JobsPage() {
                         </div>
                         <div className="flex items-center gap-1.5">
                           <MapPin className="w-4 h-4" />
-                          {job.locationType}
+                          {job.location || job.locationType}
                         </div>
                         <div className="flex items-center gap-1.5">
                           <DollarSign className="w-4 h-4" />

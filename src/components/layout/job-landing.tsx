@@ -38,7 +38,7 @@ export function JobLanding() {
   useEffect(() => {
     const fetchPublicJobs = async () => {
       try {
-        const response = await getPublicJobs({ limit: 3 });
+        const response = await getPublicJobs({ country: "US", limit: 3 });
         setPublicJobs(response.data);
       } catch (error) {
         console.error("Failed to fetch public jobs:", error);
@@ -231,7 +231,7 @@ export function JobLanding() {
                         </div>
                       </div>
                       <h3 className="text-xl font-bold mb-1 dark:text-white group-hover:text-[#C2185B] transition-colors">{job.title}</h3>
-                      <p className="text-sm text-zinc-500 mb-6">{job.companyName} • {job.locationType}</p>
+                      <p className="text-sm text-zinc-500 mb-6">{job.companyName} • {job.location || job.locationType}</p>
                       <div className="flex justify-between items-center mt-auto">
                         <span className="font-bold text-sm dark:text-white">{job.compensation || 'Competitive pay'}</span>
                         <span className="bg-[#C2185B] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all group-hover:bg-[#A3154D]">

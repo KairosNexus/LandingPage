@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Briefcase, Medal, Settings, LogOut, User, Menu, X } from "lucide-react";
+import { Home, Briefcase, Medal, Settings, LogOut, User, Menu, X, Building } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarItem } from "@/components/ui/sidebar";
 import { useAuth } from "@/components/providers/auth-provider";
 import { UserRole } from "@/lib/api";
@@ -22,6 +22,7 @@ const navItems: NavItem[] = [
   { name: "My Jobs", href: "/dashboard/talent-jobs", icon: Briefcase, roles: ["STUDENT"] },
   { name: "Competitions", href: "/dashboard/competitions", icon: Medal, roles: ["STUDENT"] },
   { name: "Talents", href: "/dashboard/talents", icon: User, roles: ["COMPANY", "ADMIN", "SUPERADMIN"] },
+  { name: "Scraped Data", href: "/admin/scraped-businesses", icon: Database, roles: ["ADMIN", "SUPERADMIN"] },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 

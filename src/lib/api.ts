@@ -1,8 +1,8 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 import { Code, Palette, Headset, Brain, FileText, Users, Briefcase, Database, Layout, BarChart, Settings, Search, Megaphone, Video, UserCheck } from "lucide-react";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:7700/api/v1";
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api-stage/kairosng.com/api/v1";
+const API_BASE_URL = "http://localhost:7700/api/v1";
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:7700/api/v1";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -10,7 +10,6 @@ const apiClient: AxiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
-console.log({API_BASE_URL})
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (typeof window !== "undefined") {
@@ -238,6 +237,7 @@ export interface PublicJob {
   companyName: string;
   companyLogo?: string;
   locationType: string;
+  location?: string;
   type: string;
   experienceLevel: string;
   compensation?: string;
@@ -285,6 +285,7 @@ export interface GetPublicJobsParams {
   jobType?: string;
   experienceLevel?: string;
   skills?: string;
+  country?: string;
   page?: number;
   limit?: number;
 }
@@ -403,5 +404,223 @@ export async function getPublicJobBySlug(slug: string): Promise<ApiResponse<Publ
 
 export async function getJobById(jobId: string): Promise<ApiResponse<RecruiterJob>> {
   const response = await apiClient.get(`/opportunity/user-get/${jobId}`);
+  return response.data;
+}
+
+// Skill Verification Types and APIs
+export type SkillRole = "BACKEND_ENGINEER" | "FRONTEND_ENGINEER" | "MARKETING" | "BRANDING" | "GRAPHICS_DESIGN" | "VIRTUAL_ASSISTANT";
+export type SubmissionStatus = "IN_PROGRESS" | "SUBMITTED" | "UNDER_REVIEW" | "PASSED" | "FAILED" | "TIMED_OUT" | "CANCELLED";
+export type SubmissionType = "GITHUB_PR" | "PDF_UPLOAD";
+
+export interface EvaluationResult {
+  id: string;
+  submissionId: string;
+  aiScore?: number;
+  aiRubricBreakdown?: Record<string, number>;
+  aiFeedback?: string;
+  adminOverrideScore?: number;
+  adminFeedback?: string;
+  finalScore?: number;
+  status: "PENDING_REVIEW" | "APPROVED" | "REJECTED";
+}
+
+export interface Submission {
+  id: string;
+  userId: string;
+  caseStudyId: string;
+  role: SkillRole;
+  submissionType: SubmissionType;
+  status: SubmissionStatus;
+  startedAt: string;
+  submittedAt?: string;
+  expiresAt: string;
+  githubPrUrl?: string;
+  githubPrNumber?: number;
+  pdfFileUrl?: string;
+  extractedText?: string;
+  attemptNumber: number;
+  roleAttemptNumber: number;
+  cooldownEndsAt?: string;
+  failureReason?: string;
+  user: {
+    id: string;
+    email: string;
+    profile?: {
+      firstName?: string;
+      lastName?: string;
+    };
+  };
+  evaluationResult?: EvaluationResult;
+  caseStudy?: {
+    title: string;
+    role: SkillRole;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SkillVerificationConfig {
+  passThreshold: number;
+  autoApproveThreshold: number;
+  autoFailThreshold: number;
+  maxAttempts: number;
+  cooldownInDays: number;
+  submissionWindowHours: number;
+}
+
+export interface QueueQueryParams {
+  page?: number;
+  limit?: number;
+  sortBy?: "aiScore" | "role" | "submittedAt";
+  sortOrder?: "asc" | "desc";
+  role?: SkillRole;
+  scoreBand?: "AUTO_APPROVE" | "GRAY_ZONE" | "AUTO_FAIL";
+  minAiScore?: number;
+  maxAiScore?: number;
+}
+
+export interface QueueResponseData {
+  items: Submission[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+  config: SkillVerificationConfig;
+}
+
+export async function getSkillVerificationQueue(params?: QueueQueryParams): Promise<ApiResponse<QueueResponseData>> {
+  const response = await apiClient.get(`/admin/skill-verifications/queue`, { params });
+  return response.data;
+}
+
+export async function getSubmissionDetail(submissionId: string): Promise<ApiResponse<any>> {
+  const response = await apiClient.get(`/admin/skill-verifications/queue/${submissionId}`);
+  return response.data;
+}
+
+export async function approveSubmission(adminUserId: string, submissionId: string): Promise<ApiResponse<any>> {
+  const response = await apiClient.post(`/admin/skill-verifications/approve/${submissionId}`);
+  return response.data;
+}
+
+export async function rejectSubmission(adminUserId: string, submissionId: string): Promise<ApiResponse<any>> {
+  const response = await apiClient.post(`/admin/skill-verifications/reject/${submissionId}`);
+  return response.data;
+}
+
+export async function saveOverrideScore(submissionId: string, data: { adminOverrideScore?: number; adminFeedback?: string }): Promise<ApiResponse<any>> {
+  const response = await apiClient.patch(`/admin/skill-verifications/override/${submissionId}`, data);
+  return response.data;
+}
+
+export async function getSkillVerificationConfig(): Promise<ApiResponse<SkillVerificationConfig>> {
+  const response = await apiClient.get(`/admin/skill-verifications/config`);
+  return response.data;
+}
+
+export async function updateSkillVerificationConfig(data: Partial<SkillVerificationConfig>): Promise<ApiResponse<SkillVerificationConfig>> {
+  const response = await apiClient.patch(`/admin/skill-verifications/config`, data);
+  return response.data;
+}
+
+export type BlogStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  coverImage?: string | null;
+  tags: string[];
+  contentHtml: string;
+  contentText?: string | null;
+  status?: BlogStatus;
+  publishedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  author?: {
+    id: string;
+    email: string;
+    profile?: {
+      firstName?: string;
+      lastName?: string;
+      profilePicture?: string;
+    };
+  } | null;
+}
+
+export async function getPublicBlogs(params?: {
+  page?: number;
+  limit?: number;
+  query?: string;
+}): Promise<ApiResponse<BlogPost[]>> {
+  const response = await apiClient.get(`/blogs`, { params });
+  return response.data;
+}
+
+export async function getPublicBlogBySlug(slug: string): Promise<ApiResponse<BlogPost>> {
+  const response = await apiClient.get(`/blogs/${slug}`);
+  return response.data;
+}
+
+export interface ScrapedBusiness {
+  id: string;
+  source: string;
+  sourceId: string;
+  mantaUrl?: string | null;
+  name?: string | null;
+  website?: string | null;
+  emails: string[];
+  phones: string[];
+  category?: string | null;
+  city?: string | null;
+  state?: string | null;
+  country?: string | null;
+  rawPayload?: Record<string, any> | null;
+  lastScrapedAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ScrapedBusinessQueryParams {
+  page?: number;
+  limit?: number;
+  query?: string;
+  category?: string;
+  city?: string;
+  state?: string;
+  emailStatus?: "with_email" | "without_email" | "";
+}
+
+export interface AdminScrapedBusinessesResponse {
+  message: string;
+  data: {
+    items: ScrapedBusiness[];
+    meta?: {
+      withEmail: number;
+      withoutEmail: number;
+    };
+  };
+  pagination: {
+    total: number;
+    pageNo: number;
+    pageSize: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
+  };
+}
+
+export async function getAdminScrapedBusinesses(
+  params?: ScrapedBusinessQueryParams
+): Promise<AdminScrapedBusinessesResponse> {
+  const response = await apiClient.get(`/admin/scraped-businesses`, { params });
+  return response.data;
+}
+
+export async function deleteAdminScrapedBusiness(id: string): Promise<ApiResponse<{ id: string }>> {
+  const response = await apiClient.delete(`/admin/scraped-businesses/${id}`);
   return response.data;
 }
