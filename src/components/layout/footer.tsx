@@ -46,8 +46,8 @@ export function Footer() {
           {/* Logo & Info */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <img src="/logo.png" alt="Kairos Logo" className="w-8 h-8 object-contain" />
-              <span className="text-xl font-bold dark:text-white">Kairos</span>
+              <img src="/logo.png" alt="Kairos Nexus Global logo" className="w-8 h-8 object-contain" />
+              <span className="text-xl font-bold dark:text-white">Kairos Nexus Global</span>
             </div>
             <p className="text-gray-600 dark:text-gray-400 max-w-xs leading-relaxed mb-6">
               The premium bridge for companies hiring exceptional remote talent with more speed, confidence, and cost efficiency.
@@ -93,7 +93,7 @@ export function Footer() {
 
         <div className="pt-8 text-center md:text-left">
           <p className="text-xs text-gray-500 dark:text-gray-500">
-            © {new Date().getFullYear()} Kairos. All rights reserved.
+            © {new Date().getFullYear()} Kairos Nexus Global. All rights reserved.
           </p>
         </div>
       </div>

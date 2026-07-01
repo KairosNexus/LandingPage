@@ -1,4 +1,5 @@
 import { UserRole } from "./api";
+import { getStorageItem, removeStorageItem, setStorageItem } from "./storage";
 
 export interface User {
   id?: string;
@@ -9,13 +10,11 @@ export interface User {
 }
 
 export function getStoredToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("authToken");
+  return getStorageItem("authToken");
 }
 
 export function getStoredUser(): User | null {
-  if (typeof window === "undefined") return null;
-  const stored = localStorage.getItem("authUser");
+  const stored = getStorageItem("authUser");
   if (!stored) return null;
   try {
     return JSON.parse(stored);
@@ -25,23 +24,19 @@ export function getStoredUser(): User | null {
 }
 
 export function setAuthData(token: string, user: User) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem("authToken", token);
-  localStorage.setItem("authUser", JSON.stringify(user));
+  setStorageItem("authToken", token);
+  setStorageItem("authUser", JSON.stringify(user));
 }
 
 export function clearAuthData() {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem("authToken");
-  localStorage.removeItem("authUser");
+  removeStorageItem("authToken");
+  removeStorageItem("authUser");
 }
 
 export function setAccountType(type: "talent" | "company") {
-  if (typeof window === "undefined") return;
-  localStorage.setItem("accountType", type);
+  setStorageItem("accountType", type);
 }
 
 export function getAccountType(): "talent" | "company" {
-  if (typeof window === "undefined") return "talent";
-  return (localStorage.getItem("accountType") as "talent" | "company") || "talent";
+  return (getStorageItem("accountType") as "talent" | "company") || "talent";
 }

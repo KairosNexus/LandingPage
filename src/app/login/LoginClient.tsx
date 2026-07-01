@@ -8,10 +8,11 @@ import { Eye, EyeOff, ArrowRight, Mail, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { loginUser, UserRole } from "@/lib/api";
 import { useAuth } from "@/components/providers/auth-provider";
+import { getStorageItem, setStorageItem } from "@/lib/storage";
 
 function getStoredAccountType(): UserRole {
   if (typeof window !== "undefined") {
-    return (localStorage.getItem("accountType") as UserRole) || "STUDENT";
+    return (getStorageItem("accountType") as UserRole) || "STUDENT";
   }
   return "STUDENT";
 }
@@ -58,7 +59,7 @@ export function LoginClient() {
           lastName: "",
         };
         if (typeof window !== "undefined") {
-          localStorage.setItem("accountType", userData.role);
+          setStorageItem("accountType", userData.role);
         }
         login(result.data.token, userData);
         router.push("/dashboard");
@@ -80,10 +81,10 @@ export function LoginClient() {
           <Link href="/" className="inline-flex items-center gap-2 mb-8">
             <img 
               src="/logo.png" 
-              alt="Kairos Logo" 
+              alt="Kairos Nexus Global logo" 
               className="w-12 h-12 object-contain" 
             />
-            <span className="text-2xl font-bold dark:text-white">Kairos<span className="text-[#C2185B]">.</span></span>
+            <span className="text-2xl font-bold dark:text-white">Kairos Nexus Global</span>
           </Link>
           
           <h1 className="text-3xl font-bold dark:text-white mb-3">Welcome back</h1>

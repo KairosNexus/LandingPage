@@ -46,10 +46,10 @@ export function AppSidebar() {
         <Link href="/" className="flex items-center gap-2">
           <img 
             src="/logo.png" 
-            alt="Kairos Logo" 
+            alt="Kairos Nexus Global logo" 
             className="w-10 h-10 object-contain" 
           />
-          <span className="text-xl font-bold text-zinc-900 dark:text-white">Kairos</span>
+          <span className="text-xl font-bold text-zinc-900 dark:text-white">Kairos Nexus Global</span>
         </Link>
       </div>
 

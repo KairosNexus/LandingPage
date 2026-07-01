@@ -75,13 +75,13 @@ export async function generateMetadata({
 
   if (!post) {
     return {
-      title: "Blog post not found | Kairos",
+      title: "Blog post not found | Kairos Nexus Global",
     };
   }
 
   return {
-    title: `${post.title} | Kairos Blog`,
-    description: post.excerpt || post.contentText || "Kairos blog article.",
+    title: `${post.title} | Kairos Nexus Global Blog`,
+    description: post.excerpt || post.contentText || "Kairos Nexus Global blog article.",
     openGraph: {
       title: post.title,
       description: post.excerpt || post.contentText || "Kairos blog article.",

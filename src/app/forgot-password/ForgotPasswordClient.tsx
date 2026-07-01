@@ -34,10 +34,10 @@ export function ForgotPasswordClient() {
             <Link href="/" className="inline-flex items-center gap-2 mb-8">
               <img 
                 src="/logo.png" 
-                alt="Kairos Logo" 
+                alt="Kairos Nexus Global logo" 
                 className="w-12 h-12 object-contain" 
               />
-              <span className="text-2xl font-bold dark:text-white">Kairos<span className="text-[#C2185B]">.</span></span>
+              <span className="text-2xl font-bold dark:text-white">Kairos Nexus Global</span>
             </Link>
             
             <div className="w-20 h-20 bg-pink-50 dark:bg-pink-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -69,10 +69,10 @@ export function ForgotPasswordClient() {
           <Link href="/" className="inline-flex items-center gap-2 mb-8">
             <img 
               src="/logo.png" 
-              alt="Kairos Logo" 
+              alt="Kairos Nexus Global logo" 
               className="w-12 h-12 object-contain" 
             />
-            <span className="text-2xl font-bold dark:text-white">Kairos<span className="text-[#C2185B]">.</span></span>
+            <span className="text-2xl font-bold dark:text-white">Kairos Nexus Global</span>
           </Link>
           
           <h1 className="text-3xl font-bold dark:text-white mb-3">Reset your password</h1>

@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
 import { Code, Palette, Headset, Brain, FileText, Users, Briefcase, Database, Layout, BarChart, Settings, Search, Megaphone, Video, UserCheck } from "lucide-react";
+import { getStorageItem, removeStorageItem } from "./storage";
 
 const API_BASE_URL = "http://localhost:7700/api/v1";
 // const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:7700/api/v1";
@@ -12,11 +13,9 @@ const apiClient: AxiosInstance = axios.create({
 });
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("authToken");
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    const token = getStorageItem("authToken");
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -32,7 +31,7 @@ apiClient.interceptors.response.use(
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
-        localStorage.removeItem("authToken");
+        removeStorageItem("authToken");
         window.location.href = "https://app.kairosng.com/auth/login";
       }
     }

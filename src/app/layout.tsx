@@ -6,7 +6,7 @@ import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Kairos - Hire vetted experts or find your dream role",
+  title: "Kairos Nexus Global - Hire vetted experts or find your dream role",
   description: "The premium bridge between strong remote talent and serious global opportunities.",
   icons: {
     icon: "/logo.png",

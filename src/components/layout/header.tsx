@@ -82,8 +82,8 @@ export function Header({ intent, setIntent }: HeaderProps) {
           {/* Logo */}
           {!isDashboard && (
             <Link href="/" className="flex items-center gap-1 cursor-pointer">
-              <img src="/logo.png" alt="Kairos Logo" className="w-10 h-10 object-contain" />
-              <span className="text-xl font-bold dark:text-white">Kairos<span className="text-[#C2185B]">.</span></span>
+              <img src="/logo.png" alt="Kairos Nexus Global logo" className="w-10 h-10 object-contain" />
+              <span className="text-xl font-bold dark:text-white">Kairos Nexus Global</span>
             </Link>
           )}
 

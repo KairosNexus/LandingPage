@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { X, Cookie, Settings, CheckCircle2 } from "lucide-react";
+import { getStorageItem, setStorageItem } from "@/lib/storage";
 
 export function CookieConsent() {
   const [showConsent, setShowConsent] = useState(false);
@@ -10,26 +11,26 @@ export function CookieConsent() {
   const [essentialOnly, setEssentialOnly] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem("cookieConsent");
+    const consent = getStorageItem("cookieConsent");
     if (!consent) {
       setShowConsent(true);
     }
   }, []);
 
   const handleAcceptEssential = () => {
-    localStorage.setItem("cookieConsent", "essential");
+    setStorageItem("cookieConsent", "essential");
     setShowConsent(false);
     setShowManage(false);
   };
 
   const handleAcceptAll = () => {
-    localStorage.setItem("cookieConsent", "all");
+    setStorageItem("cookieConsent", "all");
     setShowConsent(false);
     setShowManage(false);
   };
 
   const handleSavePreferences = () => {
-    localStorage.setItem("cookieConsent", essentialOnly ? "essential" : "all");
+    setStorageItem("cookieConsent", essentialOnly ? "essential" : "all");
     setShowConsent(false);
     setShowManage(false);
   };

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { getStorageItem, setStorageItem } from "@/lib/storage";
 
 type Intent = "talent" | "company";
 
@@ -20,7 +21,7 @@ export function IntentProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    const savedIntent = localStorage.getItem("kairos_intent") as Intent;
+    const savedIntent = getStorageItem("kairos_intent") as Intent;
     if (savedIntent) {
       setIntent(savedIntent);
     } else {
@@ -30,7 +31,7 @@ export function IntentProvider({ children }: { children: React.ReactNode }) {
 
   const handleSetIntent = (newIntent: Intent) => {
     setIntent(newIntent);
-    localStorage.setItem("kairos_intent", newIntent);
+    setStorageItem("kairos_intent", newIntent);
     setShowModal(false);
   };
 

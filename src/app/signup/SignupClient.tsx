@@ -111,15 +111,15 @@ export function SignupClient() {
           <Link href="/" className="inline-flex items-center gap-2 mb-8">
             <img 
               src="/logo.png" 
-              alt="Kairos Logo" 
+              alt="Kairos Nexus Global logo" 
               className="w-12 h-12 object-contain" 
             />
-            <span className="text-2xl font-bold dark:text-white">Kairos<span className="text-[#C2185B]">.</span></span>
+            <span className="text-2xl font-bold dark:text-white">Kairos Nexus Global</span>
           </Link>
           
           <h1 className="text-3xl font-bold dark:text-white mb-3">Create your account</h1>
           <p className="text-zinc-500 dark:text-zinc-400">
-            Join Kairos and start your journey
+            Join Kairos Nexus Global and start your journey
           </p>
         </div>
 

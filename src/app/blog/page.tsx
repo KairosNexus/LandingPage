@@ -34,9 +34,9 @@ function isDisplayableImage(value?: string | null) {
 }
 
 export const metadata = {
-  title: "Blog | Kairos",
+  title: "Blog | Kairos Nexus Global",
   description:
-    "Insights on remote hiring, verified talent, skill assessment, and global work from Kairos.",
+    "Insights on remote hiring, verified talent, skill assessment, and global work from Kairos Nexus Global.",
 };
 
 export const dynamic = "force-dynamic";
@@ -72,7 +72,7 @@ export default async function BlogPage({
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-12">
           <span className="text-[#C2185B] font-bold text-xs uppercase tracking-widest mb-2 block">
-            Kairos Blog
+            Kairos Nexus Global Blog
           </span>
           <h1 className="text-4xl lg:text-6xl font-bold dark:text-white leading-tight">
             Ideas for better remote work
