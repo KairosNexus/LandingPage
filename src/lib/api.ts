@@ -2,8 +2,8 @@ import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosE
 import { Code, Palette, Headset, Brain, FileText, Users, Briefcase, Database, Layout, BarChart, Settings, Search, Megaphone, Video, UserCheck } from "lucide-react";
 import { getStorageItem, removeStorageItem } from "./storage";
 
-const API_BASE_URL = "http://localhost:7700/api/v1";
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:7700/api/v1";
+// const API_BASE_URL = "http://localhost:7700/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:7700/api/v1";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
