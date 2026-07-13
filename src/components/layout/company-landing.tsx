@@ -19,6 +19,11 @@ export function CompanyLanding() {
     }
   };
 
+  const searchByCategory = (category: string) => {
+    setSearchQuery(category);
+    router.push(`/talents?search=${encodeURIComponent(category)}`);
+  };
+
   const categories = [
     { title: "Marketing & Growth", desc: "Social media, content, paid ads experts who drive results.", tag: "Marketing", count: "390+ Experts", icon: Code },
     { title: "Graphic & Brand Design", desc: "Senior designers specialized in branding, SaaS UI/UX, and complex workflows.", tag: "Design", count: "420+ Experts", icon: Palette },
@@ -81,16 +86,18 @@ export function CompanyLanding() {
                     </div>
                          
                   <div className="flex flex-wrap mt-8 justify-center gap-3">
-                    {["Product Design", "Frontend Engineers", "Customer Success", "Virtual Assistance"].map(tag => (
+                    {[
+                      { label: "Product Design", query: "Product Design" },
+                      { label: "Frontend Engineers", query: "Frontend Engineer" },
+                      { label: "Customer Success", query: "Customer Success" },
+                      { label: "Virtual Assistance", query: "Virtual Assistance" },
+                    ].map(({ label, query }) => (
                       <button
-                        key={tag}
-                        onClick={() => {
-                          setSearchQuery(tag);
-                          handleSearch();
-                        }}
+                        key={label}
+                        onClick={() => searchByCategory(query)}
                         className="px-4 py-2 rounded-full bg-pink-50 dark:bg-pink-900/20 text-xs font-bold text-zinc-900 dark:text-zinc-100 hover:bg-pink-100 dark:hover:bg-pink-900/30 transition-colors cursor-pointer"
                       >
-                        {tag}
+                        {label}
                       </button>
                     ))}
                   </div>

@@ -7,7 +7,11 @@ import { useRouter } from "next/navigation";
 import { getPublicTalents, PublicTalent } from "@/lib/api";
 
 export default function TalentsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(() =>
+    typeof window === "undefined"
+      ? ""
+      : new URLSearchParams(window.location.search).get("search") || ""
+  );
   const [selectedSkills, setSelectedSkills] = useState("All");
   const [selectedExperience, setSelectedExperience] = useState("All");
   const [publicTalents, setPublicTalents] = useState<PublicTalent[]>([]);
@@ -30,9 +34,8 @@ export default function TalentsPage() {
   }, []);
 
   const handleSearch = () => {
-    if (searchQuery.trim()) {
-      router.push(`/jobs?search=${encodeURIComponent(searchQuery)}`);
-    }
+    const query = searchQuery.trim();
+    router.replace(query ? `/talents?search=${encodeURIComponent(query)}` : "/talents");
   };
 
   const skills = useMemo(() => ["All", ...Array.from(new Set(publicTalents.flatMap(t => t.user?.skillSet?.map(s => s.title) || [])))], [publicTalents]);
@@ -40,10 +43,12 @@ export default function TalentsPage() {
 
   const filteredTalents = useMemo(() => {
     const talentSkills = (t: PublicTalent) => t.user?.skillSet?.map(s => s.title) || [];
+    const talentJobTitles = (t: PublicTalent) => t.jobTitles || [];
     return publicTalents.filter(talent => 
       (talent.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || 
        talent.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
        talent.bio?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+       talentJobTitles(talent).some(title => title.toLowerCase().includes(searchQuery.toLowerCase())) ||
        talentSkills(talent).some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))) &&
       (selectedSkills === "All" || talentSkills(talent).includes(selectedSkills)) &&
       (selectedExperience === "All" || talent.experienceLevel === selectedExperience)
@@ -91,7 +96,7 @@ export default function TalentsPage() {
                 onClick={handleSearch}
                 className="hidden sm:block bg-[#C2185B] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#A3154D] transition-all"
               >
-                Search Jobs
+                Search Talents
               </button>
             </div>
 
