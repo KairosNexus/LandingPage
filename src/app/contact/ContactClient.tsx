@@ -53,7 +53,7 @@ export function ContactClient() {
     {
       icon: Mail,
       title: "Email Us",
-      details: ["info@kairosng.com", "security@kairosng.com"],
+      details: ["info@kairosnexusglobal.com"],
       desc: "We'll respond within 24 hours",
     },
     {

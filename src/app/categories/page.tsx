@@ -80,7 +80,7 @@ export default function CategoriesPage() {
             filteredCategories.map((category) => (
               <a
                 key={category.id}
-                href="https://app.kairosng.com/auth/login"
+                href="https://app.kairosng.com/auth/onboarding/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] shadow-sm border border-zinc-100 dark:border-zinc-800 hover:shadow-xl hover:-translate-y-1 transition-all group block"

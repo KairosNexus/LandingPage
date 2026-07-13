@@ -14,7 +14,7 @@ export function Footer() {
     {
       title: "PLATFORM",
       links: [
-        { name: "For Businesses", href: "/for-business" },
+        // { name: "For Businesses", href: "/for-business" },
         { name: "How It Works", href: "/how-it-works" },
         { name: "Hire Talent", href: "/hire-talent" },
       ],

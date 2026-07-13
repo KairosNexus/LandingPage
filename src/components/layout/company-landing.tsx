@@ -1,37 +1,32 @@
 "use client";
 
-import { CheckCircle2, UserCheck, Zap, TrendingDown, Shield, ArrowRight, Search, FileText, Send, ClipboardList, Users, UserPlus, Brain, Star, Code, Palette, Headset, Award, Building, MapPin } from "lucide-react";
+import { CheckCircle2, UserCheck, Zap, TrendingDown, Shield, ArrowRight, Search, FileText, ClipboardList, Users, Brain, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { TrustSection } from "./trust-section";
-import { Cofounders } from "./cofounders";
+import { categories as allCategories } from "@/lib/api";
 
 export function CompanyLanding() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [locationPreference, setLocationPreference] = useState("");
   const router = useRouter();
 
   const handleSearch = () => {
-    if (searchQuery.trim()) {
-      router.push(`/talents?search=${encodeURIComponent(searchQuery)}`);
-    } else {
-      router.push('/talents');
-    }
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set("search", searchQuery.trim());
+    if (locationPreference) params.set("location", locationPreference);
+    router.push(params.size ? `/talents?${params.toString()}` : "/talents");
   };
 
   const searchByCategory = (category: string) => {
     setSearchQuery(category);
-    router.push(`/talents?search=${encodeURIComponent(category)}`);
+    const params = new URLSearchParams({ search: category });
+    if (locationPreference) params.set("location", locationPreference);
+    router.push(`/talents?${params.toString()}`);
   };
 
-  const categories = [
-    { title: "Marketing & Growth", desc: "Social media, content, paid ads experts who drive results.", tag: "Marketing", count: "390+ Experts", icon: Code },
-    { title: "Graphic & Brand Design", desc: "Senior designers specialized in branding, SaaS UI/UX, and complex workflows.", tag: "Design", count: "420+ Experts", icon: Palette },
-    { title: "Video & Content Editing", desc: "Professional editors for high-impact social content and brand storytelling.", tag: "Creative", count: "215+ Experts", icon: Headset },
-    { title: "Frontend Engineering", desc: "React, Vue, and modern web developers who ship production code.", tag: "Engineering", count: "380+ Experts", icon: Code },
-    { title: "Customer Success", desc: "Support and client success professionals who retain customers.", tag: "Support", count: "310+ Experts", icon: Headset },
-    { title: "Virtual Assistance", desc: "Executive assistants and operations support who keep things running.", tag: "Operations", count: "250+ Experts", icon: Users },
-  ];
+  const categories = allCategories.slice(0, 6);
 
   return (
     <div className="flex-1">
@@ -48,7 +43,7 @@ export function CompanyLanding() {
             </h1>
             
             <p className="text-base sm:text-lg lg:text-xl text-zinc-400 mb-12 max-w-3xl mx-auto">
-              Hire pre-vetted global talent faster and Affordable.
+              Hire pre-vetted global talent faster and more affordably.
             </p>
 
                  {/* Large Search Bar */}
@@ -59,20 +54,25 @@ export function CompanyLanding() {
                          <Search className="w-6 h-6 text-zinc-400 flex-shrink-0" />
                          <input 
                            type="text" 
-                           placeholder="Search talent by role, skill, availability, or timezone..."
+                           placeholder="Search talent by role, skill, availability..."
                            className="w-full bg-transparent border-none focus:ring-0 text-zinc-900 dark:text-white placeholder:text-zinc-400 py-4 text-lg"
                            value={searchQuery}
                            onChange={(e) => setSearchQuery(e.target.value)}
-                           onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                          />
                        </div>
                        <div className="flex items-center gap-2 pl-2 py-2 border border-zinc-100 dark:border-zinc-800 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50">
                          <MapPin className="w-6 h-6 text-zinc-400 flex-shrink-0" />
-                         <select className="w-full bg-transparent border-none focus:ring-0 text-zinc-900 dark:text-white   placeholder:text-zinc-400 py-4 pr-8 cursor-pointer text-lg" defaultValue="">
+                         <select
+                           aria-label="Talent location preference"
+                           className="w-full bg-transparent border-none focus:ring-0 text-zinc-900 dark:text-white placeholder:text-zinc-400 py-4 pr-8 cursor-pointer text-lg"
+                           value={locationPreference}
+                           onChange={(e) => setLocationPreference(e.target.value)}
+                         >
                            <option value="">Anywhere</option>
-                           <option value="remote">Remote</option>
-                           <option value="europe">Europe</option>
-                           <option value="americas">Americas</option>
+                           <option value="REMOTE">Remote</option>
+                           {/* <option value="europe">Europe</option> */}
+                           {/* <option value="americas">Americas</option> */}
                          </select>
                        </div>
                      </div>
@@ -142,7 +142,13 @@ export function CompanyLanding() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((cat) => (
-              <div key={cat.title} className="bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] shadow-sm border border-zinc-100 dark:border-zinc-800 hover:shadow-md transition-shadow group cursor-pointer">
+              <a
+                key={cat.id}
+                href="https://app.kairosng.com/auth/onboarding/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] shadow-sm border border-zinc-100 dark:border-zinc-800 hover:shadow-md transition-shadow group cursor-pointer"
+              >
                 <div className="flex justify-between items-start mb-6">
                   <div className="w-12 h-12 bg-pink-50 dark:bg-zinc-800 rounded-xl flex items-center justify-center">
                     <cat.icon className="w-6 h-6 text-[#C2185B]" />
@@ -155,11 +161,11 @@ export function CompanyLanding() {
                 <p className="text-sm text-zinc-500 mb-8 leading-relaxed">{cat.desc}</p>
                 <div className="flex justify-between items-center mt-auto pt-6 border-t border-zinc-50 dark:border-zinc-800">
                   <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{cat.count}</span>
-                  <a href="https://app.kairosng.com/auth/onboarding/" target="_blank" rel="noopener noreferrer" className="bg-[#C2185B] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all hover:bg-[#A3154D] cursor-pointer">
+                  <span className="bg-[#C2185B] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all group-hover:bg-[#A3154D]">
                     Hire talent
-                  </a>
+                  </span>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </div>
@@ -174,7 +180,7 @@ export function CompanyLanding() {
               Hire faster. Save more. Reduce risk.
             </h2>
             <p className="text-lg text-zinc-500 dark:text-zinc-400 mt-4">
-              We've built a platform that removes hiring friction while maintaining rigorous quality standards. Here's how.
+              We&apos;ve built a platform that removes hiring friction while maintaining rigorous quality standards. Here&apos;s how.
             </p>
           </div>
 
