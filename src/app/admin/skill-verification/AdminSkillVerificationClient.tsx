@@ -32,6 +32,20 @@ import {
   ShieldQuestion,
 } from "lucide-react";
 
+const fileExtensionPattern = /\.[a-zA-Z0-9]{1,8}$/;
+
+function getPdfDownloadName(url?: string) {
+  if (!url) return undefined;
+
+  try {
+    const pathname = new URL(url).pathname;
+    const filename = decodeURIComponent(pathname.split("/").pop() || "submission");
+    return fileExtensionPattern.test(filename) ? filename : `${filename}.pdf`;
+  } catch {
+    return "submission.pdf";
+  }
+}
+
 export default function AdminSkillVerificationClient() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -548,6 +562,7 @@ export default function AdminSkillVerificationClient() {
                   href={selectedSubmission.pdfFileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  download={getPdfDownloadName(selectedSubmission.pdfFileUrl)}
                   className="flex items-center gap-2 px-4 py-3 bg-zinc-50 dark:bg-zinc-800 rounded-lg text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
                 >
                   <Download className="w-5 h-5" />

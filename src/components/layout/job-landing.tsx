@@ -143,8 +143,8 @@ export function JobLanding() {
                    >
                      <option value="">Anywhere</option>
                      <option value="remote">Remote</option>
-                     <option value="europe">Europe</option>
-                     <option value="americas">Americas</option>
+                     {/* <option value="europe">Europe</option> */}
+                     {/* <option value="americas">Americas</option> */}
                    </select>
                  </div>
                  <button 

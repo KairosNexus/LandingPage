@@ -623,3 +623,56 @@ export async function deleteAdminScrapedBusiness(id: string): Promise<ApiRespons
   const response = await apiClient.delete(`/admin/scraped-businesses/${id}`);
   return response.data;
 }
+
+export type PaymentProvider = "stripe" | "paystack" | "flutterwave";
+
+export interface InitializePaymentRequest {
+  provider: PaymentProvider;
+  amount: number;
+  currency: string;
+  email: string;
+  reference?: string;
+  callbackUrl?: string;
+  description?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export async function initializePayment(
+  data: InitializePaymentRequest
+): Promise<ApiResponse<{ provider: PaymentProvider; reference: string; authorizationUrl: string }>> {
+  const response = await apiClient.post(`/payments/initialize`, data);
+  return response.data;
+}
+
+export async function verifyPayment(
+  provider: PaymentProvider,
+  reference: string
+): Promise<ApiResponse<{ provider: PaymentProvider; reference: string; status: string; paid: boolean }>> {
+  const response = await apiClient.get(`/payments/${provider}/verify/${reference}`);
+  return response.data;
+}
+
+export type ChatEventType = "join" | "leave" | "message" | "typing" | "read" | "ping";
+
+export interface ChatEvent {
+  type: ChatEventType;
+  roomId?: string;
+  message?: string;
+  payload?: Record<string, unknown>;
+}
+
+export function createChatSocket(token = getStorageItem("authToken") || "") {
+  const wsUrl = API_BASE_URL
+    .replace(/^https?:\/\//, (protocol) => (protocol === "https://" ? "wss://" : "ws://"))
+    .replace(/\/api\/v\d+\/?$/, "");
+
+  return new WebSocket(`${wsUrl}/chat?token=${encodeURIComponent(token)}`);
+}
+
+export function sendChatEvent(socket: WebSocket, event: ChatEvent) {
+  if (socket.readyState !== WebSocket.OPEN) {
+    throw new Error("Chat socket is not open");
+  }
+
+  socket.send(JSON.stringify(event));
+}

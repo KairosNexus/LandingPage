@@ -1,13 +1,22 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Search, ArrowLeft, MapPin, Briefcase, Star, Clock, ArrowRight, User, Award, Zap, CheckCircle2 } from "lucide-react";
+import { Search, ArrowLeft, MapPin, ArrowRight, User, Award, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getPublicTalents, PublicTalent } from "@/lib/api";
 
 export default function TalentsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(() =>
+    typeof window === "undefined"
+      ? ""
+      : new URLSearchParams(window.location.search).get("search") || ""
+  );
+  const [locationPreference] = useState(() =>
+    typeof window === "undefined"
+      ? ""
+      : new URLSearchParams(window.location.search).get("location") || ""
+  );
   const [selectedSkills, setSelectedSkills] = useState("All");
   const [selectedExperience, setSelectedExperience] = useState("All");
   const [publicTalents, setPublicTalents] = useState<PublicTalent[]>([]);
@@ -17,7 +26,9 @@ export default function TalentsPage() {
   useEffect(() => {
     const fetchPublicTalents = async () => {
       try {
-        const response = await getPublicTalents();
+        const response = await getPublicTalents({
+          locationPreference: locationPreference || undefined,
+        });
         setPublicTalents(response.data);
       } catch (error) {
         console.error("Failed to fetch public talents:", error);
@@ -27,12 +38,14 @@ export default function TalentsPage() {
     };
 
     fetchPublicTalents();
-  }, []);
+  }, [locationPreference]);
 
   const handleSearch = () => {
-    if (searchQuery.trim()) {
-      router.push(`/jobs?search=${encodeURIComponent(searchQuery)}`);
-    }
+    const query = searchQuery.trim();
+    const params = new URLSearchParams();
+    if (query) params.set("search", query);
+    if (locationPreference) params.set("location", locationPreference);
+    router.replace(params.size ? `/talents?${params.toString()}` : "/talents");
   };
 
   const skills = useMemo(() => ["All", ...Array.from(new Set(publicTalents.flatMap(t => t.user?.skillSet?.map(s => s.title) || [])))], [publicTalents]);
@@ -40,15 +53,18 @@ export default function TalentsPage() {
 
   const filteredTalents = useMemo(() => {
     const talentSkills = (t: PublicTalent) => t.user?.skillSet?.map(s => s.title) || [];
+    const talentJobTitles = (t: PublicTalent) => t.jobTitles || [];
     return publicTalents.filter(talent => 
       (talent.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || 
        talent.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
        talent.bio?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+       talentJobTitles(talent).some(title => title.toLowerCase().includes(searchQuery.toLowerCase())) ||
        talentSkills(talent).some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))) &&
       (selectedSkills === "All" || talentSkills(talent).includes(selectedSkills)) &&
-      (selectedExperience === "All" || talent.experienceLevel === selectedExperience)
+      (selectedExperience === "All" || talent.experienceLevel === selectedExperience) &&
+      (!locationPreference || talent.employmentType === locationPreference)
     );
-  }, [searchQuery, selectedSkills, selectedExperience, publicTalents]);
+  }, [searchQuery, selectedSkills, selectedExperience, locationPreference, publicTalents]);
 
   return (
     <div className="pt-32 pb-20">
@@ -91,7 +107,7 @@ export default function TalentsPage() {
                 onClick={handleSearch}
                 className="hidden sm:block bg-[#C2185B] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#A3154D] transition-all"
               >
-                Search Jobs
+                Search Talents
               </button>
             </div>
 
@@ -225,7 +241,7 @@ export default function TalentsPage() {
                     <div className="flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
                       <div className="flex items-center gap-1.5">
                         <MapPin className="w-4 h-4" />
-                        {'Nigeria'}
+                        {talent.location || "Location not specified"}
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Award className="w-4 h-4" />

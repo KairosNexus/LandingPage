@@ -80,7 +80,7 @@ export default function CategoriesPage() {
             filteredCategories.map((category) => (
               <a
                 key={category.id}
-                href="https://app.kairosng.com/auth/login"
+                href="https://app.kairosng.com/auth/onboarding/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] shadow-sm border border-zinc-100 dark:border-zinc-800 hover:shadow-xl hover:-translate-y-1 transition-all group block"
@@ -128,9 +128,9 @@ export default function CategoriesPage() {
               Our team can help you source specialized talent for your unique business requirements.
             </p>
           </div>
-          <button className="relative z-10 bg-[#C2185B] text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-[#A3154D] transition-all shadow-xl shadow-pink-500/20 cursor-pointer">
+          <Link href="/contact" className="relative z-10 bg-[#C2185B] text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-[#A3154D] transition-all shadow-xl shadow-pink-500/20 cursor-pointer">
             Talk to an expert
-          </button>
+          </Link>
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#C2185B] opacity-10 blur-[100px] -mr-48 -mt-48" />
         </div>
       </div>
