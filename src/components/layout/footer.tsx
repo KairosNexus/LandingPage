@@ -91,6 +91,38 @@ export function Footer() {
           ))}
         </div>
 
+        <div className="mb-12 overflow-hidden rounded-3xl border border-[#C2185B]/20 bg-gradient-to-br from-[#C2185B]/10 via-white to-blue-500/10 p-6 shadow-[0_20px_60px_-30px_rgba(194,24,91,0.45)] dark:via-zinc-950 sm:p-8">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0A66C2] text-white shadow-lg shadow-blue-600/20">
+                <FaLinkedin className="h-6 w-6" aria-hidden="true" />
+              </div>
+              <div>
+                <p className="mb-1 text-xs font-bold uppercase tracking-[0.2em] text-[#C2185B]">
+                  LinkedIn newsletter
+                </p>
+                <h3 className="text-xl font-bold text-zinc-950 dark:text-white sm:text-2xl">
+                  Kairos Nexus Global Insights
+                </h3>
+                <p className="mt-2 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                  Get practical insights on global hiring, remote work, and building high-performing teams.
+                </p>
+              </div>
+            </div>
+
+            <a
+              href="https://www.linkedin.com/newsletters/kairos-nexus-global-insights-7409364426522411008"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#C2185B] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#C2185B]/25 transition-all hover:-translate-y-0.5 hover:bg-[#a91450] hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2185B] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950"
+              aria-label="Subscribe to Kairos Nexus Global Insights on LinkedIn"
+            >
+              Subscribe on LinkedIn
+              <FaLinkedin className="h-4 w-4" aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+
         <div className="pt-8 text-center md:text-left">
           <p className="text-xs text-gray-500 dark:text-gray-500">
             © {new Date().getFullYear()} Kairos Nexus Global. All rights reserved.
