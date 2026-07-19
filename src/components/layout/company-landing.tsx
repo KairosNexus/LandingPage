@@ -2,14 +2,16 @@
 
 import { CheckCircle2, UserCheck, Zap, TrendingDown, Shield, ArrowRight, Search, FileText, ClipboardList, Users, Brain, MapPin } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { TrustSection } from "./trust-section";
-import { categories as allCategories } from "@/lib/api";
+import { categories as allCategories, getPublicLandingStats, PublicLandingStats } from "@/lib/api";
+import { getAppSignupUrl } from "@/lib/app-links";
 
 export function CompanyLanding() {
   const [searchQuery, setSearchQuery] = useState("");
   const [locationPreference, setLocationPreference] = useState("");
+  const [landingStats, setLandingStats] = useState<PublicLandingStats | null>(null);
   const router = useRouter();
 
   const handleSearch = () => {
@@ -26,7 +28,18 @@ export function CompanyLanding() {
     router.push(`/talents?${params.toString()}`);
   };
 
-  const categories = allCategories.slice(0, 6);
+  useEffect(() => {
+    getPublicLandingStats()
+      .then((response) => setLandingStats(response.data || null))
+      .catch((error) => console.error("Failed to fetch landing statistics:", error));
+  }, []);
+
+  const categories = useMemo(() => allCategories.slice(0, 6)
+    .map((category) => ({
+      ...category,
+      count: landingStats?.categories[category.tag.toLowerCase()] || 0,
+    }))
+    .filter((category) => category.count > 0), [landingStats]);
 
   return (
     <div className="flex-1">
@@ -65,14 +78,13 @@ export function CompanyLanding() {
                          <MapPin className="w-6 h-6 text-zinc-400 flex-shrink-0" />
                          <select
                            aria-label="Talent location preference"
-                           className="w-full bg-transparent border-none focus:ring-0 text-zinc-900 dark:text-white placeholder:text-zinc-400 py-4 pr-8 cursor-pointer text-lg"
+                           className="w-full bg-transparent border-none focus:ring-0 text-zinc-900 dark:text-white py-4 pr-8 cursor-pointer text-lg [color-scheme:light] dark:[color-scheme:dark]"
                            value={locationPreference}
                            onChange={(e) => setLocationPreference(e.target.value)}
                          >
-                           <option value="">Anywhere</option>
-                           <option value="REMOTE">Remote</option>
-                           {/* <option value="europe">Europe</option> */}
-                           {/* <option value="americas">Americas</option> */}
+                           <option className="bg-white text-zinc-900 dark:bg-zinc-900 dark:text-white" value="">Anywhere</option>
+                           <option className="bg-white text-zinc-900 dark:bg-zinc-900 dark:text-white" value="REMOTE">Remote</option>
+                           <option className="bg-white text-zinc-900 dark:bg-zinc-900 dark:text-white" value="africa">Africa</option>
                          </select>
                        </div>
                      </div>
@@ -144,7 +156,7 @@ export function CompanyLanding() {
             {categories.map((cat) => (
               <a
                 key={cat.id}
-                href="https://app.kairosng.com/auth/onboarding/"
+                href={getAppSignupUrl("company")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] shadow-sm border border-zinc-100 dark:border-zinc-800 hover:shadow-md transition-shadow group cursor-pointer"
@@ -160,7 +172,7 @@ export function CompanyLanding() {
                 <h3 className="text-xl font-bold mb-2 dark:text-white">{cat.title}</h3>
                 <p className="text-sm text-zinc-500 mb-8 leading-relaxed">{cat.desc}</p>
                 <div className="flex justify-between items-center mt-auto pt-6 border-t border-zinc-50 dark:border-zinc-800">
-                  <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{cat.count}</span>
+                  <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{cat.count} Experts</span>
                   <span className="bg-[#C2185B] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all group-hover:bg-[#A3154D]">
                     Hire talent
                   </span>
@@ -232,7 +244,7 @@ export function CompanyLanding() {
                 ))}
               </div>
               <a
-                href="https://app.kairosng.com/auth/onboarding/"
+                href={getAppSignupUrl("company")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#C2185B] text-white py-4 px-8 rounded-2xl font-bold hover:bg-[#A3154D] transition-colors w-fit"
@@ -301,7 +313,7 @@ export function CompanyLanding() {
               A cleaner route from hiring need to qualified shortlist, built for companies that want speed, quality, and trust.
             </p>
           </div>
-          <a href="https://app.kairosng.com/auth/onboarding/" target="_blank" rel="noopener noreferrer" className="relative z-10 bg-[#C2185B] text-white px-10 py-4 rounded-2xl font-bold hover:bg-[#A3154D] transition-colors shadow-lg shadow-pink-500/20 cursor-pointer">
+          <a href={getAppSignupUrl("company")} target="_blank" rel="noopener noreferrer" className="relative z-10 bg-[#C2185B] text-white px-10 py-4 rounded-2xl font-bold hover:bg-[#A3154D] transition-colors shadow-lg shadow-pink-500/20 cursor-pointer">
             Start hiring
           </a>
         </div>

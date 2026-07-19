@@ -7,16 +7,10 @@ import { useRouter } from "next/navigation";
 import { getPublicTalents, PublicTalent } from "@/lib/api";
 
 export default function TalentsPage() {
-  const [searchQuery, setSearchQuery] = useState(() =>
-    typeof window === "undefined"
-      ? ""
-      : new URLSearchParams(window.location.search).get("search") || ""
-  );
-  const [locationPreference] = useState(() =>
-    typeof window === "undefined"
-      ? ""
-      : new URLSearchParams(window.location.search).get("location") || ""
-  );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [appliedSearchQuery, setAppliedSearchQuery] = useState("");
+  const [locationPreference, setLocationPreference] = useState("");
+  const [filtersReady, setFiltersReady] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState("All");
   const [selectedExperience, setSelectedExperience] = useState("All");
   const [publicTalents, setPublicTalents] = useState<PublicTalent[]>([]);
@@ -24,28 +18,60 @@ export default function TalentsPage() {
   const router = useRouter();
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlSearchQuery = params.get("search")?.trim() || "";
+    const urlLocationPreference = params.get("location") || "";
+
+    setSearchQuery(urlSearchQuery);
+    setAppliedSearchQuery(urlSearchQuery);
+    setLocationPreference(urlLocationPreference);
+    setFiltersReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!filtersReady) return;
+
+    let cancelled = false;
+
     const fetchPublicTalents = async () => {
+      setLoading(true);
       try {
         const response = await getPublicTalents({
-          locationPreference: locationPreference || undefined,
+          search: appliedSearchQuery || undefined,
+          locationPreference: locationPreference === "REMOTE" ? "REMOTE" : undefined,
+          region: locationPreference.toLowerCase() === "africa" ? "Africa" : undefined,
         });
-        setPublicTalents(response.data);
+        if (!cancelled) setPublicTalents(response.data);
       } catch (error) {
         console.error("Failed to fetch public talents:", error);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchPublicTalents();
-  }, [locationPreference]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [appliedSearchQuery, filtersReady, locationPreference]);
 
   const handleSearch = () => {
     const query = searchQuery.trim();
+    setAppliedSearchQuery(query);
     const params = new URLSearchParams();
     if (query) params.set("search", query);
     if (locationPreference) params.set("location", locationPreference);
     router.replace(params.size ? `/talents?${params.toString()}` : "/talents");
+  };
+
+  const handleViewAll = () => {
+    setSearchQuery("");
+    setAppliedSearchQuery("");
+    setLocationPreference("");
+    setSelectedSkills("All");
+    setSelectedExperience("All");
+    router.replace("/talents");
   };
 
   const skills = useMemo(() => ["All", ...Array.from(new Set(publicTalents.flatMap(t => t.user?.skillSet?.map(s => s.title) || [])))], [publicTalents]);
@@ -54,17 +80,16 @@ export default function TalentsPage() {
   const filteredTalents = useMemo(() => {
     const talentSkills = (t: PublicTalent) => t.user?.skillSet?.map(s => s.title) || [];
     const talentJobTitles = (t: PublicTalent) => t.jobTitles || [];
+    const keyword = appliedSearchQuery.toLowerCase();
     return publicTalents.filter(talent => 
-      (talent.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-       talent.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-       talent.bio?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-       talentJobTitles(talent).some(title => title.toLowerCase().includes(searchQuery.toLowerCase())) ||
-       talentSkills(talent).some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))) &&
+      (!keyword ||
+       [...talentJobTitles(talent), ...talentSkills(talent)]
+         .some(value => value.toLowerCase().includes(keyword))) &&
       (selectedSkills === "All" || talentSkills(talent).includes(selectedSkills)) &&
       (selectedExperience === "All" || talent.experienceLevel === selectedExperience) &&
-      (!locationPreference || talent.employmentType === locationPreference)
+      (!locationPreference || locationPreference === "africa" || talent.employmentType === locationPreference)
     );
-  }, [searchQuery, selectedSkills, selectedExperience, locationPreference, publicTalents]);
+  }, [appliedSearchQuery, selectedSkills, selectedExperience, locationPreference, publicTalents]);
 
   return (
     <div className="pt-32 pb-20">
@@ -262,9 +287,17 @@ export default function TalentsPage() {
                 <Search className="w-12 h-12 text-zinc-400" />
               </div>
               <h3 className="text-xl font-bold dark:text-white mb-2">No talents found</h3>
-              <p className="text-zinc-500 dark:text-zinc-400">
+              <p className="text-zinc-500 dark:text-zinc-400 mb-6">
                 Try adjusting your search criteria or check back later for new talent.
               </p>
+              <button
+                type="button"
+                onClick={handleViewAll}
+                className="inline-flex items-center gap-2 bg-[#C2185B] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#A3154D] transition-colors"
+              >
+                View all talents
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           )}
         </div>

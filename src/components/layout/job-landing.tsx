@@ -6,7 +6,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TrustSection } from "./trust-section";
 import { Cofounders } from "./cofounders";
-import { getPublicJobs, PublicJob } from "@/lib/api";
+import { getPublicJobs, getPublicLandingStats, PublicJob, PublicLandingStats } from "@/lib/api";
+import { getAppSignupUrl } from "@/lib/app-links";
 
 // Custom LinkedIn Icon since it might be missing in this version of lucide-react
 const LinkedinIcon = ({ className }: { className?: string }) => (
@@ -33,13 +34,18 @@ export function JobLanding() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
+  const [landingStats, setLandingStats] = useState<PublicLandingStats | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     const fetchPublicJobs = async () => {
       try {
-        const response = await getPublicJobs({ country: "US", limit: 3 });
-        setPublicJobs(response.data);
+        const [jobsResponse, statsResponse] = await Promise.all([
+          getPublicJobs({ limit: 3 }),
+          getPublicLandingStats(),
+        ]);
+        setPublicJobs(jobsResponse.data);
+        setLandingStats(statsResponse.data || null);
       } catch (error) {
         console.error("Failed to fetch public jobs:", error);
       } finally {
@@ -52,9 +58,9 @@ export function JobLanding() {
 
   const handleSearch = () => {
     const params = new URLSearchParams();
-    if (searchQuery) params.set("search", searchQuery);
+    if (searchQuery.trim()) params.set("search", searchQuery.trim());
     if (locationFilter) params.set("location", locationFilter);
-    router.push(`/jobs?${params.toString()}`);
+    router.push(params.size ? `/jobs?${params.toString()}` : "/jobs");
   };
 
   const handleTagClick = (tag: string) => {
@@ -82,10 +88,11 @@ export function JobLanding() {
   };
 
   const highlightCategories = [
-    { title: "Product Design", desc: "UI/UX designers who ship real products", count: "390+ Experts" },
-    { title: "Frontend Engineering", desc: "React, Vue, and modern web developers", count: "420+ Experts" },
-    { title: "Customer Success", desc: "Support and client success professionals", count: "215+ Experts" },
-  ];
+    { title: "Product Design", desc: "UI/UX designers who ship real products", key: "design" },
+    { title: "Frontend Engineering", desc: "React, Vue, and modern web developers", key: "development" },
+    { title: "Customer Success", desc: "Support and client success professionals", key: "operations" },
+  ].map((category) => ({ ...category, count: landingStats?.categories[category.key] || 0 }))
+    .filter((category) => category.count > 0);
 
   const handleViewRoles = (title: string) => {
     router.push(`/jobs?search=${encodeURIComponent(title)}`);
@@ -119,9 +126,9 @@ export function JobLanding() {
             </div>
 
              {/* Bottom Row: Search Bar Card */}
-             <div className="max-w-xl mx-auto lg:mx-0 bg-white rounded-[2rem] p-6 shadow-2xl shadow-pink-500/10 border border-zinc-100 relative z-20 -mt-8 lg:-mt-130 lg:-mb-[-320px]">
+             <div className="max-w-xl mx-auto lg:mx-0 bg-white dark:bg-zinc-900 rounded-[2rem] p-6 shadow-2xl shadow-pink-500/10 border border-zinc-100 dark:border-zinc-800 relative z-20 -mt-8 lg:-mt-130 lg:-mb-[-320px]">
                <div className="flex flex-col sm:flex-row gap-4">
-                 <div className="flex-1 flex items-center gap-2 p-1 border border-zinc-100 rounded-2xl bg-zinc-50/50">
+                 <div className="flex-1 flex items-center gap-2 p-1 border border-zinc-100 dark:border-zinc-800 rounded-2xl bg-zinc-50/50 dark:bg-zinc-950/50">
                    <div className="flex items-center gap-3 pl-4 flex-1">
                      <Search className="w-5 h-5 text-zinc-400" />
                      <input 
@@ -130,21 +137,20 @@ export function JobLanding() {
                        value={searchQuery}
                        onChange={(e) => setSearchQuery(e.target.value)}
                        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                       className="w-full bg-transparent border-none focus:ring-0 text-zinc-900 placeholder:text-zinc-400 py-3"
+                       className="w-full bg-transparent border-none focus:ring-0 text-zinc-900 dark:text-white placeholder:text-zinc-400 py-3"
                      />
                    </div>
                  </div>
-                 <div className="flex items-center gap-2 p-1 border border-zinc-100 rounded-2xl bg-zinc-50/50">
+                 <div className="flex items-center gap-2 p-1 border border-zinc-100 dark:border-zinc-800 rounded-2xl bg-zinc-50/50 dark:bg-zinc-950/50">
                    <MapPin className="w-5 h-5 text-zinc-400 ml-3" />
                    <select 
                      value={locationFilter}
                      onChange={(e) => setLocationFilter(e.target.value)}
-                     className="w-full bg-transparent border-none focus:ring-0 text-zinc-900 placeholder:text-zinc-400 py-3 pr-4 cursor-pointer"
+                     className="w-full bg-transparent border-none focus:ring-0 text-zinc-900 dark:text-white py-3 pr-4 cursor-pointer [color-scheme:light] dark:[color-scheme:dark]"
                    >
-                     <option value="">Anywhere</option>
-                     <option value="remote">Remote</option>
-                     {/* <option value="europe">Europe</option> */}
-                     {/* <option value="americas">Americas</option> */}
+                     <option className="bg-white text-zinc-900 dark:bg-zinc-900 dark:text-white" value="">Anywhere</option>
+                     <option className="bg-white text-zinc-900 dark:bg-zinc-900 dark:text-white" value="REMOTE">Remote</option>
+                     <option className="bg-white text-zinc-900 dark:bg-zinc-900 dark:text-white" value="africa">Africa</option>
                    </select>
                  </div>
                  <button 
@@ -272,7 +278,7 @@ export function JobLanding() {
                   <span className="px-3 py-1 bg-pink-50 dark:bg-pink-900/20 text-[#C2185B] text-[10px] font-bold rounded-md uppercase tracking-wider">
                     In Demand
                   </span>
-                  <span className="text-xs font-bold text-zinc-400">{cat.count}</span>
+                  <span className="text-xs font-bold text-zinc-400">{cat.count} Experts</span>
                 </div>
                 <h3 className="text-xl font-bold mb-3 dark:text-white">{cat.title}</h3>
                 <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{cat.desc}</p>
@@ -343,7 +349,7 @@ export function JobLanding() {
                   </li>
                 ))}
               </ul>
-              <a href="https://app.kairosng.com/auth/onboarding/" target="_blank" rel="noopener noreferrer" className="inline-block bg-[#C2185B] text-white px-8 py-3 rounded-xl font-bold text-base hover:bg-[#A3154D] transition-all cursor-pointer shadow-lg shadow-pink-500/20">
+              <a href={getAppSignupUrl("talent")} target="_blank" rel="noopener noreferrer" className="inline-block bg-[#C2185B] text-white px-8 py-3 rounded-xl font-bold text-base hover:bg-[#A3154D] transition-all cursor-pointer shadow-lg shadow-pink-500/20">
                 Find jobs
               </a>
             </div>
@@ -411,7 +417,7 @@ export function JobLanding() {
               A cleaner route from role discovery to application, designed for talent looking for better-fit remote jobs.
             </p>
           </div>
-          <a href="https://app.kairosng.com/auth/onboarding/" target="_blank" rel="noopener noreferrer" className="relative z-10 bg-[#C2185B] text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-[#A3154D] transition-all shadow-xl shadow-pink-500/20 cursor-pointer">
+          <a href={getAppSignupUrl("talent")} target="_blank" rel="noopener noreferrer" className="relative z-10 bg-[#C2185B] text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-[#A3154D] transition-all shadow-xl shadow-pink-500/20 cursor-pointer">
             Access platform
           </a>
           {/* Subtle background decoration */}

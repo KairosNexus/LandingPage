@@ -278,6 +278,17 @@ export interface PaginatedResponse<T> {
   };
 }
 
+export interface PublicLandingStats {
+  totalJobs: number;
+  totalTalents: number;
+  categories: Record<string, number>;
+}
+
+export async function getPublicLandingStats(): Promise<ApiResponse<PublicLandingStats>> {
+  const response = await apiClient.get(`/default/public-landing-stats`);
+  return response.data;
+}
+
 export interface GetPublicJobsParams {
   search?: string;
   locationType?: string;
@@ -296,6 +307,7 @@ export interface GetPublicTalentsParams {
   experienceLevel?: string;
   locationPreference?: string;
   jobTypePreference?: string;
+  region?: string;
   page?: number;
   limit?: number;
 }

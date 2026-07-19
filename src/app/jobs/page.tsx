@@ -10,7 +10,8 @@ export default function JobsPage() {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "All");
-  const [selectedType, setSelectedType] = useState(searchParams.get("location") || "All");
+  const landingLocation = searchParams.get("location") || "";
+  const [selectedType, setSelectedType] = useState(landingLocation === "REMOTE" ? "REMOTE" : "All");
   const [publicJobs, setPublicJobs] = useState<PublicJob[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -24,7 +25,7 @@ export default function JobsPage() {
         search: searchQuery || undefined,
         jobType: selectedCategory !== "All" ? selectedCategory : undefined,
         locationType: selectedType !== "All" ? selectedType : undefined,
-        country: "US",
+        country: landingLocation.toLowerCase() === "africa" ? "Africa" : undefined,
         page: pageNum,
         limit: 20,
       });
@@ -41,7 +42,7 @@ export default function JobsPage() {
     } finally {
       setLoading(false);
     }
-  }, [searchQuery, selectedCategory, selectedType]);
+  }, [searchQuery, selectedCategory, selectedType, landingLocation]);
 
   useEffect(() => {
     fetchJobs(1, true);

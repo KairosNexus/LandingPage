@@ -75,10 +75,10 @@ export default async function BlogPage({
             Kairos Nexus Global Blog
           </span>
           <h1 className="text-4xl lg:text-6xl font-bold dark:text-white leading-tight">
-            Ideas for better remote work
+          Insights for growing teams
           </h1>
           <p className="text-zinc-500 dark:text-zinc-400 mt-4 max-w-2xl text-lg">
-            Hiring playbooks, talent guidance, and verification insights for teams and professionals.
+           Actionable insights on hiring, workforce strategy, startup growth, and career development for businesses and professionals.
           </p>
         </div>
 

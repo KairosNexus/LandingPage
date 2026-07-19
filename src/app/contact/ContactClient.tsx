@@ -65,8 +65,8 @@ export function ContactClient() {
     {
       icon: MapPin,
       title: "Headquarters",
-      details: ["Kairos Nexus Global"],
-      desc: "Remote-first, globally distributed",
+      details: ["Baltimore, Maryland, USA"],
+      desc: "Kairos Nexus Global",
     },
   ];
 
@@ -256,7 +256,7 @@ export function ContactClient() {
               },
               {
                 q: "What's the best way to reach you for security concerns?",
-                a: "For security issues, please email security@kairosng.com directly for our dedicated team.",
+                a: "For security issues, please email info@kairosnexusglobal.com directly for our dedicated team.",
               },
               {
                 q: "Can I schedule a demo?",

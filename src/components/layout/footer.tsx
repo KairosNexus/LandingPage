@@ -23,7 +23,7 @@ export function Footer() {
       title: "COMPANY",
       links: [
         { name: "About Us", href: "/about" },
-        { name: "Case Studies", href: "/case-studies" },
+        { name: "Reviews", href: "/reviews" },
         { name: "Security", href: "/security" },
         { name: "Contact", href: "/contact" },
       ],

@@ -2,157 +2,146 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Target, TrendingDown, Award, Globe } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Quote, Star } from "lucide-react";
 
-export function CaseStudiesClient() {
+export const reviews = [
+  {
+    id: "kairos-talent-client-success",
+    name: "Emmanuel Raimi",
+    company: "Developer",
+    service: "Client placement",
+    date: "Recent",
+    initials: "ER",
+    quote:
+      "I thank Kairos Nexus for helping me secure a client, maximize the value of my time, and get well paid for it.",
+  },
+  {
+    id: "sarah-product-designer",
+    name: "Sarah",
+    company: "Product Designer",
+    service: "Talent placement",
+    date: "January",
+    initials: "SA",
+    quote:
+      "After months of applying through job boards with little response, Kairos helped me showcase my Figma expertise and design thinking. I was matched with a growing U.S. SaaS startup and secured a fully remote $4,200-per-month role within 14 days—three times my previous rate.",
+  },
+  {
+    id: "velma-funebe",
+    name: "Velma Funebe",
+    company: "iBraid",
+    service: "Branding project",
+    date: "19 May",
+    initials: "VF",
+    quote:
+      "Thank you again for all of the work and support throughout the iBraid branding project. I really appreciate the collaboration and everything Emmanuel and the team contributed to bringing the vision to life.",
+  },
+  {
+    id: "kenya-pope",
+    name: "Kenya Pope",
+    company: "Kenya Pope Coaching",
+    service: "Social media strategy",
+    date: "7 April",
+    initials: "KP",
+    quote:
+      "Thank you for checking in with me. We have been able to make strides in social media content posting and boosted engagement—all pluses. As I continue to strategize, my goal is to increase inquiries for coaching services so I can convert clients.",
+  },
+] as const;
+
+export function ReviewsClient() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const caseStudies = [
-    {
-      id: "talent-success",
-      type: "Talent Success Story",
-      title: "From Discovery to Dream Role in 14 Days",
-      subtitle: "How Sarah landed a $4,200/month remote role with a U.S. SaaS company",
-      story: [
-        "Sarah, a product designer from Nigeria, had spent 8 months applying to random job boards with little response. She joined Kairos in January.",
-        "After completing a 2-hour case study showcasing her Figma expertise and design thinking, she was matched with a growing SaaS startup.",
-        "Within 14 days, she was hired at $4,200/month, 3x her previous rate, fully remote with U.S. team hours.",
-        "Sarah's case study is now part of our talent showcase, helping her attract even better opportunities.",
-      ],
-      metrics: [
-        { label: "Time to Hire", value: "14 days" },
-        { label: "Salary Increase", value: "3x" },
-        { label: "Case Study Completion", value: "2 hours" },
-      ],
-      icon: Target,
-    },
-    {
-      id: "company-success",
-      type: "Company Success Story",
-      title: "Hiring a World-Class Engineer at 60% Cost Savings",
-      subtitle: "How a fintech startup found their senior frontend engineer through Kairos",
-      story: [
-        "A fast-growing fintech startup needed a senior frontend engineer but struggled with local hiring costs and lengthy processes.",
-        "They posted on Kairos and received 5 pre-vetted candidates within 48 hours, each with verified skills and case studies.",
-        "They hired David from Kenya, a proven engineer with 6 years of React experience, at $3,800/month versus the $9,500 local market rate.",
-        "The startup saved over $68,000 in annual personnel costs while getting a higher-quality candidate than they expected.",
-      ],
-      metrics: [
-        { label: "Cost Savings", value: "60%" },
-        { label: "Candidates Received", value: "5 vetted" },
-        { label: "Time to Fill", value: "10 days" },
-      ],
-      icon: TrendingDown,
-    },
-    {
-      id: "quality-focus",
-      type: "Our Approach",
-      title: "Why Case Studies Beat Resumes Every Time",
-      subtitle: "How real work samples reveal capability that paper qualifications never will",
-      story: [
-        "Resumes tell you where someone has been. Case studies show you what they can do.",
-        "Every Kairos talent completes a short, relevant case study during onboarding, proving their skills with real work, not just listing them.",
-        "For companies, this means you're evaluating actual ability, not just impressive job titles and buzzwords.",
-        "The result: better matches, higher satisfaction, and long-term success for both sides.",
-      ],
-      metrics: [
-        { label: "Hiring Accuracy", value: "87%" },
-        { label: "Match Quality Score", value: "4.8 / 5" },
-        { label: "Avg. Case Study Time", value: "2–3 hrs" },
-      ],
-      icon: Award,
-    },
-  ];
-
   return (
-    <div className="pt-24 pb-20 bg-white dark:bg-zinc-950 min-h-screen">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="max-w-4xl mx-auto mb-16">
-          <Link
-            href="/"
-            className="inline-flex items-center text-zinc-500 hover:text-[#C2185B] transition-colors mb-8 group"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-            Back to Home
-          </Link>
+    <main className="min-h-screen overflow-hidden bg-white pb-20 pt-24 dark:bg-zinc-950">
+      <section className="relative">
+        <div className="pointer-events-none absolute -left-40 top-16 h-96 w-96 rounded-full bg-[#C2185B]/10 blur-3xl" />
+        <div className="pointer-events-none absolute -right-48 top-72 h-96 w-96 rounded-full bg-fuchsia-500/10 blur-3xl" />
 
-          <div className="text-center">
-            <span className="text-[#C2185B] font-bold text-xs uppercase tracking-widest mb-4 block">
-              Quality in Action
-            </span>
-            <h1 className="text-4xl lg:text-6xl font-bold dark:text-white leading-tight mb-6">
-              Case Studies
-            </h1>
-            <p className="text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto text-lg">
-              Real stories from real users. See how Kairos delivers on our promises of quality, speed, and cost savings.
-            </p>
-          </div>
-        </div>
+        <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <Link
+              href="/"
+              className="group mb-12 inline-flex items-center text-sm font-semibold text-zinc-500 transition-colors hover:text-[#C2185B]"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              Back to Home
+            </Link>
 
-        {/* Case Studies */}
-        <div className="max-w-4xl mx-auto space-y-16">
-          {caseStudies.map((caseStudy, idx) => (
-            <section key={caseStudy.id} id={caseStudy.id} className="scroll-mt-24">
-              {/* Header */}
-              <div className="mb-8">
-                <span className="text-[#C2185B] font-bold text-xs uppercase tracking-widest mb-2 block">{caseStudy.type}</span>
-                <h2 className="text-3xl lg:text-4xl font-bold dark:text-white mb-2">{caseStudy.title}</h2>
-                <p className="text-zinc-500 dark:text-zinc-400 text-lg">{caseStudy.subtitle}</p>
+            <div className="mb-14 max-w-3xl">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#C2185B]/20 bg-[#C2185B]/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#C2185B]">
+                <Star className="h-3.5 w-3.5 fill-current" />
+                Client reviews
               </div>
+              <h1 className="text-4xl font-bold leading-tight text-zinc-950 dark:text-white sm:text-5xl lg:text-7xl">
+                Work that makes a
+                <span className="block text-[#C2185B]">measurable difference.</span>
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
+                Real feedback from clients building their brands, growing their reach, and moving ambitious ideas forward with Kairos.
+              </p>
+            </div>
 
-              {/* Story */}
-              <div className="bg-zinc-50 dark:bg-zinc-900 p-8 lg:p-10 rounded-[2.5rem] border border-zinc-100 dark:border-zinc-800 mb-8">
-                <div className="space-y-4">
-                  {caseStudy.story.map((paragraph, pIdx) => (
-                    <p key={pIdx} className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-lg">
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
-              </div>
-
-              {/* Metrics */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {caseStudy.metrics.map((metric, mIdx) => (
-                  <div
-                    key={mIdx}
-                    className="bg-white dark:bg-zinc-900 p-6 rounded-[2rem] border border-zinc-100 dark:border-zinc-800 shadow-sm text-center"
-                  >
-                    <div className="text-3xl lg:text-4xl font-bold text-[#C2185B] mb-2">{metric.value}</div>
-                    <div className="text-sm text-zinc-500 dark:text-zinc-400">{metric.label}</div>
+            <div className="grid gap-6 lg:grid-cols-2">
+              {reviews.map((review, index) => (
+                <article
+                  key={review.id}
+                  id={review.id}
+                  className="group relative flex min-h-[430px] scroll-mt-28 flex-col overflow-hidden rounded-[2rem] border border-zinc-200 bg-white p-7 shadow-[0_24px_80px_-40px_rgba(24,24,27,0.35)] transition-all duration-300 hover:-translate-y-1 hover:border-[#C2185B]/30 hover:shadow-[0_32px_90px_-35px_rgba(194,24,91,0.35)] dark:border-zinc-800 dark:bg-zinc-900 sm:p-10"
+                >
+                  <div className="absolute right-0 top-0 h-40 w-40 rounded-bl-full bg-gradient-to-bl from-[#C2185B]/10 to-transparent transition-transform duration-500 group-hover:scale-125" />
+                  <div className="relative mb-10 flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#C2185B] to-fuchsia-700 text-base font-bold text-white shadow-lg shadow-pink-900/20">
+                        {review.initials}
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold text-zinc-950 dark:text-white">{review.name}</h2>
+                        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{review.company}</p>
+                      </div>
+                    </div>
+                    <Quote className="h-10 w-10 shrink-0 text-[#C2185B]/25" aria-hidden="true" />
                   </div>
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
 
-        {/* Bottom CTA */}
-        <div className="mt-24 max-w-4xl mx-auto bg-zinc-900 dark:bg-zinc-950 rounded-[3rem] p-10 lg:p-14 relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8 border border-zinc-800/50">
-          <div className="relative z-10 text-center lg:text-left">
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-3">Ready to write your own case study?</h2>
-            <p className="text-zinc-400 text-lg">Join hundreds of companies and talent already using Kairos.</p>
+                  <blockquote className="relative flex-1 text-lg font-medium leading-8 text-zinc-700 dark:text-zinc-200 sm:text-xl sm:leading-9">
+                    “{review.quote}”
+                  </blockquote>
+
+                  <footer className="relative mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-zinc-100 pt-6 dark:border-zinc-800">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-zinc-600 dark:text-zinc-300">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                      Verified client
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-[#C2185B]">{review.service}</p>
+                      <p className="mt-1 text-xs text-zinc-400">Received {review.date}</p>
+                    </div>
+                  </footer>
+
+                  <span className="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r from-[#C2185B] to-fuchsia-500 transition-all duration-500 group-hover:w-full" />
+                  <span className="sr-only">Review {index + 1} of {reviews.length}</span>
+                </article>
+              ))}
+            </div>
+
+            <div className="relative mt-16 overflow-hidden rounded-[2.5rem] bg-zinc-950 px-7 py-12 text-center shadow-2xl dark:border dark:border-zinc-800 sm:px-12 lg:flex lg:items-center lg:justify-between lg:text-left">
+              <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#C2185B]/30 blur-3xl" />
+              <div className="relative max-w-2xl">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-pink-400">Your next chapter</p>
+                <h2 className="text-3xl font-bold text-white sm:text-4xl">Ready to build something worth talking about?</h2>
+                <p className="mt-4 text-zinc-400">Join companies and talent turning ambitious goals into real outcomes.</p>
+              </div>
+              <Link
+                href="/signup"
+                className="relative mt-8 inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#C2185B] px-8 font-bold text-white transition-all hover:bg-[#A3154D] lg:mt-0"
+              >
+                Get started
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+            </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-4 relative z-10">
-            <Link
-              href="/signup"
-              className="px-8 py-4 rounded-2xl font-bold border border-white/20 text-white hover:bg-white/10 transition-colors text-center"
-            >
-              Join as Talent
-            </Link>
-            <Link
-              href="/signup"
-              className="px-8 py-4 rounded-2xl font-bold bg-[#C2185B] text-white hover:bg-[#A3154D] transition-colors text-center"
-            >
-              Start Hiring
-            </Link>
-          </div>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#C2185B] opacity-10 blur-[80px] -mr-32 -mt-32" />
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

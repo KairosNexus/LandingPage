@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Globe, Award, Building, Users, Target, Shield, TrendingDown, CheckCircle2 } from "lucide-react";
+import { coFounders } from "@/components/layout/cofounders";
 
 // Custom LinkedIn Icon (not available in this lucide-react version)
 const LinkedinIcon = ({ className }: { className?: string }) => (
@@ -28,25 +29,6 @@ export function AboutClient() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const coFounders = [
-    {
-      name: "Jubelo Oyeniran",
-      role: "Co-Founder & CEO",
-      bio: "Focused on building a trusted path between ambitious talent and serious global opportunities. Leading Kairos with a vision to democratize access to quality remote work across borders.",
-      image: "/Jubelo.jpeg",
-      linkedin: "https://www.linkedin.com/in/jubelooyeniran/",
-      twitter: "https://x.com/jubelooyeniran",
-    },
-    {
-      name: "Ayorinde Alase",
-      role: "Co-Founder & CTO",
-      bio: "Bringing product and intelligent matching thinking to help talent find higher-quality roles faster. Architecting the AI and vetting systems that make Kairos different from ordinary job boards.",
-      image: "/Ayorinde.jfif",
-      linkedin: "https://www.linkedin.com/in/ayorinde-alase/",
-      website: "https://www.ayoalase.com",
-    },
-  ];
 
   const trustPartners = [
     { name: "Jobberman", icon: Building, description: "Africa's leading job platform partnership" },
@@ -283,13 +265,13 @@ export function AboutClient() {
           </div>
           <div className="flex flex-col sm:flex-row gap-4 relative z-10">
             <Link
-              href="/signup"
+              href="https://app.kairosng.com/auth/login"
               className="px-8 py-4 rounded-2xl font-bold border border-white/20 text-white hover:bg-white/10 transition-colors text-center"
             >
               Explore as Talent
             </Link>
             <Link
-              href="/signup"
+              href="https://app.kairosng.com/auth/login"
               className="px-8 py-4 rounded-2xl font-bold bg-[#C2185B] text-white hover:bg-[#A3154D] transition-colors text-center"
             >
               Explore as Company

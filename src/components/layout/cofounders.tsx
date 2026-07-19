@@ -1,6 +1,6 @@
 import { Globe } from "lucide-react";
 
-type Founder = {
+export type Founder = {
   name: string;
   role: string;
   bio: string;
@@ -29,7 +29,7 @@ const LinkedinIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const coFounders: Founder[] = [
+export const coFounders: Founder[] = [
   {
     name: "Jubelo Oyeniran",
     role: "Co-Founder",

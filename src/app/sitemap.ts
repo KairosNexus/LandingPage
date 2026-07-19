@@ -15,7 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: 'https://kairosng.com/case-studies',
+      url: 'https://kairosng.com/reviews',
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,

@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
+import { getAppSignupUrl } from "@/lib/app-links";
 
 interface HeaderProps {
   intent: "talent" | "company";
@@ -158,7 +159,7 @@ export function Header({ intent, setIntent }: HeaderProps) {
                   Sign In
                 </a>
                 <a
-                  href="https://app.kairosng.com/auth/onboarding/"
+                  href={getAppSignupUrl(intent)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-[#C2185B] text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-[#A3154D] transition-colors cursor-pointer"
@@ -246,7 +247,7 @@ export function Header({ intent, setIntent }: HeaderProps) {
                   Sign In
                 </a>
                 <a 
-                  href="https://app.kairosng.com/auth/onboarding/"
+                  href={getAppSignupUrl(intent)}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setIsMenuOpen(false)}
