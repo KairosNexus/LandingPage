@@ -1,23 +1,35 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Search, ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { categories as allCategories } from "@/lib/api";
+import { categories as allCategories, getPublicLandingStats, PublicLandingStats } from "@/lib/api";
 
 export default function CategoriesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState("All");
+  const [landingStats, setLandingStats] = useState<PublicLandingStats | null>(null);
 
-  const tags = useMemo(() => ["All", ...Array.from(new Set(allCategories.map(c => c.tag)))], []);
+  useEffect(() => {
+    getPublicLandingStats()
+      .then((response) => setLandingStats(response.data || null))
+      .catch((error) => console.error("Failed to fetch landing statistics:", error));
+  }, []);
+
+  const categories = useMemo(() => allCategories.map((category) => ({
+    ...category,
+    count: landingStats?.categories[category.tag.toLowerCase()] ?? null,
+  })), [landingStats]);
+
+  const tags = useMemo(() => ["All", ...Array.from(new Set(categories.map(c => c.tag)))], [categories]);
 
   const filteredCategories = useMemo(() => {
-    return allCategories.filter(category =>
+    return categories.filter(category =>
       (category.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
        category.desc.toLowerCase().includes(searchQuery.toLowerCase())) &&
       (selectedTag === "All" || category.tag === selectedTag)
     );
-  }, [searchQuery, selectedTag]);
+  }, [categories, searchQuery, selectedTag]);
    
  
 
@@ -96,7 +108,9 @@ export default function CategoriesPage() {
                 <h3 className="text-2xl font-bold mb-2 dark:text-white group-hover:text-[#C2185B] transition-colors">{category.title}</h3>
                 <p className="text-zinc-500 dark:text-zinc-400 mb-8 leading-relaxed">{category.desc}</p>
                 <div className="flex justify-between items-center mt-auto pt-6 border-t border-zinc-50 dark:border-zinc-800">
-                  <span className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">{category.count}</span>
+                  <span className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
+                    {category.count === null ? "Loading experts..." : `${category.count} Experts`}
+                  </span>
                   <span className="flex items-center gap-2 text-[#C2185B] font-bold text-sm group-hover:gap-3 transition-all">
                     Hire talent <ArrowRight className="w-4 h-4" />
                   </span>

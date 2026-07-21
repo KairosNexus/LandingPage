@@ -14,9 +14,9 @@ export function Footer() {
     {
       title: "PLATFORM",
       links: [
-        // { name: "For Businesses", href: "/for-business" },
-        { name: "How It Works", href: "/how-it-works" },
-        { name: "Hire Talent", href: "/hire-talent" },
+        { name: "How It Works Today", href: "/#how-it-works" },
+        { name: "Platform Preview", href: "/#platform-progress" },
+        { name: "Talent Early Access", href: "/#talent-early-access" },
       ],
     },
     {
@@ -50,8 +50,11 @@ export function Footer() {
               <span className="text-xl font-bold dark:text-white">Kairos Nexus Global</span>
             </div>
             <p className="text-gray-600 dark:text-gray-400 max-w-xs leading-relaxed mb-6">
-              The premium bridge for companies hiring exceptional remote talent with more speed, confidence, and cost efficiency.
+              Human-led global talent matching today, while we build the self-service platform for tomorrow.
             </p>
+            <a href="mailto:info@kairosnexusglobal.com" className="mb-6 block text-sm font-bold text-[#C2185B] hover:underline">
+              info@kairosnexusglobal.com
+            </a>
             {/* Social Icons */}
             <div className="flex items-center gap-4">
               {socialLinks.map((social) => (

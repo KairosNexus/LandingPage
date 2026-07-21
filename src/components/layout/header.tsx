@@ -7,14 +7,9 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
-import { getAppSignupUrl } from "@/lib/app-links";
+const scopeEmailHref = "mailto:info@kairosnexusglobal.com?subject=Scope%20of%20Work%20%E2%80%94%20Talent%20Matching%20Request";
 
-interface HeaderProps {
-  intent: "talent" | "company";
-  setIntent: (intent: "talent" | "company") => void;
-}
-
-export function Header({ intent, setIntent }: HeaderProps) {
+export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -32,27 +27,12 @@ export function Header({ intent, setIntent }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleIntentSwitch = () => {
-    const newIntent = intent === "talent" ? "company" : "talent";
-    setIntent(newIntent);
-    if (pathname !== "/") {
-      router.push("/");
-    }
-  };
-
   const navLinks = [
+    { name: "How It Works", href: "/#how-it-works" },
+    { name: "Who We Serve", href: "/#who-we-serve" },
+    { name: "Platform Preview", href: "/#platform-progress" },
     { name: "About", href: "/about" },
-    { name: "How It Works", href: "/how-it-works" },
-    { name: "Blog", href: "/blog" },
   ];
-
-  const getSignupText = () => intent === "talent" ? "Join as Talent" : "Start Hiring";
-  const getIntentLabel = () => {
-    if (user) {
-      return user.role === "COMPANY" || user.role === "ADMIN" || user.role === "SUPERADMIN" ? "For Talent" : "For Companies";
-    }
-    return intent === "talent" ? "For Companies" : "For Talent";
-  };
 
   const userInitials = user 
     ? `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase() 
@@ -84,12 +64,12 @@ export function Header({ intent, setIntent }: HeaderProps) {
           {!isDashboard && (
             <Link href="/" className="flex items-center gap-1 cursor-pointer">
               <img src="/logo.png" alt="Kairos Nexus Global logo" className="w-10 h-10 object-contain" />
-              <span className="text-xl font-bold dark:text-white">Kairos Nexus Global</span>
+              <span className="hidden text-xl font-bold dark:text-white sm:inline">Kairos Nexus Global</span>
             </Link>
           )}
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -99,18 +79,10 @@ export function Header({ intent, setIntent }: HeaderProps) {
                 {link.name}
               </Link>
             ))}
-            {!pathname.startsWith("/dashboard") && (
-              <button
-                onClick={handleIntentSwitch}
-                className="text-sm font-medium text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors cursor-pointer"
-              >
-                {getIntentLabel()}
-              </button>
-            )}
           </nav>
 
           {/* Right Actions - Desktop */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             <ThemeToggle />
             {user ? (
               <div className="relative">
@@ -159,19 +131,17 @@ export function Header({ intent, setIntent }: HeaderProps) {
                   Sign In
                 </a>
                 <a
-                  href={getAppSignupUrl(intent)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={scopeEmailHref}
                   className="bg-[#C2185B] text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-[#A3154D] transition-colors cursor-pointer"
                 >
-                  {getSignupText()}
+                  Send Scope of Work
                 </a>
               </>
             )}
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-3">
+          <div className="flex lg:hidden items-center gap-3">
             <ThemeToggle />
             {user && (
               <button
@@ -193,7 +163,7 @@ export function Header({ intent, setIntent }: HeaderProps) {
 
       {/* Mobile Menu */}
       <div className={cn(
-        "md:hidden absolute top-16 left-0 w-full bg-white dark:bg-black transition-all duration-300 ease-in-out overflow-hidden border-b border-zinc-100 dark:border-zinc-800",
+        "lg:hidden absolute top-16 left-0 w-full bg-white dark:bg-black transition-all duration-300 ease-in-out overflow-hidden border-b border-zinc-100 dark:border-zinc-800",
         isMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
       )}>
         <nav className="flex flex-col p-4 gap-4">
@@ -207,17 +177,6 @@ export function Header({ intent, setIntent }: HeaderProps) {
               {link.name}
             </Link>
           ))}
-          {!pathname.startsWith("/dashboard") && (
-            <button
-              onClick={() => {
-                handleIntentSwitch();
-                setIsMenuOpen(false);
-              }}
-              className="text-left text-sm font-medium text-gray-600 dark:text-gray-400 py-2"
-            >
-              {getIntentLabel()}
-            </button>
-          )}
           <div className="flex flex-col gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
             {user ? (
               <>
@@ -247,13 +206,11 @@ export function Header({ intent, setIntent }: HeaderProps) {
                   Sign In
                 </a>
                 <a 
-                  href={getAppSignupUrl(intent)}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={scopeEmailHref}
                   onClick={() => setIsMenuOpen(false)}
                   className="bg-[#C2185B] text-white px-5 py-3 rounded-full text-sm font-medium text-center"
                 >
-                  {getSignupText()}
+                  Send Scope of Work
                 </a>
               </>
             )}

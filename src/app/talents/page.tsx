@@ -5,6 +5,40 @@ import { Search, ArrowLeft, MapPin, ArrowRight, User, Award, CheckCircle2 } from
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getPublicTalents, PublicTalent } from "@/lib/api";
+import { PreviewNotice } from "@/components/ui/preview-notice";
+
+const shuffle = <T,>(items: T[]) => {
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+  return shuffled;
+};
+
+const getRandomSkills = (talents: PublicTalent[], limit = 9) => {
+  const skillsByTalent = shuffle(talents.slice(0, 20)).map((talent) =>
+    shuffle(talent.user?.skillSet?.map(({ title }) => title.trim()).filter(Boolean) ?? []),
+  );
+  const selected: string[] = [];
+  const seen = new Set<string>();
+  const longestSkillList = Math.max(0, ...skillsByTalent.map((skills) => skills.length));
+
+  // Round-robin prevents one profile with many skills from dominating the filter.
+  for (let skillIndex = 0; skillIndex < longestSkillList && selected.length < limit; skillIndex += 1) {
+    for (const talentSkills of skillsByTalent) {
+      const skill = talentSkills[skillIndex];
+      const normalizedSkill = skill?.toLocaleLowerCase();
+      if (skill && !seen.has(normalizedSkill)) {
+        seen.add(normalizedSkill);
+        selected.push(skill);
+        if (selected.length === limit) break;
+      }
+    }
+  }
+
+  return selected;
+};
 
 export default function TalentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,17 +48,32 @@ export default function TalentsPage() {
   const [selectedSkills, setSelectedSkills] = useState("All");
   const [selectedExperience, setSelectedExperience] = useState("All");
   const [publicTalents, setPublicTalents] = useState<PublicTalent[]>([]);
+  const [randomSkills, setRandomSkills] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    totalPages: 1,
+    hasNext: false,
+    hasPrevious: false,
+  });
   const [loading, setLoading] = useState(true);
+  const [talentListHref, setTalentListHref] = useState("/talents");
   const router = useRouter();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlSearchQuery = params.get("search")?.trim() || "";
     const urlLocationPreference = params.get("location") || "";
+    const urlSkill = params.get("skill") || "All";
+    const urlExperience = params.get("experience") || "All";
+    const parsedPage = Number.parseInt(params.get("page") || "1", 10);
 
     setSearchQuery(urlSearchQuery);
     setAppliedSearchQuery(urlSearchQuery);
     setLocationPreference(urlLocationPreference);
+    setSelectedSkills(urlSkill);
+    setSelectedExperience(urlExperience);
+    setCurrentPage(Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1);
     setFiltersReady(true);
   }, []);
 
@@ -40,8 +89,25 @@ export default function TalentsPage() {
           search: appliedSearchQuery || undefined,
           locationPreference: locationPreference === "REMOTE" ? "REMOTE" : undefined,
           region: locationPreference.toLowerCase() === "africa" ? "Africa" : undefined,
+          skills: selectedSkills === "All" ? undefined : selectedSkills,
+          experienceLevel: selectedExperience === "All" ? undefined : selectedExperience,
+          page: currentPage,
+          limit: 20,
         });
-        if (!cancelled) setPublicTalents(response.data);
+        if (!cancelled) {
+          setPublicTalents(response.data);
+          setRandomSkills(getRandomSkills(response.data));
+          setPagination({
+            total: response.pagination.total,
+            totalPages: Math.max(response.pagination.totalPages, 1),
+            hasNext: response.pagination.hasNext,
+            hasPrevious: response.pagination.hasPrevious,
+          });
+
+          if (response.pagination.totalPages > 0 && currentPage > response.pagination.totalPages) {
+            setCurrentPage(response.pagination.totalPages);
+          }
+        }
       } catch (error) {
         console.error("Failed to fetch public talents:", error);
       } finally {
@@ -54,15 +120,26 @@ export default function TalentsPage() {
     return () => {
       cancelled = true;
     };
-  }, [appliedSearchQuery, filtersReady, locationPreference]);
+  }, [appliedSearchQuery, currentPage, filtersReady, locationPreference, selectedExperience, selectedSkills]);
+
+  useEffect(() => {
+    if (!filtersReady) return;
+
+    const params = new URLSearchParams();
+    if (appliedSearchQuery) params.set("search", appliedSearchQuery);
+    if (locationPreference) params.set("location", locationPreference);
+    if (selectedSkills !== "All") params.set("skill", selectedSkills);
+    if (selectedExperience !== "All") params.set("experience", selectedExperience);
+    if (currentPage > 1) params.set("page", currentPage.toString());
+    const listHref = params.size ? `/talents?${params.toString()}` : "/talents";
+    setTalentListHref(listHref);
+    router.replace(listHref);
+  }, [appliedSearchQuery, currentPage, filtersReady, locationPreference, router, selectedExperience, selectedSkills]);
 
   const handleSearch = () => {
     const query = searchQuery.trim();
+    setCurrentPage(1);
     setAppliedSearchQuery(query);
-    const params = new URLSearchParams();
-    if (query) params.set("search", query);
-    if (locationPreference) params.set("location", locationPreference);
-    router.replace(params.size ? `/talents?${params.toString()}` : "/talents");
   };
 
   const handleViewAll = () => {
@@ -71,10 +148,17 @@ export default function TalentsPage() {
     setLocationPreference("");
     setSelectedSkills("All");
     setSelectedExperience("All");
+    setCurrentPage(1);
     router.replace("/talents");
   };
 
-  const skills = useMemo(() => ["All", ...Array.from(new Set(publicTalents.flatMap(t => t.user?.skillSet?.map(s => s.title) || [])))], [publicTalents]);
+  const skills = useMemo(() => {
+    if (selectedSkills === "All" || randomSkills.some((skill) => skill.toLocaleLowerCase() === selectedSkills.toLocaleLowerCase())) {
+      return ["All", ...randomSkills];
+    }
+
+    return ["All", selectedSkills, ...randomSkills.slice(0, 8)];
+  }, [randomSkills, selectedSkills]);
   const experienceLevels = useMemo(() => ["All", ...Array.from(new Set(publicTalents.map(t => t.experienceLevel)))], [publicTalents]);
 
   const filteredTalents = useMemo(() => {
@@ -94,6 +178,7 @@ export default function TalentsPage() {
   return (
     <div className="pt-32 pb-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <PreviewNotice />
         {/* Header */}
         <div className="mb-12">
           <Link href="/" className="inline-flex items-center text-zinc-500 hover:text-[#C2185B] transition-colors mb-8 group">
@@ -109,7 +194,7 @@ export default function TalentsPage() {
               </p>
             </div>
             <div className="text-sm text-zinc-500">
-              {publicTalents.length} talented professionals available
+              {pagination.total} talented professionals available
             </div>
           </div>
         </div>
@@ -141,10 +226,13 @@ export default function TalentsPage() {
               <div className="flex-1">
                 <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3 block">Skills</span>
                 <div className="flex flex-wrap gap-2">
-                  {skills.slice(0, 10).map((skill, index) => (
+                  {skills.map((skill) => (
                     <button
-                      key={`${skill}-${index}`}
-                      onClick={() => setSelectedSkills(skill)}
+                      key={skill}
+                      onClick={() => {
+                        setSelectedSkills(skill);
+                        setCurrentPage(1);
+                      }}
                       className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
                         selectedSkills === skill 
                           ? "bg-[#C2185B] text-white shadow-md shadow-pink-500/10" 
@@ -162,7 +250,10 @@ export default function TalentsPage() {
                   {experienceLevels.map(level => (
                     <button
                       key={level}
-                      onClick={() => setSelectedExperience(level)}
+                      onClick={() => {
+                        setSelectedExperience(level);
+                        setCurrentPage(1);
+                      }}
                       className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
                         selectedExperience === level 
                           ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md" 
@@ -204,7 +295,11 @@ export default function TalentsPage() {
             ))
           ) : filteredTalents.length > 0 ? (
             filteredTalents.map((talent) => (
-              <Link key={talent.id} href={`/talents/${talent.id}`} className="block">
+              <Link
+                key={talent.id}
+                href={`/talents/${talent.id}?returnTo=${encodeURIComponent(talentListHref)}`}
+                className="block"
+              >
                 <div className="bg-white dark:bg-zinc-900 p-6 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-800 hover:shadow-lg hover:border-pink-100 dark:hover:border-pink-900/30 transition-all group cursor-pointer">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="relative">
@@ -301,6 +396,32 @@ export default function TalentsPage() {
             </div>
           )}
         </div>
+
+        {!loading && pagination.totalPages > 1 && (
+          <nav className="mt-10 flex items-center justify-center gap-4" aria-label="Talent list pagination">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+              disabled={!pagination.hasPrevious}
+              className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 px-5 py-3 text-sm font-bold text-zinc-700 dark:text-zinc-200 transition-colors hover:border-[#C2185B] hover:text-[#C2185B] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Previous
+            </button>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              Page {currentPage} of {pagination.totalPages}
+            </span>
+            <button
+              type="button"
+              onClick={() => setCurrentPage((page) => Math.min(pagination.totalPages, page + 1))}
+              disabled={!pagination.hasNext}
+              className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-700 px-5 py-3 text-sm font-bold text-zinc-700 dark:text-zinc-200 transition-colors hover:border-[#C2185B] hover:text-[#C2185B] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Next
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </nav>
+        )}
       </div>
     </div>
   );

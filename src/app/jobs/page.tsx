@@ -5,6 +5,7 @@ import { Search, ArrowLeft, MapPin, Clock, Filter, Briefcase, DollarSign, ArrowR
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { getPublicJobs, PublicJob } from "@/lib/api";
+import { PreviewNotice } from "@/components/ui/preview-notice";
 
 export default function JobsPage() {
   const searchParams = useSearchParams();
@@ -76,6 +77,7 @@ export default function JobsPage() {
   return (
     <div className="pt-32 pb-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <PreviewNotice />
         {/* Header */}
         <div className="mb-12">
           <Link href="/" className="inline-flex items-center text-zinc-500 hover:text-[#C2185B] transition-colors mb-8 group">

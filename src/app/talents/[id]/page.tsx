@@ -10,8 +10,14 @@ export default function TalentDetailPage() {
   const params = useParams();
   const [talent, setTalent] = useState<PublicTalent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [backHref, setBackHref] = useState("/talents");
 
   useEffect(() => {
+    const requestedBackHref = new URLSearchParams(window.location.search).get("returnTo");
+    if (requestedBackHref === "/talents" || requestedBackHref?.startsWith("/talents?")) {
+      setBackHref(requestedBackHref);
+    }
+
     const fetchTalent = async () => {
       try {
         const response = await getTalentById(params.id as string);
@@ -56,7 +62,7 @@ export default function TalentDetailPage() {
     return (
       <div className="pt-32 pb-20 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-2xl font-bold dark:text-white mb-4">Talent not found</h2>
-        <Link href="/talents" className="text-[#C2185B] hover:underline">
+        <Link href={backHref} className="text-[#C2185B] hover:underline">
           Back to all talents
         </Link>
       </div>
@@ -67,7 +73,7 @@ export default function TalentDetailPage() {
     <div className="pt-32 pb-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <Link href="/talents" className="inline-flex items-center text-zinc-500 hover:text-[#C2185B] transition-colors mb-8 group">
+          <Link href={backHref} className="inline-flex items-center text-zinc-500 hover:text-[#C2185B] transition-colors mb-8 group">
             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to all talents
           </Link>
