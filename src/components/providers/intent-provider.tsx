@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useSyncExternalStore } from "react";
 import { getStorageItem, setStorageItem } from "@/lib/storage";
 
 type Intent = "talent" | "company";
@@ -14,28 +14,24 @@ interface IntentContextType {
 
 const IntentContext = createContext<IntentContextType | undefined>(undefined);
 
-export function IntentProvider({ children }: { children: React.ReactNode }) {
-  const [intent, setIntent] = useState<Intent>("talent");
-  const [showModal, setShowModal] = useState(false);
-  const [mounted, setMounted] = useState(false);
+const subscribeToHydration = () => () => {};
 
-  useEffect(() => {
-    setMounted(true);
-    const savedIntent = getStorageItem("kairos_intent") as Intent;
-    if (savedIntent) {
-      setIntent(savedIntent);
-    } else {
-      setShowModal(true);
-    }
-  }, []);
+export function IntentProvider({ children }: { children: React.ReactNode }) {
+  const hydrated = useSyncExternalStore(subscribeToHydration, () => true, () => false);
+  const [selectedIntent, setSelectedIntent] = useState<Intent | null>(null);
+  const [modalOverride, setModalOverride] = useState<boolean | null>(null);
+  const savedIntent = hydrated ? getStorageItem("kairos_intent") : null;
+  const validSavedIntent = savedIntent === "talent" || savedIntent === "company" ? savedIntent : null;
+  const intent = selectedIntent ?? validSavedIntent ?? "company";
+  const showModal = modalOverride ?? (hydrated && validSavedIntent === null);
 
   const handleSetIntent = (newIntent: Intent) => {
-    setIntent(newIntent);
+    setSelectedIntent(newIntent);
     setStorageItem("kairos_intent", newIntent);
-    setShowModal(false);
+    setModalOverride(false);
   };
 
-  if (!mounted) return null;
+  if (!hydrated) return null;
 
   return (
     <IntentContext.Provider 
@@ -43,7 +39,7 @@ export function IntentProvider({ children }: { children: React.ReactNode }) {
         intent, 
         setIntent: handleSetIntent, 
         showModal, 
-        setShowModal 
+        setShowModal: setModalOverride,
       }}
     >
       {children}

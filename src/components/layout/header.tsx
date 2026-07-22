@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
+import { useIntent } from "@/components/providers/intent-provider";
+import { getAppSignupUrl } from "@/lib/app-links";
 const scopeEmailHref = "mailto:info@kairosnexusglobal.com?subject=Scope%20of%20Work%20%E2%80%94%20Talent%20Matching%20Request";
 
 export function Header() {
@@ -16,6 +18,7 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { intent, setIntent } = useIntent();
 
   const isDashboard = pathname.startsWith("/dashboard");
 
@@ -27,12 +30,28 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: "How It Works", href: "/#how-it-works" },
-    { name: "Who We Serve", href: "/#who-we-serve" },
-    { name: "Platform Preview", href: "/#platform-progress" },
-    { name: "About", href: "/about" },
-  ];
+  const navLinks = intent === "company"
+    ? [
+        { name: "How It Works", href: "/#how-it-works" },
+        { name: "Who We Serve", href: "/#who-we-serve" },
+        { name: "Platform Preview", href: "/#platform-progress" },
+        { name: "About", href: "/about" },
+      ]
+    : [
+        { name: "Early Access", href: "/#talent-early-access" },
+        { name: "Platform Preview", href: "/#platform-progress" },
+        { name: "About", href: "/about" },
+      ];
+
+  const handleIntentSwitch = () => {
+    setIntent(intent === "talent" ? "company" : "talent");
+    setIsMenuOpen(false);
+    if (pathname !== "/") router.push("/");
+  };
+
+  const switchLabel = intent === "talent" ? "For Businesses" : "For Talent";
+  const primaryHref = intent === "talent" ? getAppSignupUrl("talent") : scopeEmailHref;
+  const primaryLabel = intent === "talent" ? "Join Early Talent" : "Send Scope of Work";
 
   const userInitials = user 
     ? `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase() 
@@ -79,6 +98,13 @@ export function Header() {
                 {link.name}
               </Link>
             ))}
+            <button
+              type="button"
+              onClick={handleIntentSwitch}
+              className="text-sm font-medium text-gray-600 transition-colors hover:text-black dark:text-gray-400 dark:hover:text-white"
+            >
+              {switchLabel}
+            </button>
           </nav>
 
           {/* Right Actions - Desktop */}
@@ -128,13 +154,15 @@ export function Header() {
                   rel="noopener noreferrer"
                   className="text-sm font-medium text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors cursor-pointer"
                 >
-                  Sign In
+                  Sign In (Preview)
                 </a>
                 <a
-                  href={scopeEmailHref}
+                  href={primaryHref}
+                  target={intent === "talent" ? "_blank" : undefined}
+                  rel={intent === "talent" ? "noopener noreferrer" : undefined}
                   className="bg-[#C2185B] text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-[#A3154D] transition-colors cursor-pointer"
                 >
-                  Send Scope of Work
+                  {primaryLabel}
                 </a>
               </>
             )}
@@ -177,6 +205,13 @@ export function Header() {
               {link.name}
             </Link>
           ))}
+          <button
+            type="button"
+            onClick={handleIntentSwitch}
+            className="py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-400"
+          >
+            {switchLabel}
+          </button>
           <div className="flex flex-col gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
             {user ? (
               <>
@@ -203,14 +238,16 @@ export function Header() {
                   onClick={() => setIsMenuOpen(false)}
                   className="text-sm font-medium text-gray-600 dark:text-gray-400 py-2"
                 >
-                  Sign In
+                  Sign In (Preview)
                 </a>
                 <a 
-                  href={scopeEmailHref}
+                  href={primaryHref}
+                  target={intent === "talent" ? "_blank" : undefined}
+                  rel={intent === "talent" ? "noopener noreferrer" : undefined}
                   onClick={() => setIsMenuOpen(false)}
                   className="bg-[#C2185B] text-white px-5 py-3 rounded-full text-sm font-medium text-center"
                 >
-                  Send Scope of Work
+                  {primaryLabel}
                 </a>
               </>
             )}

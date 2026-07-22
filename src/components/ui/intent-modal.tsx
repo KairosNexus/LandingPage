@@ -52,28 +52,12 @@ export function IntentModal({ isOpen, onClose, onSelect }: IntentModalProps) {
                 </p>
               </div>
 
+              <p className="mx-6 mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-center text-xs leading-relaxed text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
+                Our self-service platform is in development. Choose the path that best matches your visit.
+              </p>
+
               {/* Options */}
               <div className="px-4 pb-4 space-y-3">
-                {/* Talent Option */}
-                <button
-                  onClick={() => onSelect("talent")}
-                  className="w-full group p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-[#C2185B] hover:bg-pink-50 dark:hover:bg-pink-900/10 transition-all duration-200"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center group-hover:scale-105 transition-transform">
-                      <Briefcase className="w-5 h-5 text-[#C2185B]" />
-                    </div>
-                    <div className="text-left">
-                      <h4 className="font-semibold text-sm dark:text-white">
-                        Find jobs
-                      </h4>
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                        Explore vetted remote roles
-                      </p>
-                    </div>
-                  </div>
-                </button>
-
                 {/* Company Option */}
                 <button
                   onClick={() => onSelect("company")}
@@ -85,10 +69,30 @@ export function IntentModal({ isOpen, onClose, onSelect }: IntentModalProps) {
                     </div>
                     <div className="text-left">
                       <h4 className="font-semibold text-sm dark:text-white">
-                        Hire talent
+                        I need talent
                       </h4>
                       <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                        Discover vetted experts
+                        Request concierge matching now
+                      </p>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Talent Option */}
+                <button
+                  onClick={() => onSelect("talent")}
+                  className="w-full group p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-[#C2185B] hover:bg-pink-50 dark:hover:bg-pink-900/10 transition-all duration-200"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <Briefcase className="w-5 h-5 text-[#C2185B]" />
+                    </div>
+                    <div className="text-left">
+                      <h4 className="font-semibold text-sm dark:text-white">
+                        I am talent
+                      </h4>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                        Join early for future opportunities
                       </p>
                     </div>
                   </div>
