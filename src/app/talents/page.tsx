@@ -161,19 +161,9 @@ export default function TalentsPage() {
   }, [randomSkills, selectedSkills]);
   const experienceLevels = useMemo(() => ["All", ...Array.from(new Set(publicTalents.map(t => t.experienceLevel)))], [publicTalents]);
 
-  const filteredTalents = useMemo(() => {
-    const talentSkills = (t: PublicTalent) => t.user?.skillSet?.map(s => s.title) || [];
-    const talentJobTitles = (t: PublicTalent) => t.jobTitles || [];
-    const keyword = appliedSearchQuery.toLowerCase();
-    return publicTalents.filter(talent => 
-      (!keyword ||
-       [...talentJobTitles(talent), ...talentSkills(talent)]
-         .some(value => value.toLowerCase().includes(keyword))) &&
-      (selectedSkills === "All" || talentSkills(talent).includes(selectedSkills)) &&
-      (selectedExperience === "All" || talent.experienceLevel === selectedExperience) &&
-      (!locationPreference || locationPreference === "africa" || talent.employmentType === locationPreference)
-    );
-  }, [appliedSearchQuery, selectedSkills, selectedExperience, locationPreference, publicTalents]);
+  // Backend applies search and filters before pagination. Rendering response
+  // directly prevents alias, fuzzy, or bio-only matches from being discarded.
+  const filteredTalents = publicTalents;
 
   return (
     <div className="pt-32 pb-20">
@@ -194,7 +184,7 @@ export default function TalentsPage() {
               </p>
             </div>
             <div className="text-sm text-zinc-500">
-              {pagination.total} talented professionals available
+              {filteredTalents.length} talented professionals available
             </div>
           </div>
         </div>

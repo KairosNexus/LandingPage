@@ -45,15 +45,15 @@ export function IntentModal({ isOpen, onClose, onSelect }: IntentModalProps) {
               {/* Header */}
               <div className="p-6 pb-4">
                 <h2 className="text-xl font-bold dark:text-white text-center mb-2">
-                  Welcome to Kairos
+                  Welcome to Kairos Nexus Global
                 </h2>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 text-center">
-                  What brings you here today?
+                  How can we help you today?
                 </p>
               </div>
 
               <p className="mx-6 mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-center text-xs leading-relaxed text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
-                Our self-service platform is in development. Choose the path that best matches your visit.
+                Our self-service platform is still in development. Choose the path that best matches your visit.
               </p>
 
               {/* Options */}
@@ -102,7 +102,7 @@ export function IntentModal({ isOpen, onClose, onSelect }: IntentModalProps) {
               {/* Footer Note */}
               <div className="px-6 py-3 border-t border-zinc-100 dark:border-zinc-800">
                 <p className="text-center text-xs text-zinc-400 dark:text-zinc-500">
-                  You can switch paths later
+                  You can switch paths at any time.
                 </p>
               </div>
             </div>

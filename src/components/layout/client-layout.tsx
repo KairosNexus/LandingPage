@@ -6,6 +6,7 @@ import { IntentProvider, useIntent } from "@/components/providers/intent-provide
 import { ClientIntentModal } from "@/components/ui/client-intent-modal";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { CookieConsent } from "@/components/ui/cookie-consent";
+import { BusinessInquiryProvider } from "@/components/providers/business-inquiry-provider";
 
 import { usePathname } from "next/navigation";
 
@@ -41,7 +42,9 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <IntentProvider>
-      <LayoutContent>{children}</LayoutContent>
+      <BusinessInquiryProvider>
+        <LayoutContent>{children}</LayoutContent>
+      </BusinessInquiryProvider>
     </IntentProvider>
   );
 }

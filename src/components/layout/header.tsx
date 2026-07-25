@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
 import { useIntent } from "@/components/providers/intent-provider";
+import { useBusinessInquiry } from "@/components/providers/business-inquiry-provider";
 import { getAppSignupUrl } from "@/lib/app-links";
-const scopeEmailHref = "mailto:info@kairosnexusglobal.com?subject=Scope%20of%20Work%20%E2%80%94%20Talent%20Matching%20Request";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,6 +19,7 @@ export function Header() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { intent, setIntent } = useIntent();
+  const { openRequestModal } = useBusinessInquiry();
 
   const isDashboard = pathname.startsWith("/dashboard");
 
@@ -34,12 +35,16 @@ export function Header() {
     ? [
         { name: "How It Works", href: "/#how-it-works" },
         { name: "Who We Serve", href: "/#who-we-serve" },
+        { name: "Talent Categories", href: "/#talent-categories" },
         { name: "Platform Preview", href: "/#platform-progress" },
+        { name: "Why Kairos", href: "/#why-kairos" },
         { name: "About", href: "/about" },
       ]
     : [
         { name: "Early Access", href: "/#talent-early-access" },
         { name: "Platform Preview", href: "/#platform-progress" },
+        { name: "Why Kairos", href: "/#why-kairos" },
+        { name: "Meet the Founders", href: "/#founders" },
         { name: "About", href: "/about" },
       ];
 
@@ -50,7 +55,7 @@ export function Header() {
   };
 
   const switchLabel = intent === "talent" ? "For Businesses" : "For Talent";
-  const primaryHref = intent === "talent" ? getAppSignupUrl("talent") : scopeEmailHref;
+  const primaryHref = getAppSignupUrl("talent");
   const primaryLabel = intent === "talent" ? "Join Early Talent" : "Send Scope of Work";
 
   const userInitials = user 
@@ -156,14 +161,24 @@ export function Header() {
                 >
                   Sign In (Preview)
                 </a>
-                <a
-                  href={primaryHref}
-                  target={intent === "talent" ? "_blank" : undefined}
-                  rel={intent === "talent" ? "noopener noreferrer" : undefined}
-                  className="bg-[#C2185B] text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-[#A3154D] transition-colors cursor-pointer"
-                >
-                  {primaryLabel}
-                </a>
+                {intent === "talent" ? (
+                  <a
+                    href={primaryHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#C2185B] text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-[#A3154D] transition-colors cursor-pointer"
+                  >
+                    {primaryLabel}
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={openRequestModal}
+                    className="bg-[#C2185B] text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-[#A3154D] transition-colors cursor-pointer"
+                  >
+                    {primaryLabel}
+                  </button>
+                )}
               </>
             )}
           </div>
@@ -240,15 +255,28 @@ export function Header() {
                 >
                   Sign In (Preview)
                 </a>
-                <a 
-                  href={primaryHref}
-                  target={intent === "talent" ? "_blank" : undefined}
-                  rel={intent === "talent" ? "noopener noreferrer" : undefined}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="bg-[#C2185B] text-white px-5 py-3 rounded-full text-sm font-medium text-center"
-                >
-                  {primaryLabel}
-                </a>
+                {intent === "talent" ? (
+                  <a
+                    href={primaryHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="bg-[#C2185B] text-white px-5 py-3 rounded-full text-sm font-medium text-center"
+                  >
+                    {primaryLabel}
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      openRequestModal();
+                    }}
+                    className="bg-[#C2185B] text-white px-5 py-3 rounded-full text-sm font-medium text-center"
+                  >
+                    {primaryLabel}
+                  </button>
+                )}
               </>
             )}
           </div>

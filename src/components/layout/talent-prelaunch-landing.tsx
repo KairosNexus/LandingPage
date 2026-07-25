@@ -11,6 +11,7 @@ import {
 import { Cofounders } from "./cofounders";
 import { TrustSection } from "./trust-section";
 import { getAppSignupUrl } from "@/lib/app-links";
+import { WhyKairosSection } from "./why-kairos-section";
 
 const earlyAccessSteps = [
   {
@@ -60,13 +61,7 @@ export function TalentPrelaunchLanding() {
                 Join Our Early Talent Network
                 <ArrowRight className="h-5 w-5" />
               </a>
-              <Link
-                href="#platform-progress"
-                className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl border border-zinc-300 bg-white/70 px-7 py-4 font-bold text-zinc-900 backdrop-blur transition-all hover:border-[#C2185B] hover:text-[#C2185B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-white"
-              >
-                Explore Our Progress So Far
-                <Eye className="h-5 w-5" />
-              </Link>
+          
             </div>
           </div>
 
@@ -131,10 +126,15 @@ export function TalentPrelaunchLanding() {
               Our self-service marketplace is still in development. Some features, opportunities, and profiles shown in the preview may be limited or incomplete.
             </p>
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-              <Link href="/jobs" className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#C2185B] px-7 py-4 font-bold text-white transition-colors hover:bg-[#A3154D]">
-                Preview Opportunities
+              <a
+                href={getAppSignupUrl("talent")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#C2185B] px-7 py-4 font-bold text-white transition-colors hover:bg-[#A3154D]"
+              >
+                Preview Talent Platform
                 <ArrowRight className="h-5 w-5" />
-              </Link>
+              </a>
               <a
                 href={getAppSignupUrl("talent")}
                 target="_blank"
@@ -148,6 +148,7 @@ export function TalentPrelaunchLanding() {
         </div>
       </section>
 
+      <WhyKairosSection />
       <TrustSection />
       <Cofounders />
 

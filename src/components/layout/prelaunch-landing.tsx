@@ -1,13 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowRight,
-  BadgeCheck,
   BriefcaseBusiness,
+  CalendarDays,
   CheckCircle2,
   Clock3,
   Code2,
   Eye,
-  Globe2,
   Handshake,
   Headphones,
   Landmark,
@@ -16,10 +17,8 @@ import {
   Palette,
   Rocket,
   SearchCheck,
-  ShieldCheck,
   Sparkles,
   Store,
-  Target,
   UserRound,
   UserRoundCheck,
   Users,
@@ -27,29 +26,16 @@ import {
 import { Cofounders } from "./cofounders";
 import { TrustSection } from "./trust-section";
 import { getAppSignupUrl } from "@/lib/app-links";
+import { useBusinessInquiry } from "@/components/providers/business-inquiry-provider";
+import { WhyKairosSection } from "./why-kairos-section";
 
 const contactEmail = "info@kairosnexusglobal.com";
-const emailSubject = "Scope of Work - Talent Matching Request";
-const emailBody = `Hello Kairos Nexus Global,
-
-I would like help finding talent for the following need:
-
-Role or project:
-Required skills:
-Scope of work:
-Expected hours:
-Timeline:
-Budget and currency:
-
-Company or organization:
-Best contact name and phone number:
-`;
-const scopeEmailHref = `mailto:${contactEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
 
 const processSteps = [
   {
-    title: "Share the need",
-    description: "Email your scope of work, role, required skills, expected hours, timeline, and budget.",
+    title: "Send your request",
+    description:
+      "Complete the request form with your scope of work, role, required skills, expected hours, timeline, and budget. Attach any helpful documents.",
     icon: BriefcaseBusiness,
   },
   {
@@ -78,38 +64,17 @@ const audiences = [
 ];
 
 const categories = [
-  { title: "Software Engineering", description: "Frontend, backend, full-stack, mobile, cloud, and QA talent.", icon: Code2 },
-  { title: "Data and AI", description: "Data analysts, data engineers, machine learning, and AI specialists.", icon: Sparkles },
-  { title: "Product and Design", description: "Product managers, UI/UX designers, researchers, and creative specialists.", icon: Palette },
+  { title: "Software Engineering", description: "Frontend, backend, full-stack, mobile, cloud, and quality assurance talent.", icon: Code2 },
+  { title: "Data and AI", description: "Data analysts, data engineers, machine-learning professionals, and AI specialists.", icon: Sparkles },
+  { title: "Product and Design", description: "Product managers, user interface and user experience designers, researchers, and creative specialists.", icon: Palette },
   { title: "Marketing and Growth", description: "Content, performance marketing, social media, and growth talent.", icon: Megaphone },
   { title: "Customer Success", description: "Customer support, onboarding, account management, and sales support.", icon: Headphones },
   { title: "Operations", description: "Virtual assistance, project coordination, finance, and administrative support.", icon: BriefcaseBusiness },
 ];
 
-const reasons = [
-  {
-    title: "Vetting with context",
-    description: "Identity checks, skill evidence, case studies, and work samples help us look beyond a résumé.",
-    icon: BadgeCheck,
-  },
-  {
-    title: "Global access",
-    description: "Tap into capable professionals across markets while keeping role fit, communication, and availability in focus.",
-    icon: Globe2,
-  },
-  {
-    title: "Hands-on matching",
-    description: "A real team reviews each request and coordinates introductions while self-service tools are being built.",
-    icon: Target,
-  },
-  {
-    title: "Trust at every step",
-    description: "Clear expectations, careful data handling, and transparent processes support confident decisions.",
-    icon: ShieldCheck,
-  },
-];
-
 export function PrelaunchLanding() {
+  const { openRequestModal, openScheduleModal } = useBusinessInquiry();
+
   return (
     <div className="flex-1 overflow-hidden">
       <section className="relative px-4 pb-20 pt-28 sm:px-6 lg:pb-28 lg:pt-36">
@@ -127,24 +92,26 @@ export function PrelaunchLanding() {
               Kairos Nexus Global connects founders, businesses, organizations, and individuals with vetted global talent. Our full self-service platform is currently being built. In the meantime, our team is matching clients and talent manually.
             </p>
             <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-              <a
-                href={scopeEmailHref}
+              <button
+                type="button"
+                onClick={openRequestModal}
                 className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-[#C2185B] px-7 py-4 font-bold text-white shadow-xl shadow-pink-600/20 transition-all hover:-translate-y-0.5 hover:bg-[#A3154D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2185B] focus-visible:ring-offset-2"
               >
                 <Mail className="h-5 w-5" />
                 Send Us Your Scope of Work
-              </a>
+              </button>
               <Link
-                href="#platform-progress"
+                href="https://app.kairosng.com/auth/login"
                 className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl border border-zinc-300 bg-white/70 px-7 py-4 font-bold text-zinc-900 backdrop-blur transition-all hover:border-[#C2185B] hover:text-[#C2185B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-white"
               >
                 Explore Our Progress So Far
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </div>
+            
             <p className="mt-5 text-sm text-zinc-500 dark:text-zinc-400">
               Prefer email? Write directly to{" "}
-              <a className="font-bold text-[#C2185B] underline underline-offset-4" href={scopeEmailHref}>
+              <a className="font-bold text-[#C2185B] underline underline-offset-4" href={`mailto:${contactEmail}`}>
                 {contactEmail}
               </a>
             </p>
@@ -184,7 +151,7 @@ export function PrelaunchLanding() {
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#C2185B]">How Kairos works today</span>
             <h2 className="mt-4 text-3xl font-bold text-zinc-950 dark:text-white sm:text-5xl">From defined need to relevant introduction.</h2>
             <p className="mt-5 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-              Concierge process gives clients a clear route to talent while our self-service experience is being developed.
+              Our concierge process gives clients a clear route to talent while our self-service experience is being developed.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -200,8 +167,18 @@ export function PrelaunchLanding() {
             ))}
           </div>
           <p className="mx-auto mt-9 max-w-4xl text-center text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-            Email your scope of work, project need, role description, required skills, expected hours, timeline, and budget. Our team will review the request and identify relevant talent for a manual introduction and matching process.
+            Send your scope of work, project need, role description, required skills, expected hours, timeline, and budget. Our team will review the request and identify relevant talent for a manual introduction and matching process.
           </p>
+          <div className="mt-7 text-center">
+            <button
+              type="button"
+              onClick={openRequestModal}
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#C2185B] px-6 py-3 font-bold text-white transition-colors hover:bg-[#A3154D]"
+            >
+              Tell Us What You Need
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </section>
 
@@ -236,10 +213,14 @@ export function PrelaunchLanding() {
                 These examples show areas Kairos can source. They do not represent a complete public inventory.
               </p>
             </div>
-            <a href={scopeEmailHref} className="inline-flex items-center gap-2 font-bold text-[#C2185B] hover:underline">
+            <button
+              type="button"
+              onClick={openRequestModal}
+              className="inline-flex items-center gap-2 font-bold text-[#C2185B] hover:underline"
+            >
               Need another specialty? Tell us
               <ArrowRight className="h-4 w-4" />
-            </a>
+            </button>
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {categories.map((category) => (
@@ -269,13 +250,15 @@ export function PrelaunchLanding() {
                   Our self-service marketplace is still in development. Some features and profiles shown in the platform preview may be limited or incomplete.
                 </p>
                 <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-                  <Link href="/talents" className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#C2185B] px-7 py-4 font-bold text-white transition-colors hover:bg-[#A3154D]">
-                    Preview Talent Experience
+                  <a
+                    href={getAppSignupUrl("company")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#C2185B] px-7 py-4 font-bold text-white transition-colors hover:bg-[#A3154D]"
+                  >
+                    Preview Company Platform
                     <ArrowRight className="h-5 w-5" />
-                  </Link>
-                  <Link href="/jobs" className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-white/20 px-7 py-4 font-bold text-white transition-colors hover:bg-white/10">
-                    Preview Opportunities
-                  </Link>
+                  </a>
                 </div>
               </div>
               <div className="border-t border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(194,24,91,0.4),transparent_45%)] p-8 sm:p-12 lg:border-l lg:border-t-0 lg:p-16">
@@ -294,23 +277,7 @@ export function PrelaunchLanding() {
         </div>
       </section>
 
-      <section id="why-kairos" className="scroll-mt-24 py-20 lg:py-28">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto mb-14 max-w-3xl text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#C2185B]">Why Kairos</span>
-            <h2 className="mt-4 text-3xl font-bold text-zinc-950 dark:text-white sm:text-5xl">Access, quality, and support built together.</h2>
-          </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {reasons.map((reason) => (
-              <article key={reason.title} className="rounded-[2rem] border border-zinc-200 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-900">
-                <reason.icon className="h-7 w-7 text-[#C2185B]" />
-                <h3 className="mt-6 text-xl font-bold text-zinc-950 dark:text-white">{reason.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{reason.description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <WhyKairosSection />
 
       <TrustSection />
 
@@ -335,41 +302,32 @@ export function PrelaunchLanding() {
 
       <Cofounders />
 
-      <section id="talent-early-access" className="scroll-mt-24 py-20 lg:py-28">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-10 rounded-[3rem] border border-[#C2185B]/20 bg-gradient-to-br from-pink-50 via-white to-blue-50 p-8 dark:from-pink-950/30 dark:via-zinc-900 dark:to-blue-950/20 sm:p-12 lg:grid-cols-[1fr_auto] lg:p-16">
-            <div className="max-w-3xl">
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#C2185B]">Talent early access</span>
-              <h2 className="mt-4 text-3xl font-bold text-zinc-950 dark:text-white sm:text-5xl">Prepare your profile before full launch.</h2>
-              <p className="mt-6 text-lg leading-relaxed text-zinc-600 dark:text-zinc-300">
-                Join our early talent network to be considered for opportunities as client demand grows and the platform moves toward full launch. Registration does not guarantee immediate placement.
-              </p>
-            </div>
-            <a
-              href={getAppSignupUrl("talent")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#C2185B] px-8 py-4 font-bold text-white shadow-lg shadow-pink-600/20 transition-all hover:-translate-y-0.5 hover:bg-[#A3154D]"
-            >
-              Join Our Early Talent Network
-              <ArrowRight className="h-5 w-5" />
-            </a>
-          </div>
-        </div>
-      </section>
-
       <section className="px-4 pb-24 pt-12 sm:px-6 lg:pb-32">
         <div className="container mx-auto overflow-hidden rounded-[3rem] bg-zinc-950 p-8 text-center text-white shadow-2xl sm:p-12 lg:p-20">
           <Mail className="mx-auto h-10 w-10 text-pink-400" />
           <p className="mt-6 text-xs font-bold uppercase tracking-[0.2em] text-pink-300">Ready to find the right talent?</p>
           <h2 className="mx-auto mt-4 max-w-4xl text-3xl font-bold sm:text-5xl">Tell us what you need. We will help you find the right talent.</h2>
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-zinc-300">
-            Send your scope, skills, expected hours, timeline, and budget. Our team will review your need and coordinate the next step.
+            Send us your scope, required skills, expected hours, timeline, and budget through our request form. Prefer to talk it through? Schedule a call with our customer success team.
           </p>
-          <a href={scopeEmailHref} className="mt-9 inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-[#C2185B] px-8 py-4 font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-[#A3154D]">
-            Send Us Your Scope of Work
-            <ArrowRight className="h-5 w-5" />
-          </a>
+          <div className="mt-9 flex flex-col justify-center gap-4 sm:flex-row">
+            <button
+              type="button"
+              onClick={openRequestModal}
+              className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-[#C2185B] px-8 py-4 font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-[#A3154D]"
+            >
+              Send Us Your Scope of Work
+              <ArrowRight className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={openScheduleModal}
+              className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl border border-white/25 px-8 py-4 font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-white/10"
+            >
+              <CalendarDays className="h-5 w-5" />
+              Schedule a Call
+            </button>
+          </div>
           <p className="mt-5 break-all text-sm text-zinc-400 sm:break-normal">{contactEmail}</p>
         </div>
       </section>

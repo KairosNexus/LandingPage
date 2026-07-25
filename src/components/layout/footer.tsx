@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { FaInstagram, FaLinkedin, FaXTwitter } from "react-icons/fa6";
+import { useIntent } from "@/components/providers/intent-provider";
+import { getAppSignupUrl } from "@/lib/app-links";
 
 export function Footer() {
+  const { intent } = useIntent();
   const socialLinks = [
     { name: "Instagram", href: "https://www.instagram.com/kairosnexus?igsh=ZDh3NTYyazgycXJ2", icon: FaInstagram },
     { name: "LinkedIn", href: "https://www.linkedin.com/company/kairosnexus/", icon: FaLinkedin },
@@ -13,11 +16,16 @@ export function Footer() {
   const sections = [
     {
       title: "PLATFORM",
-      links: [
-        { name: "How It Works Today", href: "/#how-it-works" },
-        { name: "Platform Preview", href: "/#platform-progress" },
-        { name: "Talent Early Access", href: "/#talent-early-access" },
-      ],
+      links:
+        intent === "talent"
+          ? [
+              { name: "Talent Early Access", href: "/#talent-early-access" },
+              { name: "Platform Preview", href: getAppSignupUrl("talent"), external: true },
+            ]
+          : [
+              { name: "How It Works Today", href: "/#how-it-works" },
+              { name: "Platform Preview", href: getAppSignupUrl("company"), external: true },
+            ],
     },
     {
       title: "COMPANY",
@@ -81,12 +89,23 @@ export function Footer() {
               <ul className="space-y-4">
                 {section.links.map((link) => (
                   <li key={link.name}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors cursor-pointer"
-                    >
-                      {link.name}
-                    </Link>
+                    {"external" in link && link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors cursor-pointer"
+                      >
+                        {link.name}
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className="text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors cursor-pointer"
+                      >
+                        {link.name}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -108,7 +127,9 @@ export function Footer() {
                   Kairos Nexus Global Insights
                 </h3>
                 <p className="mt-2 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-                  Get practical insights on global hiring, remote work, and building high-performing teams.
+                  {intent === "talent"
+                    ? "Get practical insights on remote work, career growth, and succeeding in global opportunities."
+                    : "Get practical insights on global hiring, remote work, and building high-performing teams."}
                 </p>
               </div>
             </div>

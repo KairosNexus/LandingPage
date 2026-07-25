@@ -4,12 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, MapPin, Phone, Mail, Send, MessageCircle, Loader2 } from "lucide-react";
 import emailjs from "@emailjs/browser";
+import { useBusinessInquiry } from "@/components/providers/business-inquiry-provider";
 
 const SERVICE_ID = "service_m61nt2b";
 const TEMPLATE_ID = "template_8dwls2b";
 const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "YOUR_PUBLIC_KEY_HERE";
 
 export function ContactClient() {
+  const { openScheduleModal } = useBusinessInquiry();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -88,10 +90,10 @@ export function ContactClient() {
               Get in Touch
             </span>
             <h1 className="text-4xl lg:text-6xl font-bold dark:text-white leading-tight mb-6">
-              Let's Start a Conversation
+              Let’s Start a Conversation
             </h1>
             <p className="text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto text-lg">
-              Whether you're seeking talent or seeking work, we're here to help. Reach out and let's explore how Kairos can work for you.
+              Whether you’re seeking talent or seeking work, we’re here to help. Reach out and let’s explore how Kairos can work for you.
             </p>
           </div>
         </div>
@@ -116,6 +118,15 @@ export function ContactClient() {
                   ))}
                 </div>
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">{info.desc}</p>
+                {info.title === "Schedule a Call" && (
+                  <button
+                    type="button"
+                    onClick={openScheduleModal}
+                    className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#C2185B] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#A3154D]"
+                  >
+                    Choose a Time
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -203,7 +214,7 @@ export function ContactClient() {
                 {status === "success" && (
                   <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl mb-4">
                     <p className="text-green-700 dark:text-green-300 font-medium text-center">
-                      Thanks for reaching out! We'll get back to you within 24 hours.
+                      Thanks for reaching out! We’ll get back to you within 24 hours.
                     </p>
                   </div>
                 )}

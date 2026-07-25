@@ -33,7 +33,7 @@ export const coFounders: Founder[] = [
   {
     name: "Jubelo Oyeniran",
     role: "Co-Founder",
-    bio: "Award-winning Stevenson University graduate and SU Pin Award recipient (valedictorian equivalent), Jubelo is a CPA candidate pursuing a master's in forensic accounting. He brings 3+ years of audit and consulting experience across Citrin Cooperman and Clearview Group, is a 2× national Johns Hopkins consulting case competition winner, built a $105K business at 17, has been featured by the NFL, and previously served as SGA President.",
+    bio: "Award-winning Stevenson University graduate and SU Pin Award recipient, the university’s valedictorian equivalent, Jubelo is a CPA candidate pursuing a master’s degree in forensic accounting. He brings more than three years of audit and consulting experience across Citrin Cooperman and Clearview Group, is a two-time national Johns Hopkins consulting case competition winner, built a $105,000 business at 17, has been featured by the NFL, and previously served as SGA President.",
     image: "/Jubelo.jpeg",
     linkedin: "https://www.linkedin.com/in/jubelooyeniran/",
     twitter:null,
@@ -41,7 +41,7 @@ export const coFounders: Founder[] = [
   {
     name: "Ayorinde Alase",
     role: "Co-Founder",
-    bio: "Doctoral candidate in Computer Engineering at University of Arkansas, Little Rock, with 3+ years building AI products. Former digital solutions developer at AXA, specializing in machine learning for insurance and healthcare. Expert in Python, deep learning, and algorithm development driving innovation in global tech solutions.",
+    bio: "Doctoral candidate in Computer Engineering at the University of Arkansas at Little Rock, with more than three years of experience building AI products. Former digital solutions developer at AXA, specializing in machine learning for insurance and healthcare. Expert in Python, deep learning, and algorithm development driving innovation in global technology solutions.",
     image: "/Ayorinde.jfif",
     linkedin: "https://www.linkedin.com/in/ayorinde-alase/",
     website: "https://www.ayoalase.com",
@@ -50,7 +50,7 @@ export const coFounders: Founder[] = [
 
 export function Cofounders() {
   return (
-    <section className="py-24" suppressHydrationWarning>
+    <section id="founders" className="scroll-mt-24 py-24" suppressHydrationWarning>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <span className="text-[#C2185B] font-bold text-xs uppercase tracking-widest mb-4 block">
