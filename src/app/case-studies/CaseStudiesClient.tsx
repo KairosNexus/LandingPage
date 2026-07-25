@@ -132,7 +132,7 @@ export function ReviewsClient() {
                 <p className="mt-4 text-zinc-400">Join companies and talent turning ambitious goals into real outcomes.</p>
               </div>
               <Link
-                href="/signup"
+                href="https://app.kairosng.com/auth/login"
                 className="relative mt-8 inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#C2185B] px-8 font-bold text-white transition-all hover:bg-[#A3154D] lg:mt-0"
               >
                 Get started
