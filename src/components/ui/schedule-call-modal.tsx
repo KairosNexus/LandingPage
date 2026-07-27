@@ -27,6 +27,8 @@ const initialForm = {
   time: "",
 };
 
+const schedulingTimeZone = "America/New_York";
+const schedulingTimeZoneLabel = "Eastern Time (ET)";
 const timeSlots = [
   "09:00",
   "10:00",
@@ -35,8 +37,71 @@ const timeSlots = [
   "13:00",
   "14:00",
   "15:00",
-  "16:00",
 ];
+
+const easternDateFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: schedulingTimeZone,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+const easternDateTimeFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: schedulingTimeZone,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
+});
+
+function partsByType(
+  formatter: Intl.DateTimeFormat,
+  date: Date
+): Record<string, string> {
+  return Object.fromEntries(
+    formatter
+      .formatToParts(date)
+      .filter(({ type }) => type !== "literal")
+      .map(({ type, value }) => [type, value])
+  );
+}
+
+function getEasternDate(date: Date): string {
+  const { year, month, day } = partsByType(easternDateFormatter, date);
+  return `${year}-${month}-${day}`;
+}
+
+function easternDateTimeToUtc(date: string, time: string): Date {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(
+    `${date}T${time}`
+  );
+  if (!match) return new Date(Number.NaN);
+
+  const [, year, month, day, hour, minute] = match.map(Number);
+  const targetWallTime = Date.UTC(year, month - 1, day, hour, minute);
+  let candidate = new Date(targetWallTime);
+
+  // Resolve Eastern offset for selected date, including daylight-saving time.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const parts = partsByType(easternDateTimeFormatter, candidate);
+    const candidateWallTime = Date.UTC(
+      Number(parts.year),
+      Number(parts.month) - 1,
+      Number(parts.day),
+      Number(parts.hour),
+      Number(parts.minute),
+      Number(parts.second)
+    );
+    candidate = new Date(
+      candidate.getTime() + targetWallTime - candidateWallTime
+    );
+  }
+
+  return candidate;
+}
 
 export function ScheduleCallModal({
   isOpen,
@@ -45,17 +110,7 @@ export function ScheduleCallModal({
   const [form, setForm] = useState(initialForm);
   const [state, setState] = useState<SubmissionState>("form");
   const [scheduledFor, setScheduledFor] = useState<Date | null>(null);
-  const timezone = useMemo(
-    () => Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
-    []
-  );
-  const minimumDate = useMemo(() => {
-    const today = new Date();
-    const offset = today.getTimezoneOffset();
-    return new Date(today.getTime() - offset * 60_000)
-      .toISOString()
-      .split("T")[0];
-  }, []);
+  const minimumDate = useMemo(() => getEasternDate(new Date()), []);
 
   const reset = () => {
     setForm(initialForm);
@@ -71,9 +126,10 @@ export function ScheduleCallModal({
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const selectedDate = new Date(`${form.date}T${form.time}:00`);
+    const selectedDate = easternDateTimeToUtc(form.date, form.time);
 
     if (
+      !timeSlots.includes(form.time) ||
       Number.isNaN(selectedDate.getTime()) ||
       selectedDate.getTime() <= Date.now()
     ) {
@@ -89,7 +145,7 @@ export function ScheduleCallModal({
         company: form.company,
         projectSummary: form.projectSummary,
         scheduledFor: selectedDate.toISOString(),
-        timezone,
+        timezone: schedulingTimeZone,
       });
       setScheduledFor(
         new Date(response.data?.scheduledFor || selectedDate.toISOString())
@@ -133,9 +189,10 @@ export function ScheduleCallModal({
                   {scheduledFor.toLocaleString([], {
                     dateStyle: "full",
                     timeStyle: "short",
+                    timeZone: schedulingTimeZone,
                   })}
                   <span className="mt-1 block text-sm font-normal text-zinc-500">
-                    {timezone}
+                    {schedulingTimeZoneLabel}
                   </span>
                 </p>
               )}
@@ -260,7 +317,8 @@ export function ScheduleCallModal({
                 </div>
 
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                  Times shown in your timezone: <strong>{timezone}</strong>.
+                  Available times: 9:00 AM–3:00 PM{" "}
+                  <strong>{schedulingTimeZoneLabel}</strong>.
                 </p>
 
                 <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
