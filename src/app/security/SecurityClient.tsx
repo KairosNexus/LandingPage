@@ -85,7 +85,7 @@ export function SecurityClient() {
       ],
       contact: {
         title: "Security Contact",
-        value: "kairosnexusglobal@gmail.com",
+        value: "info@kairosnexusglobal.com",
       },
     },
   ];
