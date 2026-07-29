@@ -15,16 +15,7 @@ export const reviews = [
     quote:
       "I thank Kairos Nexus for helping me secure a client, maximize the value of my time, and get well paid for it.",
   },
-  // {
-  //   id: "sarah-product-designer",
-  //   name: "Sarah",
-  //   company: "Product Designer",
-  //   service: "Talent placement",
-  //   date: "January",
-  //   initials: "SA",
-  //   quote:
-  //     "After months of applying through job boards with little response, Kairos helped me showcase my Figma expertise and design thinking. I was matched with a growing U.S. SaaS startup and secured a fully remote $4,200-per-month role within 14 days—three times my previous rate.",
-  // },
+  
   {
     id: "velma-funebe",
     name: "Velma Funebe",
