@@ -31,6 +31,7 @@ export function Footer() {
       title: "COMPANY",
       links: [
         { name: "About Us", href: "/about" },
+        { name: "Blog", href: "/blog" },
         { name: "Reviews", href: "/reviews" },
         { name: "Security", href: "/security" },
         { name: "Contact", href: "/contact" },

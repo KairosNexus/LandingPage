@@ -2,6 +2,10 @@
 
 Kairos is a premium bridge between high-quality remote talent and serious global opportunities. This landing page is built to serve two primary audiences: **U.S. Businesses** looking to cut hiring costs and **Global Talent** seeking serious remote work.
 
+For the current homepage architecture, preserved full-launch experience,
+audience flows, API contracts, and related backend implementation, see
+[Landing Page Architecture and Operations](docs/landing-page.md).
+
 ## 🚀 Tech Stack
 
 - **Framework:** [Next.js 16 (App Router)](https://nextjs.org/)
