@@ -75,7 +75,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     {
-      url: 'https://kairosng.com/signup',
+      url: 'https://app.kairosng.com/auth/login',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.5,

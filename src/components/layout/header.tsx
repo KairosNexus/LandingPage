@@ -7,20 +7,19 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/components/providers/auth-provider";
+import { useIntent } from "@/components/providers/intent-provider";
+import { useBusinessInquiry } from "@/components/providers/business-inquiry-provider";
 import { getAppSignupUrl } from "@/lib/app-links";
 
-interface HeaderProps {
-  intent: "talent" | "company";
-  setIntent: (intent: "talent" | "company") => void;
-}
-
-export function Header({ intent, setIntent }: HeaderProps) {
+export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { intent, setIntent } = useIntent();
+  const { openRequestModal } = useBusinessInquiry();
 
   const isDashboard = pathname.startsWith("/dashboard");
 
@@ -32,27 +31,32 @@ export function Header({ intent, setIntent }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const navLinks = intent === "company"
+    ? [
+        { name: "How It Works", href: "/#how-it-works" },
+        { name: "Who We Serve", href: "/#who-we-serve" },
+        { name: "Talent Categories", href: "/#talent-categories" },
+        { name: "Platform Preview", href: "/#platform-progress" },
+        { name: "Why Kairos", href: "/#why-kairos" },
+        { name: "About", href: "/about" },
+      ]
+    : [
+        { name: "Early Access", href: "/#talent-early-access" },
+        { name: "Platform Preview", href: "/#platform-progress" },
+        { name: "Why Kairos", href: "/#why-kairos" },
+        { name: "Meet the Founders", href: "/#founders" },
+        { name: "About", href: "/about" },
+      ];
+
   const handleIntentSwitch = () => {
-    const newIntent = intent === "talent" ? "company" : "talent";
-    setIntent(newIntent);
-    if (pathname !== "/") {
-      router.push("/");
-    }
+    setIntent(intent === "talent" ? "company" : "talent");
+    setIsMenuOpen(false);
+    if (pathname !== "/") router.push("/");
   };
 
-  const navLinks = [
-    { name: "About", href: "/about" },
-    { name: "How It Works", href: "/how-it-works" },
-    { name: "Blog", href: "/blog" },
-  ];
-
-  const getSignupText = () => intent === "talent" ? "Join as Talent" : "Start Hiring";
-  const getIntentLabel = () => {
-    if (user) {
-      return user.role === "COMPANY" || user.role === "ADMIN" || user.role === "SUPERADMIN" ? "For Talent" : "For Companies";
-    }
-    return intent === "talent" ? "For Companies" : "For Talent";
-  };
+  const switchLabel = intent === "talent" ? "For Businesses" : "For Talent";
+  const primaryHref = getAppSignupUrl("talent");
+  const primaryLabel = intent === "talent" ? "Join Early Talent" : "Send Scope of Work";
 
   const userInitials = user 
     ? `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase() 
@@ -84,12 +88,12 @@ export function Header({ intent, setIntent }: HeaderProps) {
           {!isDashboard && (
             <Link href="/" className="flex items-center gap-1 cursor-pointer">
               <img src="/logo.png" alt="Kairos Nexus Global logo" className="w-10 h-10 object-contain" />
-              <span className="text-xl font-bold dark:text-white">Kairos Nexus Global</span>
+              <span className="hidden text-xl font-bold dark:text-white sm:inline">Kairos Nexus Global</span>
             </Link>
           )}
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -99,18 +103,17 @@ export function Header({ intent, setIntent }: HeaderProps) {
                 {link.name}
               </Link>
             ))}
-            {!pathname.startsWith("/dashboard") && (
-              <button
-                onClick={handleIntentSwitch}
-                className="text-sm font-medium text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors cursor-pointer"
-              >
-                {getIntentLabel()}
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={handleIntentSwitch}
+              className="text-sm font-medium text-gray-600 transition-colors hover:text-black dark:text-gray-400 dark:hover:text-white"
+            >
+              {switchLabel}
+            </button>
           </nav>
 
           {/* Right Actions - Desktop */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             <ThemeToggle />
             {user ? (
               <div className="relative">
@@ -156,22 +159,32 @@ export function Header({ intent, setIntent }: HeaderProps) {
                   rel="noopener noreferrer"
                   className="text-sm font-medium text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors cursor-pointer"
                 >
-                  Sign In
+                  Sign In (Preview)
                 </a>
-                <a
-                  href={getAppSignupUrl(intent)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#C2185B] text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-[#A3154D] transition-colors cursor-pointer"
-                >
-                  {getSignupText()}
-                </a>
+                {intent === "talent" ? (
+                  <a
+                    href={primaryHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#C2185B] text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-[#A3154D] transition-colors cursor-pointer"
+                  >
+                    {primaryLabel}
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={openRequestModal}
+                    className="bg-[#C2185B] text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-[#A3154D] transition-colors cursor-pointer"
+                  >
+                    {primaryLabel}
+                  </button>
+                )}
               </>
             )}
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center gap-3">
+          <div className="flex lg:hidden items-center gap-3">
             <ThemeToggle />
             {user && (
               <button
@@ -193,7 +206,7 @@ export function Header({ intent, setIntent }: HeaderProps) {
 
       {/* Mobile Menu */}
       <div className={cn(
-        "md:hidden absolute top-16 left-0 w-full bg-white dark:bg-black transition-all duration-300 ease-in-out overflow-hidden border-b border-zinc-100 dark:border-zinc-800",
+        "lg:hidden absolute top-16 left-0 w-full bg-white dark:bg-black transition-all duration-300 ease-in-out overflow-hidden border-b border-zinc-100 dark:border-zinc-800",
         isMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
       )}>
         <nav className="flex flex-col p-4 gap-4">
@@ -207,17 +220,13 @@ export function Header({ intent, setIntent }: HeaderProps) {
               {link.name}
             </Link>
           ))}
-          {!pathname.startsWith("/dashboard") && (
-            <button
-              onClick={() => {
-                handleIntentSwitch();
-                setIsMenuOpen(false);
-              }}
-              className="text-left text-sm font-medium text-gray-600 dark:text-gray-400 py-2"
-            >
-              {getIntentLabel()}
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleIntentSwitch}
+            className="py-2 text-left text-sm font-medium text-gray-600 dark:text-gray-400"
+          >
+            {switchLabel}
+          </button>
           <div className="flex flex-col gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
             {user ? (
               <>
@@ -244,17 +253,30 @@ export function Header({ intent, setIntent }: HeaderProps) {
                   onClick={() => setIsMenuOpen(false)}
                   className="text-sm font-medium text-gray-600 dark:text-gray-400 py-2"
                 >
-                  Sign In
+                  Sign In (Preview)
                 </a>
-                <a 
-                  href={getAppSignupUrl(intent)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="bg-[#C2185B] text-white px-5 py-3 rounded-full text-sm font-medium text-center"
-                >
-                  {getSignupText()}
-                </a>
+                {intent === "talent" ? (
+                  <a
+                    href={primaryHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="bg-[#C2185B] text-white px-5 py-3 rounded-full text-sm font-medium text-center"
+                  >
+                    {primaryLabel}
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      openRequestModal();
+                    }}
+                    className="bg-[#C2185B] text-white px-5 py-3 rounded-full text-sm font-medium text-center"
+                  >
+                    {primaryLabel}
+                  </button>
+                )}
               </>
             )}
           </div>

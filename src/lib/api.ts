@@ -172,6 +172,60 @@ export interface ApiResponse<T> {
   data?: T;
 }
 
+export interface BusinessRequestInput {
+  fullName: string;
+  workEmail: string;
+  company?: string;
+  subject: string;
+  message: string;
+  attachments: File[];
+}
+
+export interface BusinessRequestResult {
+  requestId: string;
+  customerSuccessHandoff: boolean;
+}
+
+export async function submitBusinessRequest(
+  input: BusinessRequestInput
+): Promise<ApiResponse<BusinessRequestResult>> {
+  const formData = new FormData();
+  formData.append("fullName", input.fullName);
+  formData.append("workEmail", input.workEmail);
+  formData.append("company", input.company || "");
+  formData.append("subject", input.subject);
+  formData.append("message", input.message);
+  input.attachments.forEach((file) => formData.append("attachments", file));
+
+  const response = await apiClient.post("/business-inquiries/requests", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+}
+
+export interface CallBookingInput {
+  fullName: string;
+  workEmail: string;
+  company?: string;
+  projectSummary: string;
+  scheduledFor: string;
+  timezone: string;
+}
+
+export interface CallBookingResult {
+  bookingId: string;
+  scheduledFor: string;
+  timezone: string;
+  customerSuccessHandoff: boolean;
+}
+
+export async function scheduleCustomerSuccessCall(
+  input: CallBookingInput
+): Promise<ApiResponse<CallBookingResult>> {
+  const response = await apiClient.post("/business-inquiries/call-bookings", input);
+  return response.data;
+}
+
 export type UserRole = "STUDENT" | "COMPANY" | "ADMIN" | "SUPERADMIN";
 
 export interface RegisterRequest {
@@ -270,8 +324,8 @@ export interface PaginatedResponse<T> {
   data: T[];
   pagination: {
     total: number;
-    page: number;
-    limit: number;
+    pageNo: number;
+    pageSize: number;
     totalPages: number;
     hasNext: boolean;
     hasPrevious: boolean;

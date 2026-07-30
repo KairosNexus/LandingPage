@@ -1,15 +1,11 @@
 "use client";
 
+import { PrelaunchLanding } from "@/components/layout/prelaunch-landing";
+import { TalentPrelaunchLanding } from "@/components/layout/talent-prelaunch-landing";
 import { useIntent } from "@/components/providers/intent-provider";
-import { JobLanding } from "@/components/layout/job-landing";
-import { CompanyLanding } from "@/components/layout/company-landing";
 
 export default function Home() {
   const { intent } = useIntent();
 
-  return (
-    <>
-      {intent === "talent" ? <JobLanding /> : <CompanyLanding />}
-    </>
-  );
+  return intent === "talent" ? <TalentPrelaunchLanding /> : <PrelaunchLanding />;
 }

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChevronLeft, Briefcase, Building, MapPin, DollarSign, FileText, Users, Calendar, Clock } from "lucide-react";
 import { postJob, getJobById, updateJob, type JobRequest } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
-export default function PostJobPage() {
+function PostJobPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const jobId = searchParams.get("id");
@@ -333,5 +333,20 @@ export default function PostJobPage() {
          </div>
       </form>
     </div>
+  );
+}
+
+export default function PostJobPage() {
+  return (
+    <Suspense
+      fallback={(
+        <div className="space-y-8 p-6 lg:p-8">
+          <div className="h-24 animate-pulse rounded-2xl bg-zinc-100 dark:bg-zinc-900" />
+          <div className="h-96 animate-pulse rounded-[2rem] bg-zinc-100 dark:bg-zinc-900" />
+        </div>
+      )}
+    >
+      <PostJobPageContent />
+    </Suspense>
   );
 }

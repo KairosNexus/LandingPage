@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { Search, ArrowLeft, MapPin, Clock, Filter, Briefcase, DollarSign, ArrowRight } from "lucide-react";
+import { Suspense, useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { Search, ArrowLeft, MapPin, Clock, Briefcase, DollarSign, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { getPublicJobs, PublicJob } from "@/lib/api";
+import { PreviewNotice } from "@/components/ui/preview-notice";
 
-export default function JobsPage() {
+function JobsPageContent() {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "All");
@@ -76,6 +77,7 @@ export default function JobsPage() {
   return (
     <div className="pt-32 pb-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <PreviewNotice />
         {/* Header */}
         <div className="mb-12">
           <Link href="/" className="inline-flex items-center text-zinc-500 hover:text-[#C2185B] transition-colors mb-8 group">
@@ -256,5 +258,26 @@ export default function JobsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function JobsPage() {
+  return (
+    <Suspense
+      fallback={(
+        <div className="min-h-screen px-4 pb-20 pt-32 sm:px-6 lg:px-8">
+          <div className="container mx-auto">
+            <div className="h-32 animate-pulse rounded-2xl bg-zinc-100 dark:bg-zinc-900" />
+            <div className="mt-12 space-y-4">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <div key={index} className="h-32 animate-pulse rounded-[2rem] bg-zinc-100 dark:bg-zinc-900" />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    >
+      <JobsPageContent />
+    </Suspense>
   );
 }

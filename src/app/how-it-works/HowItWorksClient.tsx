@@ -303,13 +303,13 @@ export function HowItWorksClient() {
           </div>
           <div className="flex flex-col sm:flex-row gap-4 relative z-10">
             <Link
-              href="/signup"
+              href="https://app.kairosng.com/auth/login"
               className="px-8 py-4 rounded-2xl font-bold border border-white/20 text-white hover:bg-white/10 transition-colors text-center"
             >
               Explore as Talent
             </Link>
             <Link
-              href="/signup"
+              href="https://app.kairosng.com/auth/login"
               className="px-8 py-4 rounded-2xl font-bold bg-[#C2185B] text-white hover:bg-[#A3154D] transition-colors text-center"
             >
               Explore as Company
