@@ -10,7 +10,7 @@ export function Footer() {
   const socialLinks = [
     { name: "Instagram", href: "https://www.instagram.com/kairosnexus?igsh=ZDh3NTYyazgycXJ2", icon: FaInstagram },
     { name: "LinkedIn", href: "https://www.linkedin.com/company/kairosnexus/", icon: FaLinkedin },
-    { name: "X", href: "https://x.com/kairos_nexus?s=21", icon: FaXTwitter },
+    { name: "X", href: "https://x.com/kairosNexus?s=21", icon: FaXTwitter },
   ];
 
   const sections = [
