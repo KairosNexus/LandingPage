@@ -1,201 +1,238 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { X, Cookie, Settings, CheckCircle2 } from "lucide-react";
+import Script from "next/script";
+import {
+  CheckCircle,
+  Cookie,
+  SlidersHorizontal,
+  X,
+} from "@phosphor-icons/react";
 import { getStorageItem, setStorageItem } from "@/lib/storage";
 
+type CookiePreferences = {
+  analytics: boolean;
+  marketing: boolean;
+};
+
+const essentialPreferences: CookiePreferences = {
+  analytics: false,
+  marketing: false,
+};
+
+const allPreferences: CookiePreferences = {
+  analytics: true,
+  marketing: true,
+};
+
+function readStoredPreferences(): CookiePreferences | null {
+  const saved = getStorageItem("cookieConsent");
+
+  if (!saved) return null;
+  if (saved === "all") return allPreferences;
+  if (saved === "essential") return essentialPreferences;
+
+  try {
+    const parsed = JSON.parse(saved) as Partial<CookiePreferences>;
+    return {
+      analytics: parsed.analytics === true,
+      marketing: parsed.marketing === true,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export function CookieConsent() {
-  const [showConsent, setShowConsent] = useState(false);
+  const mounted = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
+  const [decision, setDecision] = useState<CookiePreferences | null | undefined>(undefined);
   const [showManage, setShowManage] = useState(false);
-  const [essentialOnly, setEssentialOnly] = useState(false);
+  const [draftAnalytics, setDraftAnalytics] = useState(false);
+  const [draftMarketing, setDraftMarketing] = useState(false);
 
-  useEffect(() => {
-    const consent = getStorageItem("cookieConsent");
-    if (!consent) {
-      setShowConsent(true);
-    }
-  }, []);
+  const storedPreferences = mounted ? readStoredPreferences() : undefined;
+  const preferences = decision === undefined ? storedPreferences : decision;
+  const showConsent = mounted && preferences === null;
 
-  const handleAcceptEssential = () => {
-    setStorageItem("cookieConsent", "essential");
-    setShowConsent(false);
+  const savePreferences = (nextPreferences: CookiePreferences) => {
+    setStorageItem("cookieConsent", JSON.stringify(nextPreferences));
+    setDecision(nextPreferences);
     setShowManage(false);
   };
 
-  const handleAcceptAll = () => {
-    setStorageItem("cookieConsent", "all");
-    setShowConsent(false);
-    setShowManage(false);
+  const openPreferences = () => {
+    setDraftAnalytics(preferences?.analytics ?? false);
+    setDraftMarketing(preferences?.marketing ?? false);
+    setShowManage(true);
   };
-
-  const handleSavePreferences = () => {
-    setStorageItem("cookieConsent", essentialOnly ? "essential" : "all");
-    setShowConsent(false);
-    setShowManage(false);
-  };
-
-  if (!showConsent) return null;
 
   return (
     <>
-      {/* Main Banner */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 shadow-2xl">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-start gap-4 flex-1">
-              <div className="w-12 h-12 bg-pink-50 dark:bg-pink-900/20 rounded-2xl flex items-center justify-center flex-shrink-0">
-                <Cookie className="w-6 h-6 text-[#C2185B]" />
+      {preferences?.analytics && (
+        <>
+          <Script
+            async
+            strategy="afterInteractive"
+            src="https://www.googletagmanager.com/gtag/js?id=G-HWKDMPSTMK"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-HWKDMPSTMK');
+            `}
+          </Script>
+        </>
+      )}
+
+      {showConsent && !showManage && (
+        <aside
+          aria-label="Cookie preferences"
+          className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-[820px] rounded-[24px] border border-black/10 bg-white/95 p-4 shadow-[0_22px_70px_rgba(55,18,34,0.18)] backdrop-blur-xl dark:border-white/10 dark:bg-[#1d1d1d]/95 sm:inset-x-5 sm:bottom-5 sm:p-5"
+        >
+          <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end sm:gap-6">
+            <div className="flex items-start gap-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#C2185B]/10 text-[#C2185B]">
+                <Cookie size={21} weight="regular" aria-hidden="true" />
               </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-bold dark:text-white mb-2">
-                  Cookie Consent
-                </h3>
-                <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
-                  We use cookies to improve your experience on our platform. By continuing to use our website, you agree to our{" "}
-                  <Link href="/privacy-policy" className="text-[#C2185B] font-bold hover:underline">
-                    Privacy Policy
-                  </Link>{" "}
-                  and{" "}
-                  <Link href="/terms-of-service" className="text-[#C2185B] font-bold hover:underline">
-                    Terms of Service
-                  </Link>
-                  .
+              <div>
+                <h2 className="text-base font-semibold tracking-[-0.02em]">Your privacy, your choice</h2>
+                <p className="mt-1 max-w-lg text-sm leading-6 text-[#666662] dark:text-[#b7b7b2]">
+                  We use optional analytics to understand what works. Essential cookies keep Kairos running. Read our{" "}
+                  <Link href="/privacy-policy" className="font-semibold text-[#C2185B] underline-offset-4 hover:underline">privacy policy</Link>.
                 </p>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:justify-end">
               <button
-                onClick={() => setShowManage(true)}
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                type="button"
+                onClick={openPreferences}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-black/10 px-4 text-sm font-semibold transition-colors hover:border-[#C2185B] hover:text-[#C2185B] dark:border-white/15"
               >
-                <Settings className="w-4 h-4" />
-                Manage Cookies
+                <SlidersHorizontal size={17} aria-hidden="true" />
+                Preferences
               </button>
               <button
-                onClick={handleAcceptEssential}
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                type="button"
+                onClick={() => savePreferences(essentialPreferences)}
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-black/10 px-4 text-sm font-semibold transition-colors hover:border-[#C2185B] hover:text-[#C2185B] dark:border-white/15"
               >
-                Essential Only
+                Essential only
               </button>
               <button
-                onClick={handleAcceptAll}
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#C2185B] text-white font-bold text-sm hover:bg-[#A3154D] transition-colors shadow-lg shadow-pink-500/20"
+                type="button"
+                onClick={() => savePreferences(allPreferences)}
+                className="col-span-2 inline-flex min-h-11 items-center justify-center rounded-full bg-[#C2185B] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#A3154D]"
               >
-                Accept All
-              </button>
-              <button
-                onClick={() => setShowConsent(false)}
-                className="p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
-              >
-                <X className="w-5 h-5" />
+                Allow all
               </button>
             </div>
           </div>
-        </div>
-      </div>
+        </aside>
+      )}
 
-      {/* Manage Preferences Modal */}
-      {showManage && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowManage(false)} />
-          <div className="relative bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-auto">
-            <div className="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+      {showConsent && showManage && (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-[#171717]/45 p-3 backdrop-blur-sm sm:items-center sm:p-5">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cookie-preferences-title"
+            className="relative w-full max-w-lg overflow-hidden rounded-[28px] border border-black/10 bg-white shadow-[0_28px_90px_rgba(23,23,23,0.24)] dark:border-white/10 dark:bg-[#1d1d1d]"
+          >
+            <header className="flex items-start justify-between border-b border-black/10 p-6 dark:border-white/10">
               <div>
-                <h3 className="text-xl font-bold dark:text-white">Cookie Preferences</h3>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Manage your cookie settings</p>
+                <p className="text-sm font-semibold text-[#C2185B]">Privacy controls</p>
+                <h2 id="cookie-preferences-title" className="mt-1 text-2xl font-medium tracking-[-0.035em]">Choose what Kairos can use</h2>
               </div>
               <button
+                type="button"
                 onClick={() => setShowManage(false)}
-                className="p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+                className="icon-button shrink-0"
+                aria-label="Close cookie preferences"
               >
-                <X className="w-5 h-5" />
+                <X size={20} aria-hidden="true" />
               </button>
-            </div>
+            </header>
 
-            <div className="p-6 space-y-6">
-              {/* Essential Cookies */}
-              <div className="p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="font-bold dark:text-white flex items-center gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-green-500" />
-                      Essential Cookies
-                    </h4>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                      Required for basic functionality. Always active.
-                    </p>
-                  </div>
-                  <div className="w-12 h-7 bg-green-500 rounded-full relative cursor-not-allowed">
-                    <div className="absolute right-1 top-1 w-5 h-5 bg-white rounded-full" />
-                  </div>
+            <div className="space-y-3 p-6">
+              <div className="flex items-start justify-between gap-5 rounded-[20px] bg-[#f7f7f5] p-4 dark:bg-white/5">
+                <div>
+                  <h3 className="flex items-center gap-2 font-semibold">
+                    <CheckCircle size={19} className="text-[#C2185B]" aria-hidden="true" />
+                    Essential
+                  </h3>
+                  <p className="mt-1 text-sm leading-6 text-[#666662] dark:text-[#b7b7b2]">Required for security, forms, and saved preferences.</p>
                 </div>
+                <span className="mt-0.5 shrink-0 text-xs font-semibold uppercase tracking-[0.12em] text-[#666662] dark:text-[#b7b7b2]">Always on</span>
               </div>
 
-              {/* Analytics & Performance */}
-              <div className="p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="font-bold dark:text-white">
-                      Analytics & Performance
-                    </h4>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                      Help us improve our website and understand how users interact with it.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setEssentialOnly(!essentialOnly)}
-                    className={`w-12 h-7 rounded-full relative transition-colors ${essentialOnly ? "bg-zinc-300 dark:bg-zinc-700" : "bg-[#C2185B]"}`}
-                  >
-                    <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${essentialOnly ? "left-1" : "right-1"}`} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Marketing */}
-              <div className="p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="font-bold dark:text-white">
-                      Marketing
-                    </h4>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                      Used to deliver personalized ads and content relevant to you.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setEssentialOnly(!essentialOnly)}
-                    className={`w-12 h-7 rounded-full relative transition-colors ${essentialOnly ? "bg-zinc-300 dark:bg-zinc-700" : "bg-[#C2185B]"}`}
-                  >
-                    <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${essentialOnly ? "left-1" : "right-1"}`} />
-                  </button>
-                </div>
-              </div>
+              <PreferenceRow
+                title="Analytics"
+                description="Helps us understand visits and improve the experience."
+                enabled={draftAnalytics}
+                onChange={() => setDraftAnalytics((enabled) => !enabled)}
+              />
+              <PreferenceRow
+                title="Marketing"
+                description="Allows more relevant campaign measurement and messaging."
+                enabled={draftMarketing}
+                onChange={() => setDraftMarketing((enabled) => !enabled)}
+              />
             </div>
 
-            <div className="p-6 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={handleAcceptEssential}
-                className="flex-1 px-6 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-              >
-                Essential Only
+            <footer className="grid grid-cols-2 gap-2 border-t border-black/10 p-6 dark:border-white/10">
+              <button type="button" onClick={() => savePreferences(essentialPreferences)} className="button-secondary">
+                Essential only
               </button>
               <button
-                onClick={handleAcceptAll}
-                className="flex-1 px-6 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                type="button"
+                onClick={() => savePreferences({ analytics: draftAnalytics, marketing: draftMarketing })}
+                className="button-primary"
               >
-                Accept All
+                Save choices
               </button>
-              <button
-                onClick={handleSavePreferences}
-                className="flex-1 px-6 py-3 rounded-xl bg-[#C2185B] text-white font-bold text-sm hover:bg-[#A3154D] transition-colors shadow-lg shadow-pink-500/20"
-              >
-                Save Preferences
-              </button>
-            </div>
-          </div>
+            </footer>
+          </section>
         </div>
       )}
     </>
+  );
+}
+
+function PreferenceRow({
+  title,
+  description,
+  enabled,
+  onChange,
+}: {
+  title: string;
+  description: string;
+  enabled: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-5 rounded-[20px] bg-[#f7f7f5] p-4 dark:bg-white/5">
+      <div>
+        <h3 className="font-semibold">{title}</h3>
+        <p className="mt-1 text-sm leading-6 text-[#666662] dark:text-[#b7b7b2]">{description}</p>
+      </div>
+      <button
+        type="button"
+        onClick={onChange}
+        role="switch"
+        aria-checked={enabled}
+        aria-label={`${title} cookies`}
+        className={`relative mt-0.5 h-7 w-12 shrink-0 rounded-full transition-colors ${enabled ? "bg-[#C2185B]" : "bg-black/15 dark:bg-white/20"}`}
+      >
+        <span className={`absolute left-1 top-1 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${enabled ? "translate-x-5" : "translate-x-0"}`} />
+      </button>
+    </div>
   );
 }
