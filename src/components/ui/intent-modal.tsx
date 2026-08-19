@@ -1,7 +1,14 @@
 "use client";
 
-import { X, Briefcase, Users } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import * as Dialog from "@radix-ui/react-dialog";
+import { useRef } from "react";
+import {
+  ArrowUpRight,
+  Buildings,
+  UserCircle,
+  X,
+} from "@phosphor-icons/react";
+import { motion, useReducedMotion } from "framer-motion";
 
 export interface IntentModalProps {
   isOpen: boolean;
@@ -9,106 +16,120 @@ export interface IntentModalProps {
   onSelect: (intent: "talent" | "company") => void;
 }
 
+const choices = [
+  {
+    intent: "company" as const,
+    title: "I'm hiring",
+    description: "I need vetted professionals for a project or an ongoing role.",
+    action: "Find talent",
+    icon: Buildings,
+    className: "bg-[#202020] text-[#f5f5f2] dark:bg-[#292929]",
+    iconClassName: "bg-white/10 text-[#f287b5]",
+    arrowClassName: "border-white/20 text-white",
+    copyClassName: "text-white/68",
+  },
+  {
+    intent: "talent" as const,
+    title: "I'm a professional",
+    description: "I want to build my profile and prepare for global opportunities.",
+    action: "Join as talent",
+    icon: UserCircle,
+    className: "bg-[#f7dce8] text-[#35101f] dark:bg-[#3a1d29] dark:text-[#fff7fa]",
+    iconClassName: "bg-white/65 text-[#C2185B] dark:bg-white/10 dark:text-[#f287b5]",
+    arrowClassName: "border-[#35101f]/15 text-[#35101f] dark:border-white/15 dark:text-white",
+    copyClassName: "text-[#674554] dark:text-white/68",
+  },
+];
+
 export function IntentModal({ isOpen, onClose, onSelect }: IntentModalProps) {
+  const reduceMotion = useReducedMotion();
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          {/* Backdrop */}
+    <Dialog.Root
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <Dialog.Portal>
+        <Dialog.Overlay asChild>
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            transition={{ duration: reduceMotion ? 0 : 0.22 }}
+            className="fixed inset-0 z-[100] bg-[#171717]/58 backdrop-blur-md"
           />
+        </Dialog.Overlay>
 
-          {/* Modal */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-sm bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-xl"
+        <div className="pointer-events-none fixed inset-0 z-[101] flex items-end justify-center sm:items-center sm:p-5">
+          <Dialog.Content
+            asChild
+            onOpenAutoFocus={(event) => {
+              event.preventDefault();
+              titleRef.current?.focus();
+            }}
           >
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-white/10 dark:bg-zinc-800/50 backdrop-blur-sm hover:bg-white/20 dark:hover:bg-zinc-800 transition-colors"
-              aria-label="Close modal"
+            <motion.section
+              initial={reduceMotion ? false : { opacity: 0, y: 24, scale: 0.975 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 280, damping: 27 }}
+              className="pointer-events-auto relative max-h-[calc(100dvh-0.75rem)] w-full overflow-y-auto rounded-t-[28px] border border-black/10 bg-white shadow-[0_30px_100px_rgba(45,14,28,0.28)] dark:border-white/10 dark:bg-[#1d1d1d] sm:max-w-[720px] sm:rounded-[28px]"
             >
-              <X className="w-4 h-4 text-zinc-600 dark:text-zinc-300" />
-            </button>
-
-            {/* Content */}
-            <div className="flex flex-col">
-              {/* Header */}
-              <div className="p-6 pb-4">
-                <h2 className="text-xl font-bold dark:text-white text-center mb-2">
-                  Welcome to Kairos Nexus Global
-                </h2>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 text-center">
-                  How can we help you today?
-                </p>
-              </div>
-
-              <p className="mx-6 mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-center text-xs leading-relaxed text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
-                Our self-service platform is still in development. Choose the path that best matches your visit.
-              </p>
-
-              {/* Options */}
-              <div className="px-4 pb-4 space-y-3">
-                {/* Company Option */}
+              <Dialog.Close asChild>
                 <button
-                  onClick={() => onSelect("company")}
-                  className="w-full group p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-[#C2185B] hover:bg-pink-50 dark:hover:bg-pink-900/10 transition-all duration-200"
+                  type="button"
+                  className="icon-button absolute right-4 top-4 z-10 bg-white/80 backdrop-blur-md dark:bg-[#1d1d1d]/80 sm:right-5 sm:top-5"
+                  aria-label="Close role selection"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center group-hover:scale-105 transition-transform">
-                      <Users className="w-5 h-5 text-[#C2185B]" />
-                    </div>
-                    <div className="text-left">
-                      <h4 className="font-semibold text-sm dark:text-white">
-                        I need talent
-                      </h4>
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                        Request concierge matching now
-                      </p>
-                    </div>
-                  </div>
+                  <X size={20} aria-hidden="true" />
                 </button>
+              </Dialog.Close>
 
-                {/* Talent Option */}
-                <button
-                  onClick={() => onSelect("talent")}
-                  className="w-full group p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-[#C2185B] hover:bg-pink-50 dark:hover:bg-pink-900/10 transition-all duration-200"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center group-hover:scale-105 transition-transform">
-                      <Briefcase className="w-5 h-5 text-[#C2185B]" />
+              <header className="px-5 pb-7 pt-8 pr-20 sm:px-8 sm:pb-8 sm:pt-9 sm:pr-24">
+                <Dialog.Title ref={titleRef} tabIndex={-1} className="max-w-xl text-[clamp(2rem,5vw,3.4rem)] font-medium leading-[0.98] tracking-[-0.052em] outline-none">
+                  What brings you to Kairos?
+                </Dialog.Title>
+                <Dialog.Description className="mt-4 max-w-lg text-base leading-7 text-[#666662] dark:text-[#b7b7b2]">
+                  Choose the path that fits today. You can switch whenever you need to.
+                </Dialog.Description>
+              </header>
+
+              <div className="grid gap-3 px-3 pb-3 sm:grid-cols-2 sm:px-4 sm:pb-4">
+                {choices.map((choice) => (
+                  <button
+                    key={choice.intent}
+                    type="button"
+                    onClick={() => onSelect(choice.intent)}
+                    className={`group flex min-h-52 flex-col justify-between rounded-[24px] border border-black/8 p-5 text-left transition-transform duration-200 hover:-translate-y-1 focus-visible:-translate-y-1 active:translate-y-0 sm:min-h-60 sm:p-6 ${choice.className}`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${choice.iconClassName}`}>
+                        <choice.icon size={25} weight="regular" aria-hidden="true" />
+                      </span>
+                      <span className={`flex h-10 w-10 items-center justify-center rounded-full border transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${choice.arrowClassName}`}>
+                        <ArrowUpRight size={18} weight="bold" aria-hidden="true" />
+                      </span>
                     </div>
-                    <div className="text-left">
-                      <h4 className="font-semibold text-sm dark:text-white">
-                        I am talent
-                      </h4>
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                        Join early for future opportunities
-                      </p>
+
+                    <div className="mt-10">
+                      <h3 className="text-2xl font-medium tracking-[-0.035em]">{choice.title}</h3>
+                      <p className={`mt-2 max-w-[28ch] text-sm leading-6 ${choice.copyClassName}`}>{choice.description}</p>
+                      <span className="mt-5 inline-block text-sm font-semibold">{choice.action}</span>
                     </div>
-                  </div>
-                </button>
+                  </button>
+                ))}
               </div>
 
-              {/* Footer Note */}
-              <div className="px-6 py-3 border-t border-zinc-100 dark:border-zinc-800">
-                <p className="text-center text-xs text-zinc-400 dark:text-zinc-500">
-                  You can switch paths at any time.
+              <footer className="border-t border-black/10 px-5 py-4 dark:border-white/10 sm:px-8">
+                <p className="text-sm leading-6 text-[#666662] dark:text-[#b7b7b2]">
+                  Human-led matching is available now. The self-service marketplace continues to grow.
                 </p>
-              </div>
-            </div>
-          </motion.div>
+              </footer>
+            </motion.section>
+          </Dialog.Content>
         </div>
-      )}
-    </AnimatePresence>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

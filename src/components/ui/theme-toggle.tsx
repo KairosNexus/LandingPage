@@ -1,78 +1,69 @@
 "use client";
 
-import * as React from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { Check, Desktop, Moon, Sun } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
-import { Moon, Sun, Monitor, Check } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const mounted = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
 
   useEffect(() => {
-    setMounted(true);
-    
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) setIsOpen(false);
     };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    return () => document.removeEventListener("mousedown", closeOnOutsideClick);
   }, []);
 
-  if (!mounted) return <div className="w-9 h-9" />;
+  if (!mounted) return <div className="h-11 w-11" aria-hidden="true" />;
 
   const options = [
     { value: "light", label: "Light", icon: Sun },
     { value: "dark", label: "Dark", icon: Moon },
-    { value: "system", label: "System", icon: Monitor },
+    { value: "system", label: "System", icon: Desktop },
   ];
+  const ActiveIcon = theme === "dark" ? Moon : theme === "light" ? Sun : Desktop;
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div ref={dropdownRef} className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center"
-        aria-label="Toggle theme"
+        type="button"
+        onClick={() => setIsOpen((open) => !open)}
+        className="flex h-11 w-11 items-center justify-center rounded-full text-[#5f5f5b] transition-colors hover:bg-black/5 dark:text-[#b7b7b2] dark:hover:bg-white/5"
+        aria-label="Choose color theme"
+        aria-expanded={isOpen}
       >
-        {theme === "dark" ? (
-          <Moon className="w-5 h-5 text-gray-400 hover:text-white" />
-        ) : theme === "light" ? (
-          <Sun className="w-5 h-5 text-gray-600 hover:text-black" />
-        ) : (
-          <Monitor className="w-5 h-5 text-gray-500" />
-        )}
+        <ActiveIcon size={20} weight="regular" aria-hidden="true" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl shadow-lg py-1 z-50 overflow-hidden">
+        <div className="absolute right-0 top-12 z-50 w-40 overflow-hidden rounded-2xl border border-black/10 bg-white p-1.5 shadow-xl dark:border-white/10 dark:bg-[#1d1d1d]">
           {options.map((option) => {
             const Icon = option.icon;
-            const isSelected = theme === option.value;
+            const selected = theme === option.value;
             return (
               <button
                 key={option.value}
+                type="button"
                 onClick={() => {
                   setTheme(option.value);
                   setIsOpen(false);
                 }}
                 className={cn(
-                  "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
-                  isSelected 
-                    ? "bg-[#C2185B]/10 text-[#C2185B] font-medium" 
-                    : "text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800"
+                  "flex min-h-11 w-full items-center justify-between rounded-xl px-3 text-sm transition-colors",
+                  selected ? "bg-[#C2185B]/10 font-semibold text-[#C2185B]" : "hover:bg-black/5 dark:hover:bg-white/5",
                 )}
               >
-                <div className="flex items-center gap-2">
-                  <Icon className="w-4 h-4" />
-                  {option.label}
-                </div>
-                {isSelected && <Check className="w-4 h-4" />}
+                <span className="flex items-center gap-2.5"><Icon size={18} aria-hidden="true" /> {option.label}</span>
+                {selected && <Check size={16} weight="bold" aria-hidden="true" />}
               </button>
             );
           })}

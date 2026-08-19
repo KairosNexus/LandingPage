@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ClientLayout } from "@/components/layout/client-layout";
-import Script from "next/script";
+import "@fontsource-variable/manrope";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Kairos Nexus Global | Vetted Global Talent, Matched to Your Needs",
-  description: "Kairos manually matches founders, businesses, organizations, and individuals with vetted global talent while our self-service platform is being built.",
+  title: "Kairos Nexus Global | Global Talent, Matched with Care",
+  description: "Kairos connects businesses with vetted global professionals through a hands-on matching process built around each scope of work.",
   icons: {
     icon: "/logo.png",
   },
@@ -24,21 +24,8 @@ export default function RootLayout({
       suppressHydrationWarning
       className="h-full antialiased"
     >
-      <Script
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=G-HWKDMPSTMK"
-      />
-      <Script id="google-analytics">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', 'G-HWKDMPSTMK');
-        `}
-      </Script>
-      <body 
-        className="min-h-full flex flex-col"
+      <body
+        className="flex min-h-full flex-col"
         suppressHydrationWarning
       >
         <AuthProvider>

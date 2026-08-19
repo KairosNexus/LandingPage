@@ -1,335 +1,257 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
-  BriefcaseBusiness,
-  CalendarDays,
-  CheckCircle2,
-  Clock3,
-  Code2,
-  Eye,
+  ArrowUpRight,
+  Brain,
+  Briefcase,
+  CalendarBlank,
+  ChartLineUp,
+  Check,
+  Code,
   Handshake,
-  Headphones,
-  Landmark,
-  Mail,
+  Headset,
+  MagnifyingGlass,
   Megaphone,
   Palette,
-  Rocket,
-  SearchCheck,
-  Sparkles,
-  Store,
-  UserRound,
-  UserRoundCheck,
-  Users,
-} from "lucide-react";
-import { Cofounders } from "./cofounders";
-import { TrustSection } from "./trust-section";
-import { getAppSignupUrl } from "@/lib/app-links";
+  ShieldCheck,
+  Sparkle,
+  UsersThree,
+} from "@phosphor-icons/react";
 import { useBusinessInquiry } from "@/components/providers/business-inquiry-provider";
+import { getAppSignupUrl } from "@/lib/app-links";
+import { Cofounders } from "./cofounders";
+import { TrustLogoRow } from "./trust-section";
 import { WhyKairosSection } from "./why-kairos-section";
+import { HeroReveal, Reveal } from "@/components/ui/landing-motion";
+import { HeroSculptures } from "@/components/ui/hero-sculptures";
 
-const contactEmail = "info@kairosnexusglobal.com";
-
-const processSteps = [
+const process = [
   {
-    title: "Send your request",
-    description:
-      "Complete the request form with your scope of work, role, required skills, expected hours, timeline, and budget. Attach any helpful documents.",
-    icon: BriefcaseBusiness,
+    title: "Share the work",
+    description: "Tell us the outcome, skills, timeline, and budget you have in mind.",
+    icon: Briefcase,
   },
   {
-    title: "Kairos reviews",
-    description: "Our team reviews the request and clarifies the experience, availability, and working style you need.",
-    icon: SearchCheck,
+    title: "We sharpen the brief",
+    description: "A Kairos specialist reviews the scope and closes any important gaps.",
+    icon: MagnifyingGlass,
   },
   {
-    title: "We source and match",
-    description: "We identify relevant vetted talent and coordinate a focused manual introduction.",
-    icon: UserRoundCheck,
+    title: "Meet relevant talent",
+    description: "We source vetted professionals and coordinate focused introductions.",
+    icon: UsersThree,
   },
   {
-    title: "Begin the engagement",
-    description: "Both sides align on scope, terms, and next steps, with Kairos helping the process move forward.",
+    title: "Start with clarity",
+    description: "Both sides align on terms, availability, and the first meaningful milestone.",
     icon: Handshake,
   },
 ];
 
-const audiences = [
-  { title: "Founders", description: "Specialists who can help turn a defined need into shipped work.", icon: UserRound },
-  { title: "Startups", description: "Flexible global talent for fast-moving product and growth priorities.", icon: Rocket },
-  { title: "Growing businesses", description: "Skilled support for teams expanding capacity without adding avoidable hiring friction.", icon: Store },
-  { title: "Organizations", description: "Vetted professionals for project, operational, and staffing needs.", icon: Landmark },
-  { title: "Individuals", description: "Specialist help for clearly scoped professional projects.", icon: Users },
-];
-
 const categories = [
-  { title: "Software Engineering", description: "Frontend, backend, full-stack, mobile, cloud, and quality assurance talent.", icon: Code2 },
-  { title: "Data and AI", description: "Data analysts, data engineers, machine-learning professionals, and AI specialists.", icon: Sparkles },
-  { title: "Product and Design", description: "Product managers, user interface and user experience designers, researchers, and creative specialists.", icon: Palette },
-  { title: "Marketing and Growth", description: "Content, performance marketing, social media, and growth talent.", icon: Megaphone },
-  { title: "Customer Success", description: "Customer support, onboarding, account management, and sales support.", icon: Headphones },
-  { title: "Operations", description: "Virtual assistance, project coordination, finance, and administrative support.", icon: BriefcaseBusiness },
+  {
+    title: "Software engineering",
+    description: "Frontend, backend, mobile, cloud, and quality engineering.",
+    icon: Code,
+    className: "md:col-span-7 md:row-span-2 bg-[#171717] text-white",
+    iconClassName: "bg-white/10 text-white",
+    image: "/talent_hero_.png",
+  },
+  {
+    title: "Data and AI",
+    description: "Analysts, data engineers, machine learning, and AI specialists.",
+    icon: Brain,
+    className: "md:col-span-5 bg-[#f7dce8] text-[#35101f]",
+    iconClassName: "bg-white/70 text-[#C2185B]",
+  },
+  {
+    title: "Product and design",
+    description: "Product managers, designers, researchers, and creative specialists.",
+    icon: Palette,
+    className: "md:col-span-5 bg-white dark:bg-[#1d1d1d]",
+    iconClassName: "bg-[#C2185B]/10 text-[#C2185B]",
+  },
+  {
+    title: "Marketing and growth",
+    description: "Content, acquisition, social media, and growth talent.",
+    icon: Megaphone,
+    className: "md:col-span-4 bg-white dark:bg-[#1d1d1d]",
+    iconClassName: "bg-[#C2185B]/10 text-[#C2185B]",
+  },
+  {
+    title: "Customer success",
+    description: "Onboarding, account management, support, and sales enablement.",
+    icon: Headset,
+    className: "md:col-span-4 bg-[#ececeb] dark:bg-[#242424]",
+    iconClassName: "bg-white dark:bg-white/10 text-[#C2185B]",
+  },
+  {
+    title: "Operations",
+    description: "Project coordination, finance, administration, and specialist support.",
+    icon: ChartLineUp,
+    className: "md:col-span-4 bg-[#C2185B] text-white",
+    iconClassName: "bg-white/15 text-white",
+  },
 ];
 
 export function PrelaunchLanding() {
   const { openRequestModal, openScheduleModal } = useBusinessInquiry();
 
   return (
-    <div className="flex-1 overflow-hidden">
-      <section className="relative px-4 pb-20 pt-28 sm:px-6 lg:pb-28 lg:pt-36">
-        <div className="absolute inset-x-0 top-0 -z-10 mx-auto h-[720px] max-w-7xl rounded-b-[5rem] bg-[radial-gradient(circle_at_top_left,rgba(194,24,91,0.16),transparent_42%),radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.12),transparent_34%)]" />
-        <div className="container mx-auto grid items-center gap-14 lg:grid-cols-[1.15fr_0.85fr]">
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded- border border-[#C2185B]/20 bg-white/70 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#C2185B] shadow-sm backdrop-blur dark:bg-zinc-900/70">
-              <Clock3 className="h-4 w-4" />
-              Pre-launch concierge matching available now
-            </div>
-            <h1 className="max-w-4xl text-4xl font-bold leading-[1.05] tracking-tight text-zinc-950 dark:text-white sm:text-6xl lg:text-7xl">
-              Global talent, matched to your business needs.
-            </h1>
-            <p className="mt-7 max-w-3xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-xl">
-              Kairos Nexus Global connects founders, businesses, organizations, and individuals with vetted global talent. Our full self-service platform is currently being built. In the meantime, our team is matching clients and talent manually.
-            </p>
-            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-              <button
-                type="button"
-                onClick={openRequestModal}
-                className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-[#C2185B] px-7 py-4 font-bold text-white shadow-xl shadow-pink-600/20 transition-all hover:-translate-y-0.5 hover:bg-[#A3154D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2185B] focus-visible:ring-offset-2"
-              >
-                <Mail className="h-5 w-5" />
-                Send Us Your Scope of Work
-              </button>
-              <Link
-                href="https://app.kairosng.com/auth/login"
-                className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl border border-zinc-300 bg-white/70 px-7 py-4 font-bold text-zinc-900 backdrop-blur transition-all hover:border-[#C2185B] hover:text-[#C2185B] dark:border-zinc-700 dark:bg-zinc-900/70 dark:text-white"
-              >
-                Explore Our Progress So Far
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-            </div>
-            
-            <p className="mt-5 text-sm text-zinc-500 dark:text-zinc-400">
-              Prefer email? Write directly to{" "}
-              <a className="font-bold text-[#C2185B] underline underline-offset-4" href={`mailto:${contactEmail}`}>
-                {contactEmail}
-              </a>
-            </p>
-          </div>
-
-          <div className="relative">
-            <div className="absolute -inset-8 -z-10 rounded-full bg-[#C2185B]/10 blur-3xl" />
-            <div className="rounded-[2.5rem] border border-zinc-200 bg-white/90 p-7 shadow-2xl shadow-zinc-950/10 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/90 sm:p-9">
-              <div className="mb-7 flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#C2185B]">Operating today</p>
-                  <h2 className="mt-2 text-2xl font-bold text-zinc-950 dark:text-white">Human-led talent matching</h2>
-                </div>
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300">
-                  <CheckCircle2 className="h-6 w-6" />
-                </div>
+    <div className="overflow-hidden">
+      <section className="px-3 pb-14 pt-[84px] sm:px-5 lg:pb-20 lg:pt-[92px]">
+        <div className="relative mx-auto flex min-h-[calc(100dvh-7.25rem)] max-w-[1440px] items-center overflow-hidden rounded-[28px] border border-black/10 bg-white px-5 py-16 dark:border-white/10 dark:bg-[#1d1d1d] sm:px-10 lg:px-16">
+          <HeroSculptures />
+          <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
+            <HeroReveal>
+              <p className="mb-6 text-xs font-semibold uppercase tracking-[0.18em] text-[#C2185B]">Human-led global talent matching</p>
+              <h1 className="text-[clamp(3rem,6vw,5.4rem)] font-medium leading-[0.96] tracking-[-0.055em] text-[#171717] dark:text-[#f5f5f2]">
+                Global talent.<br />Matched with care.
+              </h1>
+            </HeroReveal>
+            <HeroReveal delay={0.08} className="flex flex-col items-center">
+              <p className="mt-7 max-w-xl text-lg leading-8 text-[#5f5f5b] dark:text-[#b7b7b2]">
+                Kairos connects businesses with vetted global professionals through a hands-on process built around your exact scope.
+              </p>
+              <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                <button type="button" onClick={openRequestModal} className="button-primary">
+                  Send your scope
+                  <ArrowRight aria-hidden="true" weight="bold" />
+                </button>
+                <Link href="#how-it-works" className="button-secondary">See how it works</Link>
               </div>
-              <div className="space-y-4">
-                {["Tell us what you need", "We review and clarify the scope", "We identify relevant vetted talent", "We coordinate the introduction"].map((item, index) => (
-                  <div key={item} className="flex items-center gap-4 rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-800/70">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#C2185B] text-sm font-bold text-white">{index + 1}</span>
-                    <span className="font-semibold text-zinc-800 dark:text-zinc-100">{item}</span>
+            </HeroReveal>
+
+            <HeroReveal delay={0.14} className="mt-14 w-full border-t border-black/10 pt-7 dark:border-white/10">
+              <TrustLogoRow className="gap-y-5" />
+            </HeroReveal>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" className="scroll-mt-24 px-5 py-24 sm:px-7 lg:py-36">
+        <div className="mx-auto grid max-w-[1280px] gap-14 lg:grid-cols-[0.75fr_1.25fr] lg:gap-24">
+          <Reveal className="lg:sticky lg:top-28 lg:self-start">
+            <h2 className="max-w-lg text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
+              A clear path from need to introduction.
+            </h2>
+            <p className="mt-6 max-w-md text-lg leading-8 text-[#666662] dark:text-[#adada8]">
+              You bring the brief. We bring focused review, careful sourcing, and a real person to keep the process moving.
+            </p>
+          </Reveal>
+
+          <div className="border-t border-black/15 dark:border-white/15">
+            {process.map((item, index) => (
+              <Reveal key={item.title} delay={index * 0.04}>
+                <article className="grid gap-5 border-b border-black/15 py-8 dark:border-white/15 sm:grid-cols-[64px_1fr] sm:py-10">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#C2185B]/10 text-[#C2185B]">
+                    <item.icon size={24} weight="regular" aria-hidden="true" />
                   </div>
-                ))}
-              </div>
-              <p className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
-                Self-service marketplace remains in development. Manual matching is active now.
-              </p>
-            </div>
+                  <div>
+                    <h3 className="text-2xl font-medium tracking-[-0.025em]">{item.title}</h3>
+                    <p className="mt-2 max-w-xl leading-7 text-[#666662] dark:text-[#adada8]">{item.description}</p>
+                  </div>
+                </article>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
-      <section id="how-it-works" className="scroll-mt-24 py-20 lg:py-28">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto mb-14 max-w-3xl text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#C2185B]">How Kairos works today</span>
-            <h2 className="mt-4 text-3xl font-bold text-zinc-950 dark:text-white sm:text-5xl">From defined need to relevant introduction.</h2>
-            <p className="mt-5 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-              Our concierge process gives clients a clear route to talent while our self-service experience is being developed.
+      <section id="talent-categories" className="scroll-mt-24 px-5 py-24 sm:px-7 lg:py-36">
+        <div className="mx-auto max-w-[1280px]">
+          <Reveal>
+            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.18em] text-[#C2185B]">Talent categories</p>
+            <h2 className="max-w-3xl text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
+              Expertise for the work in front of you.
+            </h2>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#666662] dark:text-[#adada8]">
+              From product delivery to operations, we source around the outcome you need rather than a fixed public inventory.
             </p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {processSteps.map((step, index) => (
-              <article key={step.title} className="relative rounded-[2rem] border border-zinc-200 bg-white p-7 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-                <span className="absolute right-6 top-5 text-5xl font-black text-zinc-100 dark:text-zinc-800">{index + 1}</span>
-                <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-[#C2185B]/10 text-[#C2185B]">
-                  <step.icon className="h-6 w-6" />
-                </div>
-                <h3 className="relative mt-7 text-xl font-bold text-zinc-950 dark:text-white">{step.title}</h3>
-                <p className="relative mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{step.description}</p>
-              </article>
-            ))}
-          </div>
-          <p className="mx-auto mt-9 max-w-4xl text-center text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
-            Send your scope of work, project need, role description, required skills, expected hours, timeline, and budget. Our team will review the request and identify relevant talent for a manual introduction and matching process.
-          </p>
-          <div className="mt-7 text-center">
-            <button
-              type="button"
-              onClick={openRequestModal}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#C2185B] px-6 py-3 font-bold text-white transition-colors hover:bg-[#A3154D]"
-            >
-              Tell Us What You Need
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      </section>
+          </Reveal>
 
-      <section id="who-we-serve" className="scroll-mt-24 py-20 lg:py-28">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-14 max-w-3xl">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#C2185B]">Who we serve</span>
-            <h2 className="mt-4 text-3xl font-bold text-zinc-950 dark:text-white sm:text-5xl">Built for clear business and project needs.</h2>
-            <p className="mt-5 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-              Best results start with a defined outcome, role, project, or staffing requirement.
-            </p>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-            {audiences.map((audience) => (
-              <article key={audience.title} className="rounded-[2rem] border border-zinc-200 bg-gradient-to-b from-white to-pink-50/70 p-6 dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950">
-                <audience.icon className="h-7 w-7 text-[#C2185B]" />
-                <h3 className="mt-6 text-lg font-bold text-zinc-950 dark:text-white">{audience.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{audience.description}</p>
-              </article>
+          <div className="mt-14 grid grid-cols-1 gap-4 md:grid-cols-12">
+            {categories.map((category, index) => (
+              <Reveal key={category.title} className={`relative overflow-hidden rounded-[28px] ${category.className}`} delay={index * 0.04}>
+                <article className="relative flex h-full min-h-56 flex-col overflow-hidden rounded-[28px] border border-black/10 p-7 dark:border-white/10 sm:p-8">
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${category.iconClassName}`}>
+                    <category.icon size={24} weight="regular" aria-hidden="true" />
+                  </div>
+                  <div className="mt-auto pt-12">
+                    <h3 className="text-2xl font-medium tracking-[-0.03em]">{category.title}</h3>
+                    <p className="mt-3 max-w-md text-sm leading-6 opacity-75">{category.description}</p>
+                  </div>
+                  {category.image && (
+                    <div className="pointer-events-none absolute bottom-0 right-2 hidden h-[92%] w-[46%] md:block">
+                      <Image src={category.image} alt="" fill sizes="36vw" className="object-contain object-bottom" />
+                    </div>
+                  )}
+                </article>
+              </Reveal>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="talent-categories" className="scroll-mt-24 py-20 lg:py-28">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-            <div className="max-w-3xl">
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#C2185B]">Representative talent categories</span>
-              <h2 className="mt-4 text-3xl font-bold text-zinc-950 dark:text-white sm:text-5xl">Expertise matched around your scope.</h2>
-              <p className="mt-5 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-                These examples show areas Kairos can source. They do not represent a complete public inventory.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={openRequestModal}
-              className="inline-flex items-center gap-2 font-bold text-[#C2185B] hover:underline"
-            >
-              Need another specialty? Tell us
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {categories.map((category) => (
-              <article key={category.title} className="group rounded-[2rem] border border-zinc-200 bg-white p-7 transition-all hover:-translate-y-1 hover:border-[#C2185B]/30 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-50 text-[#C2185B] dark:bg-pink-950/40">
-                  <category.icon className="h-6 w-6" />
-                </div>
-                <h3 className="mt-6 text-xl font-bold text-zinc-950 dark:text-white">{category.title}</h3>
-                <p className="mt-3 leading-relaxed text-zinc-600 dark:text-zinc-400">{category.description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="platform-progress" className="scroll-mt-24 py-20 lg:py-28">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-[3rem] bg-zinc-950 text-white shadow-2xl">
-            <div className="grid lg:grid-cols-[1fr_0.85fr]">
-              <div className="p-8 sm:p-12 lg:p-16">
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-pink-300">
-                  <Eye className="h-4 w-4" />
-                  Platform preview · work in progress
-                </div>
-                <h2 className="mt-7 text-3xl font-bold sm:text-5xl">Explore what we have built so far.</h2>
-                <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-300">
-                  Our self-service marketplace is still in development. Some features and profiles shown in the platform preview may be limited or incomplete.
-                </p>
-                <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-                  <a
-                    href={getAppSignupUrl("company")}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#C2185B] px-7 py-4 font-bold text-white transition-colors hover:bg-[#A3154D]"
-                  >
-                    Preview Company Platform
-                    <ArrowRight className="h-5 w-5" />
-                  </a>
-                </div>
-              </div>
-              <div className="border-t border-white/10 bg-[radial-gradient(circle_at_top_right,rgba(194,24,91,0.4),transparent_45%)] p-8 sm:p-12 lg:border-l lg:border-t-0 lg:p-16">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-400">What preview means</p>
-                <ul className="mt-7 space-y-5">
-                  {["Features continue to evolve", "Public profiles may be limited", "Search does not represent our full sourcing reach", "Manual matching remains the best path today"].map((item) => (
-                    <li key={item} className="flex gap-3 text-zinc-200">
-                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-pink-400" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
       <WhyKairosSection />
 
-      <TrustSection />
-
-      <section id="mission" className="scroll-mt-24 py-20 lg:py-28">
-        <div className="container mx-auto grid gap-6 px-4 sm:px-6 md:grid-cols-2 lg:px-8">
-          <article className="rounded-[3rem] border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-900 sm:p-12">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#C2185B]">Our mission</span>
-            <h2 className="mt-5 text-3xl font-bold text-zinc-950 dark:text-white">Make global opportunity more accessible and trusted.</h2>
-            <p className="mt-6 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-              Kairos exists to connect capable professionals with serious work while helping businesses reach strong global talent with less friction and more confidence.
-            </p>
-          </article>
-          <article className="rounded-[3rem] bg-[#C2185B] p-8 text-white shadow-xl shadow-pink-800/20 sm:p-12">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-pink-100">Our vision</span>
-            <h2 className="mt-5 text-3xl font-bold">Build trusted infrastructure for cross-border work.</h2>
-            <p className="mt-6 text-lg leading-relaxed text-pink-50">
-              We are building toward a future where businesses and vetted talent can discover, evaluate, and begin meaningful engagements through a reliable self-service platform.
-            </p>
-          </article>
-        </div>
+      <section id="platform-progress" className="scroll-mt-24 px-5 py-24 sm:px-7 lg:py-36">
+        <Reveal className="mx-auto max-w-[1280px]">
+          <div className="grid overflow-hidden rounded-[28px] border border-black/10 bg-[#171717] text-white dark:border-white/10 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className="p-8 sm:p-12 lg:p-16">
+              <Sparkle size={30} weight="regular" className="text-[#ef8ab6]" aria-hidden="true" />
+              <h2 className="mt-10 max-w-2xl text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
+                Human support now. Self-service next.
+              </h2>
+              <p className="mt-6 max-w-xl text-lg leading-8 text-white/65">
+                Manual matching is active while the Kairos marketplace continues to grow. Explore the product preview to see what is taking shape.
+              </p>
+              <a href={getAppSignupUrl("company")} target="_blank" rel="noopener noreferrer" className="button-light mt-9">
+                Preview platform
+                <ArrowUpRight aria-hidden="true" weight="bold" />
+              </a>
+            </div>
+            <div className="flex flex-col justify-end border-t border-white/10 bg-[#232323] p-8 lg:border-l lg:border-t-0 lg:p-12">
+              <div className="space-y-5">
+                {["Manual matching is available today", "Platform features continue to evolve", "A Kairos specialist reviews every business request"].map((item) => (
+                  <div key={item} className="flex gap-3 border-b border-white/10 pb-5 text-white/75 last:border-0">
+                    <Check size={20} weight="bold" className="mt-0.5 shrink-0 text-[#ef8ab6]" aria-hidden="true" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </section>
 
       <Cofounders />
 
-      <section className="px-4 pb-24 pt-12 sm:px-6 lg:pb-32">
-        <div className="container mx-auto overflow-hidden rounded-[3rem] bg-zinc-950 p-8 text-center text-white shadow-2xl sm:p-12 lg:p-20">
-          <Mail className="mx-auto h-10 w-10 text-pink-400" />
-          <p className="mt-6 text-xs font-bold uppercase tracking-[0.2em] text-pink-300">Ready to find the right talent?</p>
-          <h2 className="mx-auto mt-4 max-w-4xl text-3xl font-bold sm:text-5xl">Tell us what you need. We will help you find the right talent.</h2>
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-zinc-300">
-            Send us your scope, required skills, expected hours, timeline, and budget through our request form. Prefer to talk it through? Schedule a call with our customer success team.
-          </p>
-          <div className="mt-9 flex flex-col justify-center gap-4 sm:flex-row">
-            <button
-              type="button"
-              onClick={openRequestModal}
-              className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-[#C2185B] px-8 py-4 font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-[#A3154D]"
-            >
-              Send Us Your Scope of Work
-              <ArrowRight className="h-5 w-5" />
-            </button>
-            <button
-              type="button"
-              onClick={openScheduleModal}
-              className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl border border-white/25 px-8 py-4 font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-white/10"
-            >
-              <CalendarDays className="h-5 w-5" />
-              Schedule a Call
-            </button>
+      <section className="px-5 pb-24 pt-12 sm:px-7 lg:pb-36">
+        <Reveal className="mx-auto max-w-[1280px]">
+          <div className="rounded-[28px] bg-[#C2185B] px-7 py-16 text-center text-white sm:px-12 sm:py-24">
+            <ShieldCheck size={34} weight="regular" className="mx-auto text-white/80" aria-hidden="true" />
+            <h2 className="mx-auto mt-7 max-w-4xl text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
+              Bring us the brief. We will find the people.
+            </h2>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/80">
+              Share the work, timeline, and budget. Our team will help turn it into a focused talent search.
+            </p>
+            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+              <button type="button" onClick={openRequestModal} className="button-light">
+                Send your scope
+                <ArrowRight aria-hidden="true" weight="bold" />
+              </button>
+              <button type="button" onClick={openScheduleModal} className="button-on-color">
+                <CalendarBlank aria-hidden="true" weight="regular" />
+                Book a call
+              </button>
+            </div>
           </div>
-          <p className="mt-5 break-all text-sm text-zinc-400 sm:break-normal">{contactEmail}</p>
-        </div>
+        </Reveal>
       </section>
     </div>
   );

@@ -1,174 +1,150 @@
-import Link from "next/link";
+"use client";
+
 import {
   ArrowRight,
-  BadgeCheck,
-  BriefcaseBusiness,
-  CheckCircle2,
-  Clock3,
-  Eye,
-  UserRoundPlus,
-} from "lucide-react";
-import { Cofounders } from "./cofounders";
-import { TrustSection } from "./trust-section";
+  ArrowUpRight,
+  Check,
+  IdentificationCard,
+  ShieldCheck,
+  Sparkle,
+  UserCircleCheck,
+} from "@phosphor-icons/react";
 import { getAppSignupUrl } from "@/lib/app-links";
+import { Cofounders } from "./cofounders";
+import { TrustLogoRow } from "./trust-section";
 import { WhyKairosSection } from "./why-kairos-section";
+import { HeroReveal, Reveal } from "@/components/ui/landing-motion";
+import { HeroSculptures } from "@/components/ui/hero-sculptures";
 
-const earlyAccessSteps = [
+const earlyAccess = [
   {
-    title: "Create your profile",
-    description: "Join through our pre-launch onboarding and share your experience, skills, and work preferences.",
-    icon: UserRoundPlus,
+    title: "Create a complete profile",
+    description: "Show your experience, preferred work, availability, and strongest evidence in one clear place.",
+    icon: IdentificationCard,
   },
   {
-    title: "Prepare for vetting",
-    description: "Complete the available profile and verification steps so your information is ready as the platform grows.",
-    icon: BadgeCheck,
+    title: "Complete readiness checks",
+    description: "Finish the onboarding and verification steps available as the platform moves toward launch.",
+    icon: ShieldCheck,
   },
   {
-    title: "Be considered as demand grows",
-    description: "Kairos may consider relevant profiles as client demand expands. Registration does not guarantee immediate placement.",
-    icon: BriefcaseBusiness,
+    title: "Be ready for a relevant match",
+    description: "Kairos can consider your profile as qualified client demand grows across the network.",
+    icon: UserCircleCheck,
   },
 ];
 
 export function TalentPrelaunchLanding() {
-  return (
-    <div className="flex-1 overflow-hidden">
-      <section className="relative px-4 pb-20 pt-28 sm:px-6 lg:pb-28 lg:pt-36">
-        <div className="absolute inset-x-0 top-0 -z-10 mx-auto h-[680px] max-w-7xl rounded-b-[5rem] bg-[radial-gradient(circle_at_top_left,rgba(194,24,91,0.16),transparent_42%),radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.12),transparent_34%)]" />
-        <div className="container mx-auto grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#C2185B]/20 bg-white/70 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#C2185B] shadow-sm backdrop-blur dark:bg-zinc-900/70">
-              <Clock3 className="h-4 w-4" />
-              Talent early access · pre-launch
-            </div>
-            <h1 className="max-w-4xl text-4xl font-bold leading-[1.05] tracking-tight text-zinc-950 dark:text-white sm:text-6xl lg:text-7xl">
-              Prepare for future global opportunities.
-            </h1>
-            <p className="mt-7 max-w-3xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-xl">
-              Kairos Nexus Global is building a platform that will connect vetted global talent with businesses and organizations. Join our early talent network as we complete the platform and grow client demand.
-            </p>
-            <p className="mt-4 font-semibold text-zinc-800 dark:text-zinc-200">
-              Registration does not guarantee an immediate opportunity or placement.
-            </p>
-            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-              <a
-                href={getAppSignupUrl("talent")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-[#C2185B] px-7 py-4 font-bold text-white shadow-xl shadow-pink-600/20 transition-all hover:-translate-y-0.5 hover:bg-[#A3154D]"
-              >
-                Join Our Early Talent Network
-                <ArrowRight className="h-5 w-5" />
-              </a>
-          
-            </div>
-          </div>
+  const signupUrl = getAppSignupUrl("talent");
 
-          <aside className="rounded-[2.5rem] border border-zinc-200 bg-white/90 p-8 shadow-2xl shadow-zinc-950/10 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/90">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#C2185B]">What early access means</p>
-            <h2 className="mt-3 text-2xl font-bold text-zinc-950 dark:text-white">Build launch readiness now.</h2>
-            <ul className="mt-7 space-y-5">
-              {[
-                "Create your talent profile before full launch",
-                "Complete available onboarding and verification steps",
-                "Be considered as relevant client demand grows",
-                "Expect more opportunities as the platform expands",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-3 text-zinc-700 dark:text-zinc-300">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#C2185B]" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <p className="mt-7 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200">
-              Self-service platform remains in development. Early registration prepares your profile for future opportunities; it does not promise immediate work.
-            </p>
-          </aside>
+  return (
+    <div className="overflow-hidden">
+      <section className="px-3 pb-14 pt-[84px] sm:px-5 lg:pb-20 lg:pt-[92px]">
+        <div className="relative mx-auto flex min-h-[calc(100dvh-7.25rem)] max-w-[1440px] items-center overflow-hidden rounded-[28px] border border-black/10 bg-white px-5 py-16 dark:border-white/10 dark:bg-[#1d1d1d] sm:px-10 lg:px-16">
+          <HeroSculptures />
+          <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
+            <HeroReveal>
+              <p className="mb-6 text-xs font-semibold uppercase tracking-[0.18em] text-[#C2185B]">Talent early access</p>
+              <h1 className="text-[clamp(3rem,6vw,5.4rem)] font-medium leading-[0.96] tracking-[-0.055em] text-[#171717] dark:text-[#f5f5f2]">
+                Build your profile.<br />Be ready for more.
+              </h1>
+            </HeroReveal>
+            <HeroReveal delay={0.08} className="flex flex-col items-center">
+              <p className="mt-7 max-w-xl text-lg leading-8 text-[#5f5f5b] dark:text-[#b7b7b2]">
+                Join Kairos early, complete your profile, and be ready as verified global opportunities begin to grow.
+              </p>
+              <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                <a href={signupUrl} target="_blank" rel="noopener noreferrer" className="button-primary">
+                  Join early access
+                  <ArrowRight aria-hidden="true" weight="bold" />
+                </a>
+                <a href="#talent-early-access" className="button-secondary">See what to expect</a>
+              </div>
+            </HeroReveal>
+            <HeroReveal delay={0.14} className="mt-14 w-full border-t border-black/10 pt-7 dark:border-white/10">
+              <TrustLogoRow className="gap-y-5" />
+            </HeroReveal>
+          </div>
         </div>
       </section>
 
-      <section id="talent-early-access" className="scroll-mt-24 py-20 lg:py-28">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto mb-14 max-w-3xl text-center">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#C2185B]">Early-access journey</span>
-            <h2 className="mt-4 text-3xl font-bold text-zinc-950 dark:text-white sm:text-5xl">Join now. Prepare for what comes next.</h2>
-            <p className="mt-5 text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-              Opportunities will expand as Kairos completes the platform and grows business demand.
+      <section id="talent-early-access" className="scroll-mt-24 px-5 py-24 sm:px-7 lg:py-36">
+        <div className="mx-auto max-w-[1280px]">
+          <Reveal>
+            <h2 className="max-w-3xl text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
+              Make your readiness visible.
+            </h2>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#666662] dark:text-[#adada8]">
+              Early access helps you prepare for future opportunities. Registration does not guarantee immediate work or placement.
             </p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            {earlyAccessSteps.map((step, index) => (
-              <article key={step.title} className="rounded-[2rem] border border-zinc-200 bg-white p-7 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-                <div className="flex items-center justify-between">
+          </Reveal>
+
+          <div className="mt-14 border-t border-black/15 dark:border-white/15">
+            {earlyAccess.map((item, index) => (
+              <Reveal key={item.title} delay={index * 0.05}>
+                <article className="grid gap-5 border-b border-black/15 py-9 dark:border-white/15 md:grid-cols-[72px_0.8fr_1.2fr] md:items-center">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#C2185B]/10 text-[#C2185B]">
-                    <step.icon className="h-6 w-6" />
+                    <item.icon size={25} weight="regular" aria-hidden="true" />
                   </div>
-                  <span className="text-4xl font-black text-zinc-100 dark:text-zinc-800">{index + 1}</span>
-                </div>
-                <h3 className="mt-6 text-xl font-bold text-zinc-950 dark:text-white">{step.title}</h3>
-                <p className="mt-3 leading-relaxed text-zinc-600 dark:text-zinc-400">{step.description}</p>
-              </article>
+                  <h3 className="text-2xl font-medium tracking-[-0.03em]">{item.title}</h3>
+                  <p className="max-w-xl leading-7 text-[#666662] dark:text-[#adada8]">{item.description}</p>
+                </article>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="platform-progress" className="scroll-mt-24 py-20 lg:py-28">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="overflow-hidden rounded-[3rem] bg-zinc-950 p-8 text-white shadow-2xl sm:p-12 lg:p-16">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-pink-300">
-              <Eye className="h-4 w-4" />
-              Platform preview · work in progress
+      <WhyKairosSection />
+
+      <section id="platform-progress" className="scroll-mt-24 px-5 py-24 sm:px-7 lg:py-36">
+        <Reveal className="mx-auto max-w-[1280px]">
+          <div className="grid overflow-hidden rounded-[28px] border border-black/10 bg-[#171717] text-white dark:border-white/10 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className="p-8 sm:p-12 lg:p-16">
+              <Sparkle size={30} weight="regular" className="text-[#ef8ab6]" aria-hidden="true" />
+              <h2 className="mt-10 max-w-2xl text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
+                See the platform taking shape.
+              </h2>
+              <p className="mt-6 max-w-xl text-lg leading-8 text-white/65">
+                The marketplace is still in development. Some profiles, opportunities, and tools in the preview may be limited or incomplete.
+              </p>
+              <a href={signupUrl} target="_blank" rel="noopener noreferrer" className="button-light mt-9">
+                Preview platform
+                <ArrowUpRight aria-hidden="true" weight="bold" />
+              </a>
             </div>
-            <h2 className="mt-7 max-w-3xl text-3xl font-bold sm:text-5xl">Explore the product being built.</h2>
-            <p className="mt-6 max-w-3xl text-lg leading-relaxed text-zinc-300">
-              Our self-service marketplace is still in development. Some features, opportunities, and profiles shown in the preview may be limited or incomplete.
-            </p>
-            <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-              <a
-                href={getAppSignupUrl("talent")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#C2185B] px-7 py-4 font-bold text-white transition-colors hover:bg-[#A3154D]"
-              >
-                Preview Talent Platform
-                <ArrowRight className="h-5 w-5" />
-              </a>
-              <a
-                href={getAppSignupUrl("talent")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-14 items-center justify-center rounded-2xl border border-white/20 px-7 py-4 font-bold text-white transition-colors hover:bg-white/10"
-              >
-                Create Early-Access Profile
-              </a>
+            <div className="flex flex-col justify-end border-t border-white/10 bg-[#232323] p-8 lg:border-l lg:border-t-0 lg:p-12">
+              <div className="space-y-5">
+                {["Profiles can be prepared before full launch", "Features continue to evolve", "Opportunities expand as client demand grows"].map((item) => (
+                  <div key={item} className="flex gap-3 border-b border-white/10 pb-5 text-white/75 last:border-0">
+                    <Check size={20} weight="bold" className="mt-0.5 shrink-0 text-[#ef8ab6]" aria-hidden="true" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
 
-      <WhyKairosSection />
-      <TrustSection />
       <Cofounders />
 
-      <section className="px-4 pb-24 pt-12 sm:px-6 lg:pb-32">
-        <div className="container mx-auto rounded-[3rem] bg-zinc-950 p-8 text-center text-white shadow-2xl sm:p-12 lg:p-20">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-pink-300">Talent early access</p>
-          <h2 className="mx-auto mt-4 max-w-4xl text-3xl font-bold sm:text-5xl">Create your talent profile before launch.</h2>
-          <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-zinc-300">
-            Join our early talent network to be considered for opportunities as client demand grows and the platform moves toward full launch. Registration does not guarantee immediate placement.
-          </p>
-          <a
-            href={getAppSignupUrl("talent")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-9 inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-[#C2185B] px-8 py-4 font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-[#A3154D]"
-          >
-            Join Our Early Talent Network
-            <ArrowRight className="h-5 w-5" />
-          </a>
-        </div>
+      <section className="px-5 pb-24 pt-12 sm:px-7 lg:pb-36">
+        <Reveal className="mx-auto max-w-[1280px]">
+          <div className="rounded-[28px] bg-[#C2185B] px-7 py-16 text-center text-white sm:px-12 sm:py-24">
+            <UserCircleCheck size={36} weight="regular" className="mx-auto text-white/80" aria-hidden="true" />
+            <h2 className="mx-auto mt-7 max-w-4xl text-4xl font-medium leading-[1.02] tracking-[-0.045em] sm:text-6xl">
+              Be ready when the right work appears.
+            </h2>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/80">
+              Build a complete Kairos profile now and strengthen it as new verification steps become available.
+            </p>
+            <a href={signupUrl} target="_blank" rel="noopener noreferrer" className="button-light mt-9">
+              Join early access
+              <ArrowRight aria-hidden="true" weight="bold" />
+            </a>
+          </div>
+        </Reveal>
       </section>
     </div>
   );
