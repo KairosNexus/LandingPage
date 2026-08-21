@@ -294,6 +294,7 @@ export interface PublicJob {
   type: string;
   experienceLevel: string;
   compensation?: string;
+  description: string;
   skills: string[];
   createdAt: string;
   applicationCloseDate?: string;

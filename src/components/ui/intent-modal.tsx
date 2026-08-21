@@ -1,6 +1,10 @@
 "use client";
 
-import { X, Briefcase, Users } from "lucide-react";
+import {
+  PiBriefcase as Briefcase,
+  PiUsers as Users,
+  PiX as X,
+} from "react-icons/pi";
 import { motion, AnimatePresence } from "framer-motion";
 
 export interface IntentModalProps {

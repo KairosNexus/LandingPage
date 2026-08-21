@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays } from "lucide-react";
 import { getPublicBlogBySlug } from "@/lib/api";
+import { sanitizeHtml } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -167,7 +168,7 @@ export default async function BlogDetailPage({
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div
             className="blog-content mx-auto mt-12 max-w-3xl"
-            dangerouslySetInnerHTML={{ __html: renderBlogContent(post.contentHtml) }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(renderBlogContent(post.contentHtml)) }}
           />
         </div>
       </article>

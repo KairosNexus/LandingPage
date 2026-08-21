@@ -1,80 +1,65 @@
-import React from "react";
+import Image from "next/image";
+
+const partners = [
+  { name: "Jobberman", logo: "/jobberman.png" },
+  { name: "PluralCode", logo: "/pluralcode.png" },
+  { name: "Maryland TEDCO", logo: "/tedco.png" },
+];
+
+const recognition = [
+  { name: "Pava Innovation", logo: "/pava.png" },
+  { name: "Spark Impact", logo: "/spark_baltimore.png" },
+  { name: "Howard University PNC", logo: "/howard_pnc.png" },
+];
+
+function LogoRow({ items }: { items: typeof partners }) {
+  return (
+    <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      {items.map((item) => (
+        <div
+          key={item.name}
+          className="flex min-h-24 items-center justify-center rounded-[20px] border border-black/[0.08] bg-white p-4"
+        >
+          <Image
+            src={item.logo}
+            alt={item.name}
+            width={160}
+            height={64}
+            className="h-9 w-auto max-w-full object-contain grayscale transition-[filter,opacity] duration-300 hover:grayscale-0"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export function TrustSection() {
-  const partners = [
-    { name: "Jobberman", logo: "/jobberman.png" },
-    { name: "PluralCode", logo: "/pluralcode.png" },
-    { name: "Maryland TEDCO", logo: "/tedco.png" },
-  ];
-
-  const awards = [
-    { name: "Pava Innovation", logo: "/pava.png" },
-    { name: "Spark Impact", logo: "/spark_baltimore.png" },
-    { name: "Howard University PNC", logo: "/howard_pnc.png" },
-  ];
-
-  // Double the arrays for seamless marquee loop
-  const marqueePartners = [...partners, ...partners, ...partners, ...partners];
-  const marqueeAwards = [...awards, ...awards, ...awards, ...awards];
-
   return (
-    <section className="py-24 border-y border-zinc-100 dark:border-zinc-800 bg-white dark:bg-black overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-16">
-        <div className="text-center">
-          <span className="text-[#C2185B] font-bold text-xs uppercase tracking-widest mb-2 block">Our Credibility</span>
-          <h2 className="text-3xl md:text-4xl font-bold dark:text-white">Trusted By Builders. Backed By Institutions.</h2>
-        </div>
-      </div>
-
-      <div className="space-y-12">
-        {/* Partners Marquee */}
-        <div className="flex flex-col gap-4">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] text-center">Strategic Partners & Backers</h3>
-          </div>
-          <div className="marquee-container">
-            <div className="animate-marquee py-4">
-              {marqueePartners.map((partner, index) => (
-                <div 
-                  key={`${partner.name}-${index}`} 
-                  className="flex items-center justify-center px-6 grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100"
-                >
-                  <div className="bg-[#FFF8FB] dark:bg-white p-4 rounded-[1.5rem] shadow-sm border border-zinc-100 dark:border-zinc-200 flex items-center justify-center min-w-[160px] h-20">
-                    <img 
-                      src={partner.logo} 
-                      alt={partner.name} 
-                      className="h-8 sm:h-10 w-auto object-contain max-w-[120px]" 
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+    <section className="py-24 sm:py-28 lg:py-36">
+      <div className="mx-auto max-w-[1440px] px-5 sm:px-8">
+        <div className="mb-12 max-w-3xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C2185B]">
+            Credibility
+          </p>
+          <h2 className="mt-5 text-4xl font-medium leading-[1.05] tracking-[-0.04em] text-[#171717] dark:text-[#F5F5F2] sm:text-5xl">
+            Trusted by builders. Backed by institutions.
+          </h2>
         </div>
 
-        {/* Awards Marquee */}
-        <div className="flex flex-col gap-4">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] text-center">Recognition & Awards</h3>
-          </div>
-          <div className="marquee-container">
-            <div className="animate-marquee-reverse py-4">
-              {marqueeAwards.map((award, index) => (
-                <div 
-                  key={`${award.name}-${index}`} 
-                  className="flex items-center justify-center px-6 grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100"
-                >
-                  <div className="bg-[#FFF8FB] dark:bg-white p-4 rounded-[1.5rem] shadow-sm border border-zinc-100 dark:border-zinc-200 flex items-center justify-center min-w-[160px] h-20">
-                    <img 
-                      src={award.logo} 
-                      alt={award.name} 
-                      className="h-8 sm:h-10 w-auto object-contain max-w-[120px]" 
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="grid gap-5 lg:grid-cols-12">
+          <article className="kairos-glass-card rounded-[28px] border border-black/10 p-7 sm:p-10 lg:col-span-7">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5F5F5B] dark:text-[#B7B7B2]">
+              Strategic partners and backers
+            </p>
+            <LogoRow items={partners} />
+          </article>
+
+          <article className="kairos-glass-card rounded-[28px] border border-black/10 p-7 sm:p-10 lg:col-span-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5F5F5B] dark:text-[#B7B7B2]">
+              Recognition and awards
+            </p>
+            <LogoRow items={recognition} />
+          </article>
         </div>
       </div>
     </section>

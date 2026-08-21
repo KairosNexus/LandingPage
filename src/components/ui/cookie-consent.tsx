@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { X, Cookie, Settings, CheckCircle2 } from "lucide-react";
+import {
+  PiCheckCircle as CheckCircle2,
+  PiCookie as Cookie,
+  PiGear as Settings,
+  PiX as X,
+} from "react-icons/pi";
 import { getStorageItem, setStorageItem } from "@/lib/storage";
 
 export function CookieConsent() {

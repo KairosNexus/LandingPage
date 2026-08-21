@@ -3,15 +3,15 @@
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
-  AlertCircle,
-  CheckCircle2,
-  FileText,
-  Loader2,
-  Paperclip,
-  ShieldAlert,
-  Trash2,
-  X,
-} from "lucide-react";
+  PiCheckCircle as CheckCircle2,
+  PiFileText as FileText,
+  PiPaperclip as Paperclip,
+  PiShieldWarning as ShieldAlert,
+  PiSpinnerGap as Loader2,
+  PiTrash as Trash2,
+  PiWarningCircle as AlertCircle,
+  PiX as X,
+} from "react-icons/pi";
 import { submitBusinessRequest } from "@/lib/api";
 
 type SubmissionState = "form" | "loading" | "success" | "error";

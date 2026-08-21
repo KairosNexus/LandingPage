@@ -96,7 +96,7 @@ export default function JobDetailPage() {
                   </div>
                   <div className="flex items-center gap-1.5">
                     <MapPin className="w-4 h-4" />
-                    {job.locationType}
+                    {job.location || job.locationType}
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Briefcase className="w-4 h-4" />
@@ -120,6 +120,13 @@ export default function JobDetailPage() {
                 Apply Now
               </button>
             </div>
+
+            {job.description && (
+              <div className="mt-8 pt-8 border-t border-zinc-100 dark:border-zinc-800">
+                <h2 className="text-xl font-bold dark:text-white mb-4">Job Description</h2>
+                <p className="text-zinc-700 dark:text-zinc-300 whitespace-pre-line leading-relaxed">{job.description}</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -31,8 +31,6 @@ export function IntentProvider({ children }: { children: React.ReactNode }) {
     setModalOverride(false);
   };
 
-  if (!hydrated) return null;
-
   return (
     <IntentContext.Provider 
       value={{ 

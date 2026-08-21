@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUp } from "lucide-react";
+import { PiArrowUp as ArrowUp } from "react-icons/pi";
 import { cn } from "@/lib/utils";
 
 export function ScrollToTop() {

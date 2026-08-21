@@ -3,12 +3,12 @@
 import { FormEvent, useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
-  AlertCircle,
-  CalendarDays,
-  CheckCircle2,
-  Loader2,
-  X,
-} from "lucide-react";
+  PiCalendar as CalendarDays,
+  PiCheckCircle as CheckCircle2,
+  PiSpinnerGap as Loader2,
+  PiWarningCircle as AlertCircle,
+  PiX as X,
+} from "react-icons/pi";
 import { scheduleCustomerSuccessCall } from "@/lib/api";
 
 type SubmissionState = "form" | "loading" | "success" | "error";

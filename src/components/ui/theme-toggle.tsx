@@ -2,19 +2,21 @@
 
 import * as React from "react";
 import { useTheme } from "next-themes";
-import { Moon, Sun, Monitor, Check } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { PiCheck, PiDesktop, PiMoon, PiSun } from "react-icons/pi";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
-    
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -28,9 +30,9 @@ export function ThemeToggle() {
   if (!mounted) return <div className="w-9 h-9" />;
 
   const options = [
-    { value: "light", label: "Light", icon: Sun },
-    { value: "dark", label: "Dark", icon: Moon },
-    { value: "system", label: "System", icon: Monitor },
+    { value: "light", label: "Light", icon: PiSun },
+    { value: "dark", label: "Dark", icon: PiMoon },
+    { value: "system", label: "System", icon: PiDesktop },
   ];
 
   return (
@@ -41,11 +43,11 @@ export function ThemeToggle() {
         aria-label="Toggle theme"
       >
         {theme === "dark" ? (
-          <Moon className="w-5 h-5 text-gray-400 hover:text-white" />
+          <PiMoon className="w-5 h-5 text-gray-400 hover:text-white" />
         ) : theme === "light" ? (
-          <Sun className="w-5 h-5 text-gray-600 hover:text-black" />
+          <PiSun className="w-5 h-5 text-gray-600 hover:text-black" />
         ) : (
-          <Monitor className="w-5 h-5 text-gray-500" />
+          <PiDesktop className="w-5 h-5 text-gray-500" />
         )}
       </button>
 
@@ -72,7 +74,7 @@ export function ThemeToggle() {
                   <Icon className="w-4 h-4" />
                   {option.label}
                 </div>
-                {isSelected && <Check className="w-4 h-4" />}
+                {isSelected && <PiCheck className="w-4 h-4" />}
               </button>
             );
           })}
