@@ -132,7 +132,7 @@ export function Header() {
         rel="noopener noreferrer"
         onClick={() => setIsMenuOpen(false)}
         className={cn(
-          "inline-flex min-h-11 items-center justify-center rounded-full bg-[#C2185B] px-5 text-sm font-semibold text-white transition-[background-color,box-shadow] duration-300 hover:bg-[#A3154D] hover:shadow-[0_10px_24px_rgba(194,24,91,0.2)]",
+          "kairos-header-primary-action inline-flex min-h-11 items-center justify-center rounded-full bg-[#C2185B] px-5 text-sm font-semibold text-white transition-[background-color,box-shadow] duration-300 hover:bg-[#A3154D] hover:shadow-[0_10px_24px_rgba(194,24,91,0.2)]",
           focusRing,
         )}
       >
@@ -146,7 +146,7 @@ export function Header() {
           openRequestModal();
         }}
         className={cn(
-          "inline-flex min-h-11 items-center justify-center rounded-full bg-[#C2185B] px-5 text-sm font-semibold text-white transition-[background-color,box-shadow] duration-300 hover:bg-[#A3154D] hover:shadow-[0_10px_24px_rgba(194,24,91,0.2)]",
+          "kairos-header-primary-action inline-flex min-h-11 items-center justify-center rounded-full bg-[#C2185B] px-5 text-sm font-semibold text-white transition-[background-color,box-shadow] duration-300 hover:bg-[#A3154D] hover:shadow-[0_10px_24px_rgba(194,24,91,0.2)]",
           focusRing,
         )}
       >
@@ -158,17 +158,17 @@ export function Header() {
     <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 lg:px-8">
       <div
         className={cn(
-          "kairos-header-glass mx-auto max-w-[1440px] rounded-full px-3 transition-[background-color,box-shadow,border-color] duration-300 sm:px-4",
+          "kairos-header-glass kairos-header-bar mx-auto max-w-[1440px] rounded-full px-3 transition-[background-color,box-shadow,border-color] duration-300 sm:px-4",
           isScrolled && "is-scrolled",
         )}
       >
-        <div className="flex h-14 items-center justify-between gap-3">
+        <div className="kairos-header-row flex h-14 items-center justify-between gap-3">
           {!isDashboard && (
             <Link
               href="/"
               aria-label="Kairos Nexus Global home"
               className={cn(
-                "flex min-h-11 shrink-0 items-center gap-2.5 rounded-full pr-2",
+                "kairos-header-brand flex min-h-11 shrink-0 items-center gap-2.5 rounded-full pr-2",
                 focusRing,
               )}
             >
@@ -190,7 +190,7 @@ export function Header() {
 
           <nav
             aria-label="Primary navigation"
-            className="hidden items-center gap-5 lg:flex xl:gap-7"
+            className="kairos-header-primary-nav hidden items-center gap-5 lg:flex xl:gap-7"
           >
             {navLinks.map((link) => (
               <Link
@@ -206,9 +206,9 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-2 lg:flex">
+          <div className="kairos-header-actions hidden items-center gap-2 lg:flex">
             <div
-              className="flex rounded-full border border-black/10 bg-white/70 p-1 dark:border-white/10 dark:bg-white/[0.04]"
+              className="kairos-audience-switch flex rounded-full border border-black/10 bg-white/70 p-1 dark:border-white/10 dark:bg-white/[0.04]"
               aria-label="Choose audience"
             >
               {(["company", "talent"] as const).map((audience) => (
@@ -282,7 +282,7 @@ export function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    "inline-flex min-h-11 items-center rounded-full px-2 text-sm font-medium text-[#5F5F5B] transition-colors hover:text-[#171717] dark:text-[#B7B7B2] dark:hover:text-white",
+                    "kairos-header-signin inline-flex min-h-11 items-center rounded-full px-2 text-sm font-medium text-[#5F5F5B] transition-colors hover:text-[#171717] dark:text-[#B7B7B2] dark:hover:text-white",
                     focusRing,
                   )}
                 >
@@ -316,7 +316,7 @@ export function Header() {
               aria-expanded={isMenuOpen}
               aria-controls="kairos-mobile-menu"
               className={cn(
-                "inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold text-[#171717] dark:text-[#F5F5F2]",
+                "kairos-header-menu-button inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold text-[#171717] dark:text-[#F5F5F2]",
                 focusRing,
               )}
             >

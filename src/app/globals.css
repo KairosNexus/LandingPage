@@ -1645,22 +1645,59 @@ select {
   box-shadow: 0 0 80px rgba(25, 25, 25, 0.07);
 }
 
-.design-2-shell > header { padding: 0 1rem; }
+.design-2-shell > header { padding: 1rem clamp(1rem, 2.2vw, 2rem) 0; }
 .design-2-shell .kairos-header-glass {
-  max-width: 1408px;
-  border: 0;
-  border-bottom: 1px solid rgba(25, 25, 25, 0.08);
-  border-radius: 0;
-  background: rgba(247, 245, 240, 0.92);
+  max-width: 1376px;
+  border: 1px solid transparent;
+  border-radius: 30px;
+  background: transparent;
   box-shadow: none;
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(20px);
 }
 .design-2-shell .kairos-header-glass::before { display: none; }
 .design-2-shell .kairos-header-glass.is-scrolled {
-  border-color: rgba(25, 25, 25, 0.12);
-  background: rgba(247, 245, 240, 0.96);
-  box-shadow: 0 12px 34px rgba(25, 25, 25, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(194, 24, 91, 0.97);
+  box-shadow: 0 20px 50px rgba(119, 12, 54, 0.24);
 }
+.design-2-shell .kairos-header-row { height: 4.65rem; padding-inline: 0.65rem; }
+.design-2-shell .kairos-header-brand > span:first-child { border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.96); }
+.design-2-shell .kairos-header-brand > span:last-child { color: var(--d2-ink) !important; font-size: 1rem; font-weight: 700; }
+.design-2-shell .kairos-header-primary-nav {
+  gap: 0.15rem;
+  padding: 0.3rem;
+  border: 1px solid rgba(25,25,25,.1);
+  border-radius: 999px;
+  background: rgba(255,255,255,.64);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+}
+.design-2-shell .kairos-header-primary-nav a { padding: .5rem .72rem; color: var(--d2-muted) !important; font-size: .76rem; }
+.design-2-shell .kairos-header-primary-nav a:hover { background: rgba(194,24,91,.08); color: var(--d2-brand) !important; }
+.design-2-shell .kairos-audience-switch { border-color: rgba(25,25,25,.1); background: rgba(255,255,255,.64); }
+.design-2-shell .kairos-audience-switch button[aria-pressed="false"] { color: var(--d2-muted) !important; }
+.design-2-shell .kairos-audience-switch button[aria-pressed="true"] { background: rgba(255,255,255,.96) !important; color: #123f41 !important; }
+.design-2-shell .kairos-header-signin { min-height: 2.7rem; padding-inline: 1rem; border: 1px solid rgba(25,25,25,.14); color: var(--d2-ink) !important; }
+.design-2-shell .kairos-header-signin:hover { border-color: var(--d2-brand); color: var(--d2-brand) !important; }
+.design-2-shell .kairos-header-primary-action { min-height: 2.7rem; padding-inline: 1.35rem; background: var(--d2-brand) !important; color: #fff !important; box-shadow: none !important; }
+.design-2-shell .kairos-header-primary-action:hover { background: #a3154d !important; }
+.design-2-shell .kairos-header-menu-button { color: var(--d2-ink) !important; }
+.design-2-shell .kairos-header-menu-button:hover { background: rgba(194,24,91,.08); }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-brand > span:last-child,
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-primary-nav a,
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-signin,
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-menu-button { color: #fff !important; }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-primary-nav,
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-audience-switch { border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.1); }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-primary-nav a:hover { background: rgba(255,255,255,.12); color: #fff !important; }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-audience-switch button[aria-pressed="false"] { color: rgba(255,255,255,.78) !important; }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-signin { border-color: rgba(255,255,255,.28); }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-primary-action { background: #080d0d !important; }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-primary-action:hover { background: #fff !important; color: #171717 !important; }
+.design-2-shell .kairos-header-menu-glass { background: rgba(194,24,91,.98); }
+.design-2-shell .kairos-header-menu-glass nav > p { color: rgba(255,255,255,.58) !important; }
+.design-2-shell .kairos-header-menu-glass nav > div:first-of-type a { color: #fff !important; }
+.design-2-shell .kairos-header-menu-glass nav > div:first-of-type a:hover { background: rgba(255,255,255,.1) !important; }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-actions > .relative > button svg { color: #fff !important; }
 
 .design-2-hero {
   min-height: min(940px, 100svh);
@@ -1794,7 +1831,8 @@ select {
 @keyframes d2-person-breathe { from { transform: translateY(0); } to { transform: translateY(-3px); } }
 
 @media (max-width: 767px) {
-  .design-2-shell > header { padding-inline: 0; }
+  .design-2-shell > header { padding: .75rem .75rem 0; }
+  .design-2-shell .kairos-header-row { height: 4.25rem; padding-inline: .25rem; }
   .design-2-hero { min-height: auto; padding: 7.5rem 1.25rem 0; }
   .design-2-hero-inner { min-height: auto; }
   .design-2-title { font-size: clamp(3rem, 15vw, 4.7rem); line-height: 0.98; }
@@ -1822,7 +1860,19 @@ select {
   --d2-rule: #383733;
 }
 .dark .design-2-shell .kairos-header-glass,
-.dark .design-2-shell .kairos-header-glass.is-scrolled { border-color: var(--d2-rule); background: rgba(23, 23, 22, 0.94); box-shadow: none; }
+.dark .design-2-shell .kairos-header-glass.is-scrolled {
+  border-color: rgba(255,255,255,.14);
+  background: rgba(194,24,91,.97);
+  box-shadow: 0 20px 52px rgba(0,0,0,.3);
+}
+.dark .design-2-shell .kairos-header-glass:not(.is-scrolled) { border-color: transparent; background: transparent; box-shadow: none; }
+.dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-header-brand > span:last-child,
+.dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-header-primary-nav a,
+.dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-header-signin,
+.dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-header-menu-button { color: #f5f2eb !important; }
+.dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-header-primary-nav,
+.dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-audience-switch { border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.06); }
+.dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-audience-switch button[aria-pressed="false"] { color: rgba(255,255,255,.7) !important; }
 .dark .design-2-primary-action { border-color: #f5f2eb; background: #f5f2eb; color: #171717; }
 .dark .design-2-primary-action:hover { border-color: var(--d2-brand); background: var(--d2-brand); color: white; }
 
