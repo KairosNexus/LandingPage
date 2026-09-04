@@ -146,7 +146,7 @@ export function Header() {
     );
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5 lg:px-8">
+    <header className="fixed inset-x-0 top-0 z-50 px-3 sm:px-5 lg:px-8">
       <div
         className={cn(
           "kairos-header-glass kairos-header-bar mx-auto max-w-[1440px] rounded-full px-3 transition-[background-color,box-shadow,border-color] duration-300 sm:px-4",
