@@ -30,6 +30,12 @@ const initialForm = {
 const schedulingTimeZone = "America/New_York";
 const schedulingTimeZoneLabel = "Eastern Time (ET)";
 const timeSlots = [
+  "03:00",
+  "04:00",
+  "05:00",
+  "06:00",
+  "07:00",
+  "08:00",
   "09:00",
   "10:00",
   "11:00",
@@ -38,6 +44,25 @@ const timeSlots = [
   "14:00",
   "15:00",
 ];
+
+const personalEmailDomains = new Set([
+  "aol.com",
+  "gmail.com",
+  "gmx.com",
+  "hotmail.com",
+  "icloud.com",
+  "live.com",
+  "mail.com",
+  "outlook.com",
+  "proton.me",
+  "protonmail.com",
+  "yahoo.com",
+]);
+
+function isWorkEmail(email: string): boolean {
+  const domain = email.trim().toLowerCase().split("@")[1];
+  return Boolean(domain && !personalEmailDomains.has(domain));
+}
 
 const easternDateFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: schedulingTimeZone,
@@ -109,12 +134,14 @@ export function ScheduleCallModal({
 }: ScheduleCallModalProps) {
   const [form, setForm] = useState(initialForm);
   const [state, setState] = useState<SubmissionState>("form");
+  const [errorMessage, setErrorMessage] = useState("");
   const [scheduledFor, setScheduledFor] = useState<Date | null>(null);
   const minimumDate = useMemo(() => getEasternDate(new Date()), []);
 
   const reset = () => {
     setForm(initialForm);
     setState("form");
+    setErrorMessage("");
     setScheduledFor(null);
   };
 
@@ -128,16 +155,26 @@ export function ScheduleCallModal({
     event.preventDefault();
     const selectedDate = easternDateTimeToUtc(form.date, form.time);
 
+    if (!isWorkEmail(form.workEmail)) {
+      setErrorMessage(
+        "Enter your company or organization email. Personal email addresses are not accepted."
+      );
+      setState("error");
+      return;
+    }
+
     if (
       !timeSlots.includes(form.time) ||
       Number.isNaN(selectedDate.getTime()) ||
       selectedDate.getTime() <= Date.now()
     ) {
+      setErrorMessage("Choose an available future date and time.");
       setState("error");
       return;
     }
 
     setState("loading");
+    setErrorMessage("");
     try {
       const response = await scheduleCustomerSuccessCall({
         fullName: form.fullName,
@@ -152,6 +189,9 @@ export function ScheduleCallModal({
       );
       setState("success");
     } catch {
+      setErrorMessage(
+        "Your call was not scheduled. Check your details and try again."
+      );
       setState("error");
     }
   };
@@ -199,14 +239,14 @@ export function ScheduleCallModal({
               <button
                 type="button"
                 onClick={close}
-                className="mt-8 inline-flex min-h-12 items-center justify-center rounded-xl bg-[#C2185B] px-7 py-3 font-bold text-white hover:bg-[#A3154D]"
+                className="mt-8 inline-flex min-h-12 items-center justify-center rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079]"
               >
                 Done
               </button>
             </div>
           ) : (
             <>
-              <CalendarDays className="h-9 w-9 text-[#C2185B]" />
+              <CalendarDays className="h-9 w-9 text-[#DE028E]" />
               <Dialog.Title className="mt-4 pr-10 text-3xl font-bold text-zinc-950 dark:text-white">
                 Schedule a Call With Customer Success
               </Dialog.Title>
@@ -219,8 +259,7 @@ export function ScheduleCallModal({
               {state === "error" && (
                 <div className="mt-5 flex gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-200">
                   <AlertCircle className="h-5 w-5 shrink-0" />
-                  Your call was not scheduled. Check your details, choose a
-                  future time, and try again.
+                  {errorMessage}
                 </div>
               )}
 
@@ -245,12 +284,20 @@ export function ScheduleCallModal({
                       type="email"
                       autoComplete="email"
                       maxLength={254}
+                      aria-describedby="schedule-work-email-help"
                       value={form.workEmail}
                       onChange={(event) =>
                         setForm({ ...form, workEmail: event.target.value })
                       }
                       className={inputClass}
                     />
+                    <span
+                      id="schedule-work-email-help"
+                      className="mt-2 block text-xs font-normal text-zinc-500 dark:text-zinc-400"
+                    >
+                      Use your company or organization email. Personal email
+                      addresses are not accepted.
+                    </span>
                   </ModalField>
                 </div>
 
@@ -317,7 +364,7 @@ export function ScheduleCallModal({
                 </div>
 
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                  Available times: 9:00 AM–3:00 PM{" "}
+                  Available times: 3:00 AM–3:00 PM{" "}
                   <strong>{schedulingTimeZoneLabel}</strong>.
                 </p>
 
@@ -333,7 +380,7 @@ export function ScheduleCallModal({
                   <button
                     type="submit"
                     disabled={state === "loading"}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#C2185B] px-7 py-3 font-bold text-white hover:bg-[#A3154D] disabled:opacity-60"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079] disabled:opacity-60"
                   >
                     {state === "loading" && (
                       <Loader2 className="h-5 w-5 animate-spin" />
@@ -351,7 +398,7 @@ export function ScheduleCallModal({
 }
 
 const inputClass =
-  "mt-2 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-950 outline-none transition focus:border-[#C2185B] focus:ring-2 focus:ring-[#C2185B]/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white";
+  "mt-2 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-950 outline-none transition focus:border-[#DE028E] focus:ring-2 focus:ring-[#DE028E]/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white";
 
 function ModalField({
   label,

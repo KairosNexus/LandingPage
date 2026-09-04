@@ -13,7 +13,7 @@ import { getAppSignupUrl } from "@/lib/app-links";
 import { cn } from "@/lib/utils";
 
 const focusRing =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C2185B] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-[#141414]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DE028E] focus-visible:ring-offset-2 dark:focus-visible:ring-[#FEC2E8] dark:focus-visible:ring-offset-[#141414]";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -88,20 +88,12 @@ export function Header() {
     };
   }, [isMenuOpen]);
 
-  const navLinks =
-    intent === "company"
-      ? [
-          { name: "How it works", href: "/#how-it-works" },
-          { name: "Talent", href: "/#talent-categories" },
-          { name: "Platform", href: "/#platform-progress" },
-          { name: "Why Kairos", href: "/#why-kairos" },
-        ]
-      : [
-          { name: "Early access", href: "/#talent-early-access" },
-          { name: "Platform", href: "/#platform-progress" },
-          { name: "Why Kairos", href: "/#why-kairos" },
-          { name: "Founders", href: "/#founders" },
-        ];
+  const navLinks = [
+    { name: "How it works", href: "/#how-it-works" },
+    { name: "Product", href: "/#product" },
+    { name: "About", href: "/about" },
+    { name: "Resources", href: "/blog" },
+  ];
 
   const chooseIntent = (nextIntent: "company" | "talent") => {
     setIntent(nextIntent);
@@ -110,8 +102,7 @@ export function Header() {
   };
 
   const primaryHref = getAppSignupUrl("talent");
-  const primaryLabel =
-    intent === "talent" ? "Join early talent" : "Send your scope";
+  const primaryLabel = intent === "talent" ? "Create your profile" : "Send your scope";
   const userInitials = user
     ? `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase()
     : "";
@@ -132,7 +123,7 @@ export function Header() {
         rel="noopener noreferrer"
         onClick={() => setIsMenuOpen(false)}
         className={cn(
-          "kairos-header-primary-action inline-flex min-h-11 items-center justify-center rounded-full bg-[#C2185B] px-5 text-sm font-semibold text-white transition-[background-color,box-shadow] duration-300 hover:bg-[#A3154D] hover:shadow-[0_10px_24px_rgba(194,24,91,0.2)]",
+          "kairos-header-primary-action inline-flex min-h-11 items-center justify-center rounded-full bg-[#DE028E] px-5 text-sm font-semibold text-white transition-[background-color,box-shadow] duration-300 hover:bg-[#C00079] hover:shadow-[0_10px_24px_rgba(222,2,142,0.2)]",
           focusRing,
         )}
       >
@@ -146,7 +137,7 @@ export function Header() {
           openRequestModal();
         }}
         className={cn(
-          "kairos-header-primary-action inline-flex min-h-11 items-center justify-center rounded-full bg-[#C2185B] px-5 text-sm font-semibold text-white transition-[background-color,box-shadow] duration-300 hover:bg-[#A3154D] hover:shadow-[0_10px_24px_rgba(194,24,91,0.2)]",
+          "kairos-header-primary-action inline-flex min-h-11 items-center justify-center rounded-full bg-[#DE028E] px-5 text-sm font-semibold text-white transition-[background-color,box-shadow] duration-300 hover:bg-[#C00079] hover:shadow-[0_10px_24px_rgba(222,2,142,0.2)]",
           focusRing,
         )}
       >
@@ -225,7 +216,7 @@ export function Header() {
                     focusRing,
                   )}
                 >
-                  {audience === "company" ? "Companies" : "Talent"}
+                  {audience === "company" ? "For companies" : "For talent"}
                 </button>
               ))}
             </div>
@@ -240,7 +231,7 @@ export function Header() {
                   aria-label="Open account menu"
                   aria-expanded={isUserMenuOpen}
                   className={cn(
-                    "flex h-11 w-11 items-center justify-center rounded-full bg-[#C2185B] text-sm font-semibold text-white",
+                    "flex h-11 w-11 items-center justify-center rounded-full bg-[#DE028E] text-sm font-semibold text-white",
                     focusRing,
                   )}
                 >
@@ -266,7 +257,7 @@ export function Header() {
                       <button
                         type="button"
                         onClick={handleLogout}
-                        className="flex min-h-11 w-full items-center gap-2 rounded-xl px-3 text-sm text-[#C2185B] hover:bg-[#C2185B]/[0.06]"
+                        className="flex min-h-11 w-full items-center gap-2 rounded-xl px-3 text-sm text-[#C00079] hover:bg-[#DE028E]/[0.06] dark:text-[#FEC2E8] dark:hover:bg-[#FEC2E8]/[0.08]"
                       >
                         <PiSignOut aria-hidden="true" className="h-4 w-4" />
                         Log out
@@ -301,7 +292,7 @@ export function Header() {
                 onClick={() => router.push("/dashboard")}
                 aria-label="Open dashboard"
                 className={cn(
-                  "flex h-11 w-11 items-center justify-center rounded-full bg-[#C2185B] text-sm font-semibold text-white",
+                  "flex h-11 w-11 items-center justify-center rounded-full bg-[#DE028E] text-sm font-semibold text-white",
                   focusRing,
                 )}
               >
@@ -340,7 +331,7 @@ export function Header() {
           className="kairos-header-glass kairos-header-menu-glass mx-auto mt-2 max-w-[1440px] overflow-hidden rounded-[24px] lg:hidden"
         >
         <nav aria-label="Mobile navigation" className="p-4 sm:p-5">
-          <p className="px-3 pb-2 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#777773] dark:text-[#999995]">
+          <p className="px-3 pb-2 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#666661] dark:text-[#B7B7B2]">
             Navigation
           </p>
           <div className="grid gap-1">
@@ -370,7 +361,7 @@ export function Header() {
           </div>
 
           <div className="my-4 h-px bg-black/10 dark:bg-white/10" />
-          <p className="px-3 pb-2 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#777773] dark:text-[#999995]">
+          <p className="px-3 pb-2 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-[#666661] dark:text-[#B7B7B2]">
             I am here to
           </p>
           <div className="grid grid-cols-2 gap-2">
@@ -425,7 +416,7 @@ export function Header() {
                   href="/dashboard"
                   onClick={() => setIsMenuOpen(false)}
                   className={cn(
-                    "inline-flex min-h-11 items-center justify-center rounded-full bg-[#C2185B] px-5 text-sm font-semibold text-white",
+                    "inline-flex min-h-11 items-center justify-center rounded-full bg-[#DE028E] px-5 text-sm font-semibold text-white",
                     focusRing,
                   )}
                 >
@@ -435,7 +426,7 @@ export function Header() {
                   type="button"
                   onClick={handleLogout}
                   className={cn(
-                    "inline-flex min-h-11 items-center justify-center rounded-full border border-[#C2185B]/20 px-5 text-sm font-semibold text-[#C2185B]",
+                    "inline-flex min-h-11 items-center justify-center rounded-full border border-[#DE028E]/20 px-5 text-sm font-semibold text-[#C00079] dark:border-[#FEC2E8]/40 dark:text-[#FEC2E8]",
                     focusRing,
                   )}
                 >

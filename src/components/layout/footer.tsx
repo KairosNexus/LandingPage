@@ -37,7 +37,11 @@ export function Footer() {
       links:
         intent === "talent"
           ? [
-              { name: "Talent early access", href: "/#talent-early-access" },
+              {
+                name: "Talent early access",
+                href: getAppSignupUrl("talent"),
+                external: true,
+              },
               {
                 name: "Platform preview",
                 href: getAppSignupUrl("talent"),
@@ -89,7 +93,7 @@ export function Footer() {
             </p>
             <a
               href="mailto:info@kairosnexusglobal.com"
-              className="mt-5 inline-block text-sm font-semibold text-[#C2185B] hover:underline"
+              className="mt-5 inline-block text-sm font-semibold text-[#C00079] hover:underline dark:text-[#FEC2E8]"
             >
               info@kairosnexusglobal.com
             </a>
@@ -101,7 +105,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.name}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-[#5F5F5B] transition-[border-color,color,box-shadow] hover:border-[#C2185B]/40 hover:text-[#C2185B] hover:shadow-md dark:border-white/10 dark:bg-[#1D1D1D] dark:text-[#B7B7B2]"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-[#5F5F5B] transition-[border-color,color,box-shadow] hover:border-[#DE028E]/40 hover:text-[#C00079] hover:shadow-md dark:border-white/10 dark:bg-[#1D1D1D] dark:text-[#B7B7B2] dark:hover:border-[#FEC2E8]/50 dark:hover:text-[#FEC2E8]"
                 >
                   <social.icon aria-hidden="true" className="h-5 w-5" />
                 </a>
@@ -112,7 +116,7 @@ export function Footer() {
           <div className="grid gap-10 sm:grid-cols-3 lg:col-span-7">
             {sections.map((section) => (
               <div key={section.title}>
-                <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-[#777773] dark:text-[#999995]">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-[#666661] dark:text-[#B7B7B2]">
                   {section.title}
                 </h3>
                 <ul className="mt-6 space-y-4">
@@ -145,11 +149,11 @@ export function Footer() {
 
         <div className="kairos-glass-card mt-16 flex flex-col gap-7 rounded-[28px] border border-black/10 p-7 sm:p-9 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#C2185B]/10 text-[#C2185B]">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#DE028E]/10 text-[#C00079] dark:text-[#FEC2E8]">
               <PiLinkedinLogo aria-hidden="true" className="h-6 w-6" />
             </span>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C2185B]">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C00079] dark:text-[#FEC2E8]">
                 LinkedIn newsletter
               </p>
               <h3 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-[#171717] dark:text-[#F5F5F2]">
@@ -166,14 +170,14 @@ export function Footer() {
             href="https://www.linkedin.com/newsletters/kairos-nexus-global-insights-7409364426522411008"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#C2185B] px-6 text-sm font-semibold text-white transition-[background-color,box-shadow] hover:bg-[#A3154D] hover:shadow-lg"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-[#DE028E] px-6 text-sm font-semibold text-white transition-[background-color,box-shadow] hover:bg-[#C00079] hover:shadow-lg"
           >
             Subscribe
             <PiArrowRight aria-hidden="true" className="h-4 w-4" />
           </a>
         </div>
 
-        <p className="mt-10 text-xs text-[#777773] dark:text-[#999995]">
+        <p className="mt-10 text-xs text-[#666661] dark:text-[#B7B7B2]">
           © {new Date().getFullYear()} Kairos Nexus Global. All rights reserved.
         </p>
       </div>

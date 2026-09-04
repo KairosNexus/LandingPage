@@ -1,91 +1,167 @@
 "use client";
 
-import Image from "next/image";
-import { PiArrowRight } from "react-icons/pi";
+import Link from "next/link";
+import { PiArrowRight, PiCheckCircle } from "react-icons/pi";
 import { useBusinessInquiry } from "@/components/providers/business-inquiry-provider";
 import { getAppSignupUrl } from "@/lib/app-links";
+import { HeroParticles } from "./hero-particles";
+import { ProductPreview } from "./product-preview";
 
 type LandingHeroProps = { audience: "company" | "talent" };
 
 const heroContent = {
   company: {
-    eyebrow: "Human-led matching available now",
-    headline: "Global talent,",
-    accent: "matched with clarity.",
+    eyebrow: "Verified. Skilled. Ready to work.",
+    headline: "Verified talent. Right fit. Ready to deliver.",
     description:
-      "Tell us what your business needs. Kairos finds and introduces vetted global talent while our self-service platform is being built.",
-    primaryLabel: "Send your scope",
-    secondaryLabel: "Sign up for talent",
+      "Tell us what you need. We introduce skilled professionals with identity and role-specific verification signals, visible availability, and clear delivery expectations.",
+    primaryLabel: "Submit your scope",
+    secondaryLabel: "Schedule a call",
+    exploreLabel: "Platform preview",
+    exploreHref: getAppSignupUrl("company"),
     trustItems: [
-      "Human-led matching",
-      "Vetted global talent",
-      "Self-service platform in progress",
+      "Talent identity checks",
+      "Role-specific skill evidence",
+      "Availability and delivery alignment",
     ],
   },
   talent: {
-    eyebrow: "Talent early access",
-    headline: "Prepare today for",
-    accent: "global opportunities.",
+    eyebrow: "Remote work. Strong earnings. Your Kairos moment.",
+    headline: "Prove your skills. Earn well from anywhere.",
     description:
-      "Build your profile and complete available verification steps as Kairos grows its network of global opportunities.",
-    primaryLabel: "Join early talent",
-    secondaryLabel: "Explore platform preview",
+      "Build a credible profile, prove what you can deliver, and pursue well-paid remote opportunities. Your next breakthrough could be your Kairos moment.",
+    primaryLabel: "Create your profile",
+    secondaryLabel: "Explore opportunities",
+    exploreLabel: "Platform preview",
+    exploreHref: getAppSignupUrl("talent"),
     trustItems: [
-      "Early profile access",
-      "Verification pathways",
-      "Platform in progress",
+      "Identity and skill verification",
+      "Jobs and applications",
+      "Protected messages and contracts",
     ],
   },
 } as const;
 
 export function LandingHero({ audience }: LandingHeroProps) {
   const content = heroContent[audience];
-  const { openRequestModal } = useBusinessInquiry();
-  const signupHref = getAppSignupUrl(audience);
+  const { openRequestModal, openScheduleModal } = useBusinessInquiry();
 
   return (
-    <section className="design-2-hero" aria-labelledby="design-2-hero-title">
-      <div className="design-2-hero-inner">
-        <p className="design-2-eyebrow kairos-hero-reveal kairos-hero-reveal-1">
-          {content.eyebrow}
-        </p>
-        <h1 id="design-2-hero-title" className="design-2-title kairos-hero-reveal kairos-hero-reveal-2">
-          <span>{content.headline}</span>{" "}<em>{content.accent}</em>
-        </h1>
-        <p className="design-2-summary kairos-hero-reveal kairos-hero-reveal-3">
-          {content.description}
-        </p>
-        <div className="design-2-actions kairos-hero-reveal kairos-hero-reveal-4">
-          {audience === "company" && (
-            <button type="button" onClick={openRequestModal} className="design-2-primary-action">
-              {content.primaryLabel}<PiArrowRight aria-hidden="true" />
-            </button>
-          )}
-          <a href={signupHref} target="_blank" rel="noopener noreferrer" className="design-2-secondary-action">
-            {content.secondaryLabel}
+    <section className="product-hero" aria-labelledby="product-hero-title">
+      <HeroParticles />
+      <div className="product-hero-cursor-glow" aria-hidden="true" />
+      <div className="product-hero-grid">
+        <div className="product-hero-copy">
+          <p className="product-eyebrow" data-hero-reveal>
+            {content.eyebrow}
+          </p>
+          <h1 id="product-hero-title" data-hero-reveal>
+            {audience === "company" ? (
+              <>
+                Verified talent. Right <span>fit.</span> Ready to deliver.
+              </>
+            ) : (
+              <>
+                Prove your skills. <span>Earn well</span> from anywhere.
+              </>
+            )}
+          </h1>
+          <p className="product-hero-summary" data-hero-reveal>
+            {content.description}
+          </p>
+          <div className="product-hero-actions" data-hero-reveal>
+            {audience === "company" ? (
+              <>
+                <button
+                  type="button"
+                  className="product-button product-button-primary"
+                  onClick={openRequestModal}
+                >
+                  {content.primaryLabel}
+                  <PiArrowRight aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  className="product-button product-button-secondary"
+                  onClick={openScheduleModal}
+                >
+                  {content.secondaryLabel}
+                </button>
+              </>
+            ) : (
+              <>
+                <a
+                  className="product-button product-button-primary"
+                  href={getAppSignupUrl("talent")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {content.primaryLabel}
+                  <PiArrowRight aria-hidden="true" />
+                </a>
+                <Link
+                  className="product-button product-button-secondary"
+                  href="/jobs"
+                >
+                  {content.secondaryLabel}
+                </Link>
+              </>
+            )}
+          </div>
+          <a
+            className="product-hero-explore"
+            href={content.exploreHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-hero-reveal
+          >
+            {content.exploreLabel}
           </a>
+          {audience === "talent" && (
+            <p className="product-hero-disclaimer" data-hero-reveal>
+              Registration and verification do not guarantee immediate placement.
+            </p>
+          )}
         </div>
-        {audience === "talent" && (
-          <p className="design-2-disclaimer">Registration does not guarantee immediate placement.</p>
-        )}
-        <div className="design-2-scene-wrap kairos-hero-reveal kairos-hero-reveal-5">
-          <Image
-            src="/vector.svg"
-            alt=""
-            width={1344}
-            height={768}
-            priority
-            unoptimized
-            className="design-2-vector-scene"
-            sizes="(max-width: 767px) 190vw, 100vw"
+
+        <div className="product-hero-aside" data-hero-reveal>
+          <p>Available workspace</p>
+          <span>Home</span>
+          <i />
+          <span>Jobs</span>
+          <i />
+          <span>Messages</span>
+          <i />
+          <span>Contracts</span>
+        </div>
+      </div>
+
+      <div className="product-hero-preview" data-hero-reveal>
+        <ProductPreview kind="dashboard" audience={audience} />
+        <div className="product-hero-detail product-hero-detail-one">
+          <ProductPreview kind="verification" audience={audience} compact />
+        </div>
+        <div className="product-hero-detail product-hero-detail-two">
+          <ProductPreview
+            kind={audience === "company" ? "messaging" : "jobs"}
+            audience={audience}
+            compact
           />
         </div>
-        <ul className="design-2-trust" aria-label="Kairos service highlights">
-          {content.trustItems.map((item, index) => (
-            <li key={item}><span>0{index + 1}</span>{item}</li>
-          ))}
-        </ul>
       </div>
+
+      <ul
+        className="product-trust-row"
+        aria-label="Kairos service highlights"
+        data-hero-reveal
+      >
+        {content.trustItems.map((item) => (
+          <li key={item}>
+            <PiCheckCircle aria-hidden="true" />
+            {item}
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

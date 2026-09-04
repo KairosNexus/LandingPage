@@ -129,7 +129,7 @@ export function BusinessRequestModal({
               <button
                 type="button"
                 onClick={close}
-                className="mt-8 inline-flex min-h-12 items-center justify-center rounded-xl bg-[#C2185B] px-7 py-3 font-bold text-white hover:bg-[#A3154D]"
+                className="mt-8 inline-flex min-h-12 items-center justify-center rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079]"
               >
                 Done
               </button>
@@ -148,7 +148,7 @@ export function BusinessRequestModal({
                 <button
                   type="button"
                   onClick={() => setState("form")}
-                  className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#C2185B] px-7 py-3 font-bold text-white hover:bg-[#A3154D]"
+                  className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079]"
                 >
                   Try Again
                 </button>
@@ -275,7 +275,7 @@ export function BusinessRequestModal({
                   />
                   <label
                     htmlFor="business-request-attachments"
-                    className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-zinc-300 px-4 py-3 text-sm font-bold text-zinc-800 transition-colors hover:border-[#C2185B] hover:text-[#C2185B] dark:border-zinc-700 dark:text-zinc-100"
+                    className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-zinc-300 px-4 py-3 text-sm font-bold text-zinc-800 transition-colors hover:border-[#DE028E] hover:text-[#C00079] dark:border-zinc-700 dark:text-zinc-100 dark:hover:text-[#FEC2E8]"
                   >
                     <Paperclip className="h-4 w-4" />
                     Choose Files
@@ -294,7 +294,7 @@ export function BusinessRequestModal({
                           key={`${file.name}-${file.lastModified}-${index}`}
                           className="flex items-center gap-3 rounded-xl bg-zinc-50 px-3 py-2 dark:bg-zinc-900"
                         >
-                          <FileText className="h-4 w-4 shrink-0 text-[#C2185B]" />
+                          <FileText className="h-4 w-4 shrink-0 text-[#DE028E]" />
                           <span className="min-w-0 flex-1 truncate text-sm text-zinc-700 dark:text-zinc-300">
                             {file.name}
                           </span>
@@ -330,7 +330,7 @@ export function BusinessRequestModal({
                   <button
                     type="submit"
                     disabled={state === "loading"}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#C2185B] px-7 py-3 font-bold text-white hover:bg-[#A3154D] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {state === "loading" && (
                       <Loader2 className="h-5 w-5 animate-spin" />
@@ -350,7 +350,7 @@ export function BusinessRequestModal({
 }
 
 const inputClass =
-  "mt-2 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-950 outline-none transition focus:border-[#C2185B] focus:ring-2 focus:ring-[#C2185B]/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white";
+  "mt-2 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-950 outline-none transition focus:border-[#DE028E] focus:ring-2 focus:ring-[#DE028E]/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white";
 
 function Field({
   label,

@@ -35,7 +35,7 @@ export function Cofounders() {
     <section id="founders" className="scroll-mt-24 py-24 sm:py-28 lg:py-36">
       <div className="mx-auto grid max-w-[1440px] gap-14 px-5 sm:px-8 lg:grid-cols-12 lg:gap-20">
         <div className="self-start lg:sticky lg:top-28 lg:col-span-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C2185B]">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C00079] dark:text-[#FEC2E8]">
             Meet the founders
           </p>
           <h2 className="mt-5 text-4xl font-medium leading-[1.05] tracking-[-0.04em] text-[#171717] dark:text-[#F5F5F2] sm:text-5xl">
@@ -62,7 +62,7 @@ export function Cofounders() {
                 />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C2185B]">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#C00079] dark:text-[#FEC2E8]">
                   {founder.role}
                 </p>
                 <h3 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[#171717] dark:text-[#F5F5F2]">
@@ -77,7 +77,7 @@ export function Cofounders() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${founder.name} on LinkedIn`}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 text-[#5F5F5B] transition-[border-color,color,box-shadow] hover:border-[#C2185B]/40 hover:text-[#C2185B] hover:shadow-md dark:border-white/10 dark:text-[#B7B7B2]"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 text-[#5F5F5B] transition-[border-color,color,box-shadow] hover:border-[#DE028E]/40 hover:text-[#C00079] hover:shadow-md dark:border-white/10 dark:text-[#B7B7B2] dark:hover:border-[#FEC2E8]/50 dark:hover:text-[#FEC2E8]"
                   >
                     <PiLinkedinLogo aria-hidden="true" className="h-5 w-5" />
                   </a>
@@ -87,7 +87,7 @@ export function Cofounders() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${founder.name} website`}
-                      className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 text-[#5F5F5B] transition-[border-color,color,box-shadow] hover:border-[#C2185B]/40 hover:text-[#C2185B] hover:shadow-md dark:border-white/10 dark:text-[#B7B7B2]"
+                      className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 text-[#5F5F5B] transition-[border-color,color,box-shadow] hover:border-[#DE028E]/40 hover:text-[#C00079] hover:shadow-md dark:border-white/10 dark:text-[#B7B7B2] dark:hover:border-[#FEC2E8]/50 dark:hover:text-[#FEC2E8]"
                     >
                       <PiGlobe aria-hidden="true" className="h-5 w-5" />
                     </a>

@@ -1,4 +1,5 @@
 @import "@fontsource-variable/manrope";
+@import "./product-landing.css";
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -1631,7 +1632,10 @@ select {
   --d2-panel: #fffefa;
   --d2-ink: #191919;
   --d2-muted: #68645f;
-  --d2-brand: #c2185b;
+  --d2-brand: #de028e;
+  --d2-brand-hover: #bd0279;
+  --d2-navy: #2c3177;
+  --d2-navy-dark: #121532;
   --d2-rule: #d8d4cd;
   background: var(--d2-page) !important;
 }
@@ -1645,7 +1649,7 @@ select {
   box-shadow: 0 0 80px rgba(25, 25, 25, 0.07);
 }
 
-.design-2-shell > header { padding: 1rem clamp(1rem, 2.2vw, 2rem) 0; }
+.design-2-shell > header { padding: 0 clamp(1rem, 2.2vw, 2rem); }
 .design-2-shell .kairos-header-glass {
   max-width: 1376px;
   border: 1px solid transparent;
@@ -1657,8 +1661,8 @@ select {
 .design-2-shell .kairos-header-glass::before { display: none; }
 .design-2-shell .kairos-header-glass.is-scrolled {
   border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(194, 24, 91, 0.97);
-  box-shadow: 0 20px 50px rgba(119, 12, 54, 0.24);
+  background: rgba(222, 2, 142, 0.97);
+  box-shadow: 0 20px 50px rgba(117, 2, 75, 0.24);
 }
 .design-2-shell .kairos-header-row { height: 4.65rem; padding-inline: 0.65rem; }
 .design-2-shell .kairos-header-brand > span:first-child { border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.96); }
@@ -1672,16 +1676,16 @@ select {
   box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
 .design-2-shell .kairos-header-primary-nav a { padding: .5rem .72rem; color: var(--d2-muted) !important; font-size: .76rem; }
-.design-2-shell .kairos-header-primary-nav a:hover { background: rgba(194,24,91,.08); color: var(--d2-brand) !important; }
+.design-2-shell .kairos-header-primary-nav a:hover { background: rgba(222,2,142,.08); color: var(--d2-brand) !important; }
 .design-2-shell .kairos-audience-switch { border-color: rgba(25,25,25,.1); background: rgba(255,255,255,.64); }
 .design-2-shell .kairos-audience-switch button[aria-pressed="false"] { color: var(--d2-muted) !important; }
-.design-2-shell .kairos-audience-switch button[aria-pressed="true"] { background: rgba(255,255,255,.96) !important; color: #123f41 !important; }
+.design-2-shell .kairos-audience-switch button[aria-pressed="true"] { background: rgba(255,255,255,.96) !important; color: var(--d2-navy) !important; }
 .design-2-shell .kairos-header-signin { min-height: 2.7rem; padding-inline: 1rem; border: 1px solid rgba(25,25,25,.14); color: var(--d2-ink) !important; }
 .design-2-shell .kairos-header-signin:hover { border-color: var(--d2-brand); color: var(--d2-brand) !important; }
 .design-2-shell .kairos-header-primary-action { min-height: 2.7rem; padding-inline: 1.35rem; background: var(--d2-brand) !important; color: #fff !important; box-shadow: none !important; }
-.design-2-shell .kairos-header-primary-action:hover { background: #a3154d !important; }
+.design-2-shell .kairos-header-primary-action:hover { background: var(--d2-brand-hover) !important; }
 .design-2-shell .kairos-header-menu-button { color: var(--d2-ink) !important; }
-.design-2-shell .kairos-header-menu-button:hover { background: rgba(194,24,91,.08); }
+.design-2-shell .kairos-header-menu-button:hover { background: rgba(222,2,142,.08); }
 .design-2-shell .kairos-header-glass.is-scrolled .kairos-header-brand > span:last-child,
 .design-2-shell .kairos-header-glass.is-scrolled .kairos-header-primary-nav a,
 .design-2-shell .kairos-header-glass.is-scrolled .kairos-header-signin,
@@ -1691,9 +1695,12 @@ select {
 .design-2-shell .kairos-header-glass.is-scrolled .kairos-header-primary-nav a:hover { background: rgba(255,255,255,.12); color: #fff !important; }
 .design-2-shell .kairos-header-glass.is-scrolled .kairos-audience-switch button[aria-pressed="false"] { color: rgba(255,255,255,.78) !important; }
 .design-2-shell .kairos-header-glass.is-scrolled .kairos-header-signin { border-color: rgba(255,255,255,.28); }
-.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-primary-action { background: #080d0d !important; }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-primary-action { background: var(--d2-navy-dark) !important; }
 .design-2-shell .kairos-header-glass.is-scrolled .kairos-header-primary-action:hover { background: #fff !important; color: #171717 !important; }
-.design-2-shell .kairos-header-menu-glass { background: rgba(194,24,91,.98); }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-theme-toggle { color: #fff; }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-theme-toggle:hover { background: rgba(255,255,255,.12); }
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-theme-toggle svg { color: currentColor !important; }
+.design-2-shell .kairos-header-menu-glass { background: rgba(222,2,142,.98); }
 .design-2-shell .kairos-header-menu-glass nav > p { color: rgba(255,255,255,.58) !important; }
 .design-2-shell .kairos-header-menu-glass nav > div:first-of-type a { color: #fff !important; }
 .design-2-shell .kairos-header-menu-glass nav > div:first-of-type a:hover { background: rgba(255,255,255,.1) !important; }
@@ -1703,7 +1710,7 @@ select {
   min-height: min(940px, 100svh);
   padding: clamp(8rem, 14vh, 10rem) clamp(1.25rem, 5vw, 5rem) 0;
   overflow: hidden;
-  background: radial-gradient(circle at 16% 22%, rgba(194, 24, 91, 0.035), transparent 24rem), var(--d2-canvas);
+  background: radial-gradient(circle at 16% 22%, rgba(222, 2, 142, 0.04), transparent 24rem), var(--d2-canvas);
 }
 .design-2-hero-inner {
   display: flex;
@@ -1760,13 +1767,13 @@ select {
   font-weight: 700;
   transition: transform 180ms ease, background-color 180ms ease, color 180ms ease, border-color 180ms ease;
 }
-.design-2-primary-action { border: 1px solid var(--d2-ink); background: var(--d2-ink); color: white; }
+.design-2-primary-action { border: 1px solid var(--d2-navy-dark); background: var(--d2-navy-dark); color: white; }
 .design-2-primary-action svg { width: 1rem; height: 1rem; }
 .design-2-secondary-action { border: 1px solid var(--d2-rule); color: var(--d2-ink); }
 .design-2-primary-action:hover,
 .design-2-secondary-action:hover { transform: translateY(-2px); }
 .design-2-primary-action:hover { border-color: var(--d2-brand); background: var(--d2-brand); }
-.design-2-secondary-action:hover { border-color: var(--d2-ink); }
+.design-2-secondary-action:hover { border-color: var(--d2-navy); color: var(--d2-navy); }
 .design-2-primary-action:focus-visible,
 .design-2-secondary-action:focus-visible { outline: 3px solid color-mix(in srgb, var(--d2-brand) 34%, transparent); outline-offset: 3px; }
 .design-2-disclaimer { margin-top: 0.8rem; color: var(--d2-muted); font-size: 0.72rem; }
@@ -1806,15 +1813,68 @@ select {
 .design-2-landing h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 500 !important; }
 .design-2-landing h2 { letter-spacing: -0.035em !important; }
 .design-2-landing .kairos-glass-card {
-  border-color: var(--d2-rule) !important;
+  border-color: color-mix(in srgb, var(--d2-navy) 24%, var(--d2-rule)) !important;
   background: var(--d2-panel) !important;
-  box-shadow: none !important;
+  box-shadow: inset 0 3px 0 rgba(44, 49, 119, 0.72) !important;
   backdrop-filter: none;
 }
-.design-2-landing .kairos-glass-card-interactive:hover {
-  border-color: var(--d2-brand) !important;
-  background: white !important;
-  box-shadow: 8px 8px 0 rgba(194, 24, 91, 0.1) !important;
+html:not(.dark) .design-2-landing .kairos-glass-card h2,
+html:not(.dark) .design-2-landing .kairos-glass-card h3 {
+  color: var(--d2-navy-dark) !important;
+}
+html:not(.dark) .design-2-landing .kairos-glass-card svg:not(.kairos-card-doodles svg) {
+  color: var(--d2-navy) !important;
+}
+.design-2-landing .kairos-glass-card .kairos-card-doodles {
+  color: var(--d2-navy);
+  filter: none;
+}
+.design-2-landing .design-2-navy-card {
+  border-color: var(--d2-navy) !important;
+  background: var(--d2-navy) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+html:not(.dark) .design-2-landing .kairos-glass-card.design-2-navy-card h2,
+html:not(.dark) .design-2-landing .kairos-glass-card.design-2-navy-card h3,
+.dark .design-2-landing .kairos-glass-card.design-2-navy-card h2,
+.dark .design-2-landing .kairos-glass-card.design-2-navy-card h3 {
+  color: #fff !important;
+}
+.design-2-landing .design-2-navy-card p {
+  color: rgba(255, 255, 255, 0.76) !important;
+}
+.design-2-landing .design-2-navy-card li > span {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+.design-2-landing .design-2-navy-card li {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+.design-2-landing .design-2-navy-card svg:not(.kairos-card-doodles svg) {
+  color: #fce6f4 !important;
+}
+.design-2-landing .design-2-navy-card .kairos-card-doodles {
+  color: rgba(255, 255, 255, 0.34);
+}
+.design-2-landing .design-2-navy-card article {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  .design-2-landing .kairos-glass-card-interactive:hover {
+    border-color: var(--d2-brand) !important;
+    background: white !important;
+    box-shadow: inset 0 3px 0 var(--d2-navy), 8px 8px 0 rgba(222, 2, 142, 0.1) !important;
+  }
+
+  .dark .design-2-landing .kairos-glass-card-interactive:hover {
+    background: var(--d2-panel) !important;
+    box-shadow: inset 0 3px 0 var(--d2-navy), 8px 8px 0 rgba(222, 2, 142, 0.22) !important;
+  }
+  .design-2-landing .design-2-navy-card.kairos-glass-card-interactive:hover {
+    border-color: var(--d2-brand) !important;
+    background: var(--d2-navy-dark) !important;
+    box-shadow: 8px 8px 0 rgba(222, 2, 142, 0.18) !important;
+  }
 }
 .design-2-landing .kairos-card-doodle::before,
 .design-2-landing .kairos-card-doodle::after,
@@ -1831,7 +1891,7 @@ select {
 @keyframes d2-person-breathe { from { transform: translateY(0); } to { transform: translateY(-3px); } }
 
 @media (max-width: 767px) {
-  .design-2-shell > header { padding: .75rem .75rem 0; }
+  .design-2-shell > header { padding: 0 .75rem; }
   .design-2-shell .kairos-header-row { height: 4.25rem; padding-inline: .25rem; }
   .design-2-hero { min-height: auto; padding: 7.5rem 1.25rem 0; }
   .design-2-hero-inner { min-height: auto; }
@@ -1840,7 +1900,11 @@ select {
   .design-2-summary { max-width: 34rem; }
   .design-2-actions { width: 100%; flex-direction: column; }
   .design-2-primary-action, .design-2-secondary-action { width: min(100%, 22rem); }
-  .design-2-scene-wrap { width: 190%; margin-left: -45%; padding-top: 2.5rem; }
+  .design-2-scene-wrap {
+    width: 135%;
+    margin-left: -17.5%;
+    padding-top: 1.5rem;
+  }
   .design-2-trust { grid-template-columns: 1fr; }
   .design-2-trust li { justify-content: flex-start; border-right: 0; border-bottom: 1px solid var(--d2-rule); padding-inline: 1.25rem; }
   .design-2-trust li:last-child { border-bottom: 0; }
@@ -1862,7 +1926,7 @@ select {
 .dark .design-2-shell .kairos-header-glass,
 .dark .design-2-shell .kairos-header-glass.is-scrolled {
   border-color: rgba(255,255,255,.14);
-  background: rgba(194,24,91,.97);
+  background: rgba(222,2,142,.97);
   box-shadow: 0 20px 52px rgba(0,0,0,.3);
 }
 .dark .design-2-shell .kairos-header-glass:not(.is-scrolled) { border-color: transparent; background: transparent; box-shadow: none; }

@@ -17,7 +17,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   const isDashboard = pathname.startsWith("/dashboard");
 
   return (
-    <div className={`min-h-screen flex flex-col bg-[var(--background)] dark:bg-black transition-colors duration-300${pathname === "/" ? " design-2-shell" : ""}`}>
+    <div className={`min-h-screen flex flex-col bg-[var(--background)] dark:bg-black transition-colors duration-300${pathname === "/" ? " product-site-shell" : ""}`}>
       <Header />
       
       <main className="flex-1">

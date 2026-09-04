@@ -49,8 +49,8 @@ export function CookieConsent() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="flex items-start gap-4 flex-1">
-              <div className="w-12 h-12 bg-pink-50 dark:bg-pink-900/20 rounded-2xl flex items-center justify-center flex-shrink-0">
-                <Cookie className="w-6 h-6 text-[#C2185B]" />
+              <div className="w-12 h-12 bg-[#FEC2E8]/40 dark:bg-[#DE028E]/20 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <Cookie className="w-6 h-6 text-[#DE028E]" />
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-bold dark:text-white mb-2">
@@ -58,11 +58,11 @@ export function CookieConsent() {
                 </h3>
                 <p className="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
                   We use cookies to improve your experience on our platform. By continuing to use our website, you agree to our{" "}
-                  <Link href="/privacy-policy" className="text-[#C2185B] font-bold hover:underline">
+                  <Link href="/privacy-policy" className="text-[#C00079] font-bold hover:underline dark:text-[#FEC2E8]">
                     Privacy Policy
                   </Link>{" "}
                   and{" "}
-                  <Link href="/terms-of-service" className="text-[#C2185B] font-bold hover:underline">
+                  <Link href="/terms-of-service" className="text-[#C00079] font-bold hover:underline dark:text-[#FEC2E8]">
                     Terms of Service
                   </Link>
                   .
@@ -85,7 +85,7 @@ export function CookieConsent() {
               </button>
               <button
                 onClick={handleAcceptAll}
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#C2185B] text-white font-bold text-sm hover:bg-[#A3154D] transition-colors shadow-lg shadow-pink-500/20"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#DE028E] text-white font-bold text-sm hover:bg-[#C00079] transition-colors shadow-lg shadow-[#DE028E]/20"
               >
                 Accept All
               </button>
@@ -150,7 +150,7 @@ export function CookieConsent() {
                   </div>
                   <button
                     onClick={() => setEssentialOnly(!essentialOnly)}
-                    className={`w-12 h-7 rounded-full relative transition-colors ${essentialOnly ? "bg-zinc-300 dark:bg-zinc-700" : "bg-[#C2185B]"}`}
+                    className={`w-12 h-7 rounded-full relative transition-colors ${essentialOnly ? "bg-zinc-300 dark:bg-zinc-700" : "bg-[#DE028E]"}`}
                   >
                     <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${essentialOnly ? "left-1" : "right-1"}`} />
                   </button>
@@ -170,7 +170,7 @@ export function CookieConsent() {
                   </div>
                   <button
                     onClick={() => setEssentialOnly(!essentialOnly)}
-                    className={`w-12 h-7 rounded-full relative transition-colors ${essentialOnly ? "bg-zinc-300 dark:bg-zinc-700" : "bg-[#C2185B]"}`}
+                    className={`w-12 h-7 rounded-full relative transition-colors ${essentialOnly ? "bg-zinc-300 dark:bg-zinc-700" : "bg-[#DE028E]"}`}
                   >
                     <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-transform ${essentialOnly ? "left-1" : "right-1"}`} />
                   </button>
@@ -193,7 +193,7 @@ export function CookieConsent() {
               </button>
               <button
                 onClick={handleSavePreferences}
-                className="flex-1 px-6 py-3 rounded-xl bg-[#C2185B] text-white font-bold text-sm hover:bg-[#A3154D] transition-colors shadow-lg shadow-pink-500/20"
+                className="flex-1 px-6 py-3 rounded-xl bg-[#DE028E] text-white font-bold text-sm hover:bg-[#C00079] transition-colors shadow-lg shadow-[#DE028E]/20"
               >
                 Save Preferences
               </button>

@@ -39,7 +39,7 @@ export function ThemeToggle() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center"
+        className="kairos-theme-toggle p-2 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors flex items-center justify-center"
         aria-label="Toggle theme"
       >
         {theme === "dark" ? (
@@ -66,7 +66,7 @@ export function ThemeToggle() {
                 className={cn(
                   "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
                   isSelected 
-                    ? "bg-[#C2185B]/10 text-[#C2185B] font-medium" 
+                    ? "bg-[#DE028E]/10 text-[#C00079] dark:text-[#FEC2E8] font-medium"
                     : "text-gray-600 dark:text-zinc-400 hover:bg-gray-50 dark:hover:bg-zinc-800"
                 )}
               >
