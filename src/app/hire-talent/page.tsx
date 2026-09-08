@@ -3,7 +3,7 @@ import { CompanyLanding } from "@/components/layout/company-landing";
 
 export const metadata: Metadata = {
   title: "Hire Talent | Kairos Nexus Global",
-  description: "Hire verified global experts at 60-70% savings. Access pre-vetted talent across marketing, design, engineering, and support.",
+  description: "Hire skilled African professionals, starting in Nigeria, at up to 70% less than the cost of equivalent U.S. hires.",
 };
 
 export default function HireTalentPage() {

@@ -52,11 +52,11 @@ export function CompanyLanding() {
             </span>
             
             <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold dark:text-white leading-tight mb-6">
-              Cut Hiring Costs by 70%
+              Save Up to 70% on Hiring Costs
             </h1>
             
             <p className="text-base sm:text-lg lg:text-xl text-zinc-400 mb-12 max-w-3xl mx-auto">
-              Hire pre-vetted global talent faster and more affordably.
+              Hire skilled African professionals, starting in Nigeria, at up to 70% less than the cost of equivalent U.S. hires.
             </p>
 
                  {/* Large Search Bar */}
@@ -200,7 +200,7 @@ export function CompanyLanding() {
             {[
               { title: "Verified experts only", desc: "Skip unqualified applicants. Every profile is identity-verified, skill-assessed, and includes real work samples (case studies).", icon: UserCheck },
               { title: "Faster shortlists", desc: "Receive pre-vetted candidates within 48 hours. Filter by role, seniority, availability, timezone, and working style to reach decisions sooner.", icon: Zap },
-              { title: "Reduced hiring cost", desc: "Access exceptional global talent at 60–70% lower cost than traditional local hiring, without compromising quality.", icon: TrendingDown },
+              { title: "Reduced hiring cost", desc: "Hire skilled African professionals at up to 70% less than the cost of equivalent U.S. hires.", icon: TrendingDown },
               { title: "Hiring confidence", desc: "Every step is designed to help teams hire with more trust, clarity, and operational control, from case study review to onboarding.", icon: CheckCircle2 },
             ].map((feature) => (
               <div key={feature.title} className="p-8 rounded-[2.5rem] bg-gradient-to-b from-white to-[#C2185B]/10 dark:from-zinc-900 dark:to-zinc-950 border border-white dark:border-zinc-800 shadow-sm transition-transform hover:-translate-y-1">
@@ -232,7 +232,7 @@ export function CompanyLanding() {
                 {[
                   "Shortlist talent by role, skills, seniority, and availability, all pre-vetted",
                   "Review case studies and work samples before interviews, see real capability",
-                  "Hire globally while keeping cost efficiency (60–70% savings) in view",
+                  "Save up to 70% compared with the cost of equivalent U.S. hires",
                   "Move from shortlist to hire in days, not weeks"
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-4">

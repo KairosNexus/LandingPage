@@ -1,8 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CheckCircle2, Quote, Star } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Quote } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useBusinessInquiry } from "@/components/providers/business-inquiry-provider";
+import { getAppSignupUrl } from "@/lib/app-links";
+import styles from "../reviews/reviews.module.css";
 
 export const reviews = [
   {
@@ -12,10 +18,11 @@ export const reviews = [
     service: "Client placement",
     date: "Recent",
     initials: "ER",
+    image: "https://res.cloudinary.com/dt4apbzc6/image/upload/v1788795749/app_uploads/profile_pics/1788795749591_873184.jpg",
     quote:
       "I thank Kairos Nexus for helping me secure a client, maximize the value of my time, and get well paid for it.",
   },
-  
+
   {
     id: "velma-funebe",
     name: "Velma Funebe",
@@ -23,6 +30,7 @@ export const reviews = [
     service: "Branding project",
     date: "19 May",
     initials: "VF",
+    image: null,
     quote:
       "Thank you again for all of the work and support throughout the iBraid branding project. I really appreciate the collaboration and everything Emmanuel and the team contributed to bringing the vision to life.",
   },
@@ -33,106 +41,102 @@ export const reviews = [
     service: "Social media strategy",
     date: "7 April",
     initials: "KP",
+    image: null,
     quote:
       "Thank you for checking in with me. We have been able to make strides in social media content posting and boosted engagement—all pluses. As I continue to strategize, my goal is to increase inquiries for coaching services so I can convert clients.",
   },
 ] as const;
 
 export function ReviewsClient() {
+  const scope = useRef<HTMLDivElement>(null);
+  const { openRequestModal } = useBusinessInquiry();
+  const [featured, ...clientReviews] = reviews;
+
   useEffect(() => {
-    window.scrollTo(0, 0);
+    gsap.registerPlugin(ScrollTrigger);
+    const media = gsap.matchMedia();
+    const context = gsap.context(() => {
+      media.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from("[data-review-hero]", {
+          y: 28, opacity: 0, duration: 0.8, stagger: 0.12,
+          ease: "power3.out", clearProps: "transform,opacity",
+        });
+        gsap.utils.toArray<HTMLElement>("[data-review-reveal]").forEach((element) => {
+          gsap.from(element, {
+            y: 32, opacity: 0, duration: 0.75, ease: "power3.out",
+            clearProps: "transform,opacity",
+            scrollTrigger: { trigger: element, start: "top 92%", once: true },
+          });
+        });
+      });
+    }, scope);
+    return () => { media.revert(); context.revert(); };
   }, []);
 
   return (
-    <main className="min-h-screen overflow-hidden bg-white pb-20 pt-24 dark:bg-zinc-950">
-      <section className="relative">
-        <div className="pointer-events-none absolute -left-40 top-16 h-96 w-96 rounded-full bg-[#C2185B]/10 blur-3xl" />
-        <div className="pointer-events-none absolute -right-48 top-72 h-96 w-96 rounded-full bg-fuchsia-500/10 blur-3xl" />
+    <div ref={scope} className={styles.page}>
+      <section className={`${styles.hero} ${styles.container}`} aria-labelledby="reviews-title">
+        <div className={styles.heroCopy}>
+          <p className={styles.eyebrow} data-review-hero>Voices of Kairos / Reviews</p>
+          <h1 id="reviews-title" data-review-hero>Good work.<br />Real people.<br /><em>Their words.</em></h1>
+          <p className={styles.summary} data-review-hero>Behind every project is a person with a goal. Hear from the talent and companies moving forward with Kairos.</p>
+          <a className={styles.primary} href="#reviews" data-review-hero>Read their experiences <ArrowDown aria-hidden="true" /></a>
 
-        <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-6xl">
-            <Link
-              href="/"
-              className="group mb-12 inline-flex items-center text-sm font-semibold text-zinc-500 transition-colors hover:text-[#C2185B]"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              Back to Home
-            </Link>
-
-            <div className="mb-14 max-w-3xl">
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#C2185B]/20 bg-[#C2185B]/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#C2185B]">
-                <Star className="h-3.5 w-3.5 fill-current" />
-                Client reviews
-              </div>
-              <h1 className="text-4xl font-bold leading-tight text-zinc-950 dark:text-white sm:text-5xl lg:text-7xl">
-                Work that makes a
-                <span className="block text-[#C2185B]">measurable difference.</span>
-              </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-                Real feedback from clients building their brands, growing their reach, and moving ambitious ideas forward with Kairos.
-              </p>
-            </div>
-
-            <div className="grid gap-6 lg:grid-cols-2">
-              {reviews.map((review, index) => (
-                <article
-                  key={review.id}
-                  id={review.id}
-                  className="group relative flex min-h-[430px] scroll-mt-28 flex-col overflow-hidden rounded-[2rem] border border-zinc-200 bg-white p-7 shadow-[0_24px_80px_-40px_rgba(24,24,27,0.35)] transition-all duration-300 hover:-translate-y-1 hover:border-[#C2185B]/30 hover:shadow-[0_32px_90px_-35px_rgba(194,24,91,0.35)] dark:border-zinc-800 dark:bg-zinc-900 sm:p-10"
-                >
-                  <div className="absolute right-0 top-0 h-40 w-40 rounded-bl-full bg-gradient-to-bl from-[#C2185B]/10 to-transparent transition-transform duration-500 group-hover:scale-125" />
-                  <div className="relative mb-10 flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#C2185B] to-fuchsia-700 text-base font-bold text-white shadow-lg shadow-pink-900/20">
-                        {review.initials}
-                      </div>
-                      <div>
-                        <h2 className="text-xl font-bold text-zinc-950 dark:text-white">{review.name}</h2>
-                        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{review.company}</p>
-                      </div>
-                    </div>
-                    <Quote className="h-10 w-10 shrink-0 text-[#C2185B]/25" aria-hidden="true" />
-                  </div>
-
-                  <blockquote className="relative flex-1 text-lg font-medium leading-8 text-zinc-700 dark:text-zinc-200 sm:text-xl sm:leading-9">
-                    “{review.quote}”
-                  </blockquote>
-
-                  <footer className="relative mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-zinc-100 pt-6 dark:border-zinc-800">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-zinc-600 dark:text-zinc-300">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                      Verified client
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-[#C2185B]">{review.service}</p>
-                      <p className="mt-1 text-xs text-zinc-400">Received {review.date}</p>
-                    </div>
-                  </footer>
-
-                  <span className="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r from-[#C2185B] to-fuchsia-500 transition-all duration-500 group-hover:w-full" />
-                  <span className="sr-only">Review {index + 1} of {reviews.length}</span>
-                </article>
-              ))}
-            </div>
-
-            <div className="relative mt-16 overflow-hidden rounded-[2.5rem] bg-zinc-950 px-7 py-12 text-center shadow-2xl dark:border dark:border-zinc-800 sm:px-12 lg:flex lg:items-center lg:justify-between lg:text-left">
-              <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#C2185B]/30 blur-3xl" />
-              <div className="relative max-w-2xl">
-                <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-pink-400">Your next chapter</p>
-                <h2 className="text-3xl font-bold text-white sm:text-4xl">Ready to build something worth talking about?</h2>
-                <p className="mt-4 text-zinc-400">Join companies and talent turning ambitious goals into real outcomes.</p>
-              </div>
-              <Link
-                href="https://app.kairosng.com/auth/login"
-                className="relative mt-8 inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#C2185B] px-8 font-bold text-white transition-all hover:bg-[#A3154D] lg:mt-0"
-              >
-                Get started
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-            </div>
+        </div>
+        <div className={styles.heroVisual} data-review-hero>
+          <div className={styles.photo}>
+            <Image src="/professional-hero.png" alt="Black professional working at a laptop in a bright office" fill priority sizes="(max-width: 767px) 90vw, 640px" />
           </div>
+          <div className={styles.photoCaption}><span>People at the heart<br /><strong>of every opportunity.</strong></span><ArrowUpRight aria-hidden="true" /></div>
         </div>
       </section>
-    </main>
+
+      <section id="reviews" className={`${styles.stories} ${styles.container}`} aria-labelledby="stories-title">
+        <div className={styles.sectionHeading} data-review-reveal>
+          <div><p className={styles.eyebrow}>Shared experiences</p><h2 id="stories-title">Different journeys.<br /><em>Meaningful connections.</em></h2></div>
+
+        </div>
+
+        <article id={featured.id} className={styles.featured} data-review-reveal aria-labelledby="featured-author">
+          <div className={styles.featuredLabel}><span>Talent perspective</span><Quote aria-hidden="true" /></div>
+          <div>
+            <blockquote>“{featured.quote}”</blockquote>
+            <div className={styles.author}>
+              <span className={styles.avatar}>
+                {featured.image ? (
+                  <Image src={featured.image} alt="Emmanuel Raimi" width={48} height={48} />
+                ) : (
+                  <span aria-hidden="true">{featured.initials}</span>
+                )}
+              </span>
+              <div><h3 id="featured-author">{featured.name}</h3><p>{featured.company} · {featured.service}</p></div>
+            </div>
+          </div>
+        </article>
+
+        <div className={styles.reviewGrid}>
+          {clientReviews.map((review) => (
+            <article key={review.id} id={review.id} className={styles.reviewCard} data-review-reveal aria-labelledby={`${review.id}-author`}>
+              <div className={styles.cardHeading}><span>{review.service}</span><Quote aria-hidden="true" /></div>
+              <blockquote>“{review.quote}”</blockquote>
+              <div className={styles.author}>
+                <span className={styles.avatar}>
+                  {review.image ? <Image src={review.image} alt={review.name} width={48} height={48} /> : <span aria-hidden="true">{review.initials}</span>}
+                </span>
+                <div><h3 id={`${review.id}-author`}>{review.name}</h3><p>{review.company}</p></div>
+              </div>
+              <div className={styles.cardFooter}><span>Client perspective</span><span>Received {review.date}</span></div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className={`${styles.ctaWrap} ${styles.container}`} aria-labelledby="reviews-cta-title">
+        <div className={styles.cta} data-review-reveal>
+          <div><p className={styles.eyebrow}>Your next chapter</p><h2 id="reviews-cta-title">What could we<br /><em>build together?</em></h2><p>Find the people or the opportunity to move your next idea forward.</p></div>
+          <div className={styles.ctaActions}><button className={styles.primary} type="button" onClick={openRequestModal}>Find talent <ArrowUpRight aria-hidden="true" /></button><a className={styles.secondary} href={getAppSignupUrl("talent")}>Explore as talent <ArrowUpRight aria-hidden="true" /></a></div>
+        </div>
+      </section>
+    </div>
   );
 }

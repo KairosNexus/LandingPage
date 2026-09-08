@@ -3,7 +3,7 @@ import { ReviewsClient } from "./CaseStudiesClient";
 
 export const metadata: Metadata = {
   title: "Case Studies | Kairos Nexus Global",
-  description: "Real success stories from Kairos Nexus Global, see how talent land dream roles and companies save 60–70% on hiring with our vetted marketplace.",
+  description: "Read real experiences from talent and companies working with Kairos Nexus Global across Africa and beyond.",
 };
 
 export default function CaseStudiesPage() {

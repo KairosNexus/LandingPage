@@ -65,7 +65,7 @@ export function HowItWorksClient() {
   const whyCompaniesChoose = [
     { title: "Verified experts only", desc: "Skip unqualified applicants and focus on candidates already reviewed for capability and fit.", icon: UserCheck },
     { title: "Faster shortlists", desc: "Filter by role, seniority, availability, timezone, and working style to reach decisions sooner.", icon: Zap },
-    { title: "Reduced hiring cost", desc: "Access exceptional global talent with a more efficient cost structure than traditional local hiring.", icon: TrendingDown },
+    { title: "Reduced hiring cost", desc: "Hire skilled African professionals at up to 70% less than the cost of equivalent U.S. hires.", icon: TrendingDown },
     { title: "Hiring confidence", desc: "Every step is designed to help teams hire with more trust, clarity, and operational control.", icon: CheckCircle2 },
   ];
 

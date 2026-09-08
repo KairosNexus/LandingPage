@@ -3,7 +3,7 @@ import { AboutClient } from "./AboutClient";
 
 export const metadata: Metadata = {
   title: "About Us | Kairos Nexus Global",
-  description: "Learn about Kairos Nexus Global, our mission, founders, trust partnerships, and commitment to reimagining global talent connectivity.",
+  description: "Kairos connects companies with skilled African professionals, starting in Nigeria, while building a wider path to global opportunity.",
 };
 
 export default function AboutPage() {

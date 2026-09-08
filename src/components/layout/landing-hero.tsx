@@ -11,10 +11,10 @@ type LandingHeroProps = { audience: "company" | "talent" };
 
 const heroContent = {
   company: {
-    eyebrow: "Verified. Skilled. Ready to work.",
-    headline: "Verified talent. Right fit. Ready to deliver.",
+    eyebrow: "Skilled African talent. Ready to work.",
+    headline: "Build with skilled African talent. Save up to 70%.",
     description:
-      "Tell us what you need. We introduce skilled professionals with identity and role-specific verification signals, visible availability, and clear delivery expectations.",
+      "Tell us what you need. We introduce you to skilled professionals, with visible identity and role-specific skill verification, clear availability, and shared delivery expectations.",
     primaryLabel: "Submit your scope",
     secondaryLabel: "Schedule a call",
     exploreLabel: "Platform preview",
@@ -22,11 +22,11 @@ const heroContent = {
     trustItems: [
       "Talent identity checks",
       "Role-specific skill evidence",
-      "Availability and delivery alignment",
+      "Up to 70% lower cost than equivalent U.S. hires",
     ],
   },
   talent: {
-    eyebrow: "Remote work. Strong earnings. Your Kairos moment.",
+    eyebrow: "",
     headline: "Prove your skills. Earn well from anywhere.",
     description:
       "Build a credible profile, prove what you can deliver, and pursue well-paid remote opportunities. Your next breakthrough could be your Kairos moment.",
@@ -58,7 +58,7 @@ export function LandingHero({ audience }: LandingHeroProps) {
           <h1 id="product-hero-title" data-hero-reveal>
             {audience === "company" ? (
               <>
-                Verified talent. Right <span>fit.</span> Ready to deliver.
+                Build with skilled African <span>talent.</span> Save up to <span>70%.</span>
               </>
             ) : (
               <>

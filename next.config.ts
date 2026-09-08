@@ -2,8 +2,16 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   outputFileTracingRoot: "../../",
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/dt4apbzc6/image/upload/**",
+      },
+    ],
+  },
 };
 
 export default withSentryConfig(nextConfig, {

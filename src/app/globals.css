@@ -1665,8 +1665,7 @@ select {
   box-shadow: 0 20px 50px rgba(117, 2, 75, 0.24);
 }
 .design-2-shell .kairos-header-row { height: 4.65rem; padding-inline: 0.65rem; }
-.design-2-shell .kairos-header-brand > span:first-child { border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.96); }
-.design-2-shell .kairos-header-brand > span:last-child { color: var(--d2-ink) !important; font-size: 1rem; font-weight: 700; }
+.design-2-shell .kairos-header-wordmark { color: var(--d2-ink) !important; font-size: 1rem; font-weight: 700; }
 .design-2-shell .kairos-header-primary-nav {
   gap: 0.15rem;
   padding: 0.3rem;
@@ -1686,7 +1685,7 @@ select {
 .design-2-shell .kairos-header-primary-action:hover { background: var(--d2-brand-hover) !important; }
 .design-2-shell .kairos-header-menu-button { color: var(--d2-ink) !important; }
 .design-2-shell .kairos-header-menu-button:hover { background: rgba(222,2,142,.08); }
-.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-brand > span:last-child,
+.design-2-shell .kairos-header-glass.is-scrolled .kairos-header-wordmark,
 .design-2-shell .kairos-header-glass.is-scrolled .kairos-header-primary-nav a,
 .design-2-shell .kairos-header-glass.is-scrolled .kairos-header-signin,
 .design-2-shell .kairos-header-glass.is-scrolled .kairos-header-menu-button { color: #fff !important; }
@@ -1930,7 +1929,7 @@ html:not(.dark) .design-2-landing .kairos-glass-card.design-2-navy-card h3,
   box-shadow: 0 20px 52px rgba(0,0,0,.3);
 }
 .dark .design-2-shell .kairos-header-glass:not(.is-scrolled) { border-color: transparent; background: transparent; box-shadow: none; }
-.dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-header-brand > span:last-child,
+.dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-header-wordmark,
 .dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-header-primary-nav a,
 .dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-header-signin,
 .dark .design-2-shell .kairos-header-glass:not(.is-scrolled) .kairos-header-menu-button { color: #f5f2eb !important; }

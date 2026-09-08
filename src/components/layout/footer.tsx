@@ -89,7 +89,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-6 text-[#5F5F5B] dark:text-[#B7B7B2]">
-              Human-led global talent matching today, while we build the self-service platform for tomorrow.
+              Human-led matching with skilled African professionals, building a trusted path between ambitious companies and skilled African professionals.
             </p>
             <a
               href="mailto:info@kairosnexusglobal.com"

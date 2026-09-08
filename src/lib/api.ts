@@ -303,6 +303,7 @@ export interface PublicJob {
 export interface PublicTalentUser {
   skillSet: { title: string }[];
   isKycDone?: boolean;
+  verifiedRoles?: string[];
 }
 
 export interface PublicTalent {
@@ -363,6 +364,7 @@ export interface GetPublicTalentsParams {
   locationPreference?: string;
   jobTypePreference?: string;
   region?: string;
+  skillVerified?: boolean;
   page?: number;
   limit?: number;
 }

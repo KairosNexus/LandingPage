@@ -14,16 +14,16 @@ export type Founder = {
 export const coFounders: Founder[] = [
   {
     name: "Jubelo Oyeniran",
-    role: "Co-Founder",
-    bio: "Award-winning Stevenson University graduate and SU Pin Award recipient, the university’s valedictorian equivalent, Jubelo is a CPA candidate pursuing a master’s degree in forensic accounting. He brings more than three years of audit and consulting experience across Citrin Cooperman and Clearview Group, is a two-time national Johns Hopkins consulting case competition winner, built a $105,000 business at 17, has been featured by the NFL, and previously served as SGA President.",
+    role: "Co-Founder & CEO",
+    bio: "Jubelo Oyeniran is Co-Founder & CEO of Kairos Nexus Global and an MBA candidate at Johns Hopkins Carey Business School. He holds a B.S. in Accounting and an M.S. in Forensic Accounting & Investigative Finance from Stevenson University, where he received the SU Pin Award, the university’s highest student honor.\n\nJubelo brings four years of audit, accounting, and consulting experience across RSM US LLP, Citrin Cooperman, and Clearview Group. Having built a $105,000 business at 17, Jubelo has lived the founder side of the problem Kairos is solving and understands firsthand what it takes to build and grow a company. He previously served as SGA President and brings a proven track record across entrepreneurship, finance, and leadership.",
     image: "/Jubelo.jpeg",
     linkedin: "https://www.linkedin.com/in/jubelooyeniran/",
     twitter: null,
   },
   {
     name: "Ayorinde Alase",
-    role: "Co-Founder",
-    bio: "Doctoral candidate in Computer Engineering at the University of Arkansas at Little Rock, with more than three years of experience building AI products. Former digital solutions developer at AXA, specializing in machine learning for insurance and healthcare. Expert in Python, deep learning, and algorithm development driving innovation in global technology solutions.",
+    role: "Co-Founder & Chief Technology Officer",
+    bio: "Ayorinde Alase is the Co-Founder and Chief Technology Officer of Kairos Nexus Global and a Doctoral Candidate in Computer Engineering at the University of Arkansas at Little Rock. His research is supported by an NVIDIA Academic Research Grant.\n\nWith more than three years of experience building AI-powered products, Ayorinde combines advanced technical expertise with a strong record of delivering measurable business impact. He previously worked as a Data Scientist at AXA, a Fortune 500 company, where he developed solutions that supported critical financial and strategic decisions. He has also worked at HERE Technologies, a global location-data and technology company backed by leading automotive brands, including Mercedes-Benz and BMW.\n\nBefore relocating to the United States, Ayorinde worked remotely for U.S. companies while living in Nigeria. This firsthand experience gives him a deep understanding of the global talent challenges Kairos Nexus Global is working to solve. His expertise spans artificial intelligence, machine learning, algorithm development, and the creation of scalable, data-driven products.",
     image: "/Ayorinde.jfif",
     linkedin: "https://www.linkedin.com/in/ayorinde-alase/",
     website: "https://www.ayoalase.com",
@@ -42,7 +42,10 @@ export function Cofounders() {
             Built by operators who understand both sides.
           </h2>
           <p className="mt-6 max-w-[52ch] text-base leading-7 text-[#5F5F5B] dark:text-[#B7B7B2]">
-            Kairos combines experience across business, technology, global hiring, and professional development.
+            Jubelo has lived the founder side, building a $105,000 business at
+            17. Ayorinde has lived the talent side, working remotely for U.S.
+            companies from Nigeria. Together, they understand both the founders
+            Kairos serves and the talent it creates opportunities for.
           </p>
         </div>
 
@@ -68,7 +71,7 @@ export function Cofounders() {
                 <h3 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[#171717] dark:text-[#F5F5F2]">
                   {founder.name}
                 </h3>
-                <p className="mt-4 text-sm leading-6 text-[#5F5F5B] dark:text-[#B7B7B2]">
+                <p className="mt-4 whitespace-pre-line text-sm leading-6 text-[#5F5F5B] dark:text-[#B7B7B2]">
                   {founder.bio}
                 </p>
                 <div className="mt-6 flex gap-2">

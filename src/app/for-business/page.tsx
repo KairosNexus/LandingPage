@@ -3,7 +3,7 @@ import { CompanyLanding } from "@/components/layout/company-landing";
 
 export const metadata: Metadata = {
   title: "For Businesses | Kairos Nexus Global",
-  description: "Cut hiring costs by up to 70%. Access pre-vetted global talent with Kairos Nexus Global. Hire faster, save more, reduce risk.",
+  description: "Hire skilled African professionals, starting in Nigeria, at up to 70% less than the cost of equivalent U.S. hires.",
 };
 
 export default function ForBusinessPage() {

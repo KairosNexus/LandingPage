@@ -18,6 +18,7 @@ import { GsapScrollExperience } from "./gsap-scroll-experience";
 import { LandingHero } from "./landing-hero";
 import { ProductPreview, type PreviewKind } from "./product-preview";
 import { TrustSection } from "./trust-section";
+import { CompanyCapabilities } from "./company-capabilities";
 
 type Audience = "company" | "talent";
 
@@ -42,7 +43,7 @@ const processContent: Record<
   company: {
     heading: "Start with your need. We help find the right fit.",
     description:
-      "Share your scope or speak with our team. We help you meet verified, skilled professionals who are ready to work and aligned with your delivery timeline.",
+      "Share your scope or speak with our team. We help you meet skilled professionals, starting in Nigeria, who are ready to work and can reduce hiring costs by up to 70% compared with equivalent U.S. hires.",
     steps: [
       {
         title: "Share your requirements",
@@ -96,7 +97,7 @@ const processContent: Record<
       {
         title: "Create your Kairos moment",
         description:
-          "Message companies, attend interviews, and review contract terms as you move toward well-paid remote work.",
+          "Accept job message requests, attend interviews, and review contract terms as you move toward well-paid remote work.",
         icon: PiHandshake,
       },
     ],
@@ -205,11 +206,10 @@ const transparencyContent: Record<
     description:
       "Kairos provides tools to help you prepare and respond to opportunities. Our team can also review suitable professionals for company requests while the marketplace continues to develop.",
     points: [
-      "Registration does not guarantee placement",
-      "Available jobs change over time",
-      "Verification does not guarantee selection",
+      "Registration does not guarantee job placement",
+      "Available jobs can change over time",
+      "Skill verification does not guarantee selection",
       "Companies make final hiring decisions",
-      "Some platform capabilities continue to evolve",
     ],
   },
 };
@@ -257,7 +257,9 @@ export function ProductLanding({ audience }: { audience: Audience }) {
             <h2>
               {company ? (
                 <>
-                  Start with your <span>need.</span> We help find the right{" "}
+                  Start with your <span>need.</span>
+                  <br />
+                  We help find the right{" "}
                   <span>fit.</span>
                 </>
               ) : (
@@ -282,6 +284,8 @@ export function ProductLanding({ audience }: { audience: Audience }) {
           </ol>
         </section>
 
+        {company && <CompanyCapabilities />}
+
         <section
           id="product"
           className="product-workflow-stage scroll-mt-24"
@@ -304,7 +308,7 @@ export function ProductLanding({ audience }: { audience: Audience }) {
               </h2>
               <p>
                 {company
-                  ? "Use Kairos directly where the platform is available, with our team ready to support sourcing and introductions when needed."
+                  ? "Review skilled professionals in one place, with our team ready to support sourcing and introductions."
                   : "Set up your account, complete available verification, explore jobs, and manage each next step in one workspace."}
               </p>
               <a
@@ -385,7 +389,7 @@ export function ProductLanding({ audience }: { audience: Audience }) {
           </h2>
           <p>
             {company
-              ? "Submit your scope for review or schedule a call to discuss the role, project, timeline, and kind of professional you need."
+              ? "Submit your scope or schedule a call. We will help you find skilled African professionals, starting in Nigeria, with potential savings of up to 70% compared with equivalent U.S. hiring costs."
               : "Prove your skills, explore remote roles, and pursue work that rewards what you can deliver."}
           </p>
           <div>

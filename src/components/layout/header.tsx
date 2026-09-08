@@ -92,6 +92,7 @@ export function Header() {
     { name: "How it works", href: "/#how-it-works" },
     { name: "Product", href: "/#product" },
     { name: "About", href: "/about" },
+    { name: "Reviews", href: "/reviews" },
     { name: "Resources", href: "/blog" },
   ];
 
@@ -163,17 +164,15 @@ export function Header() {
                 focusRing,
               )}
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/[0.08] bg-white shadow-sm dark:border-white/10 dark:bg-[#1D1D1D]">
-                <Image
-                  src="/logo.png"
-                  alt=""
-                  width={30}
-                  height={34}
-                  priority
-                  className="h-[30px] w-auto object-contain"
-                />
-              </span>
-              <span aria-hidden="true" className="text-[0.95rem] font-semibold tracking-[-0.025em] text-[#171717] dark:text-[#F5F5F2]">
+              <Image
+                src="/logo.png"
+                alt=""
+                width={36}
+                height={40}
+                priority
+                className="h-10 w-9 shrink-0 object-contain"
+              />
+              <span aria-hidden="true" className="kairos-header-wordmark text-[0.95rem] font-semibold tracking-[-0.025em] text-[#171717] dark:text-[#F5F5F2]">
                 Kairos<span className="hidden sm:inline"> Nexus Global</span>
               </span>
             </Link>
@@ -348,16 +347,6 @@ export function Header() {
                 {link.name}
               </Link>
             ))}
-            <Link
-              href="/about"
-              onClick={() => setIsMenuOpen(false)}
-              className={cn(
-                "flex min-h-11 items-center rounded-xl px-3 text-sm font-medium text-[#171717] hover:bg-white dark:text-[#F5F5F2] dark:hover:bg-white/[0.06]",
-                focusRing,
-              )}
-            >
-              About
-            </Link>
           </div>
 
           <div className="my-4 h-px bg-black/10 dark:bg-white/10" />

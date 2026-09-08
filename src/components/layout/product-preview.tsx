@@ -1,4 +1,5 @@
 import {
+  PiArrowRight,
   PiBell,
   PiBriefcase,
   PiChatCircleDots,
@@ -6,10 +7,15 @@ import {
   PiFileText,
   PiGear,
   PiHouse,
+  PiMagnifyingGlass,
+  PiMapPin,
+  PiShieldCheck,
+  PiSparkle,
   PiSquaresFour,
   PiUserCircle,
   PiUsersThree,
 } from "react-icons/pi";
+import Image from "next/image";
 
 export type PreviewKind =
   | "dashboard"
@@ -40,7 +46,7 @@ type PreviewContent = {
 const previewContent: Record<Audience, Record<PreviewKind, PreviewContent>> = {
   company: {
     dashboard: {
-      title: "Hi, Maya",
+      title: "Hi, Joshua",
       eyebrow: "Company workspace",
       description: "Review hiring activity and keep conversations moving.",
       activeNav: "Home",
@@ -224,10 +230,12 @@ export function ProductPreview({
 }) {
   const content = previewContent[audience][kind];
   const Icon = content.icon;
+  const isDashboard = kind === "dashboard";
+  const percentage = 90;
 
   return (
     <div
-      className={`product-preview ${compact ? "product-preview-compact" : ""}`}
+      className={`product-preview product-preview-${kind} product-preview-audience-${audience} ${compact ? "product-preview-compact" : ""}`}
       data-product-frame
       data-screenshot-slot={`kairos-${audience}-${kind}`}
       aria-label={`${content.title} illustrative Kairos product preview with sample data`}
@@ -241,12 +249,10 @@ export function ProductPreview({
       <div className="product-preview-shell">
         <aside className="product-preview-sidebar" aria-hidden="true">
           <div className="product-preview-brand">
-            <span className="product-preview-mark">K</span>
-            <strong>Kairos</strong>
+            <span className="product-preview-mark"><Image src="/logo.png" alt="" width={32} height={32} /></span>
+            <strong>kairos</strong>
           </div>
-          {audience === "company" && !compact && (
-            <div className="product-preview-company">Sample Company</div>
-          )}
+          {!compact && <div className="product-preview-company">Kairos Nexus Global</div>}
           <nav>
             {navItems
               .filter((item) => !item.talentOnly || audience === "talent")
@@ -264,27 +270,25 @@ export function ProductPreview({
           </nav>
           {!compact && (
             <div className="product-preview-account">
-              <small>Account setup</small>
+              <small>Complete Account Setup</small>
+              <span>Almost done!</span>
               <i>
-                <b style={{ width: audience === "company" ? "100%" : "80%" }} />
+                <b style={{ width: `${percentage}%` }} />
               </i>
-              <strong>{audience === "company" ? "Maya" : "Amina"}</strong>
+              <em>Get started</em>
+              <strong>{audience === "company" ? "John" : "Amina"}</strong>
             </div>
           )}
         </aside>
         <div className="product-preview-main">
           <div className="product-preview-topbar">
-            <div>
-              <small>Kairos Nexus Global</small>
-              <strong>{content.activeNav}</strong>
-            </div>
+            {!isDashboard && <div><small>Kairos Nexus Global</small><strong>{content.activeNav}</strong></div>}
             <div className="product-preview-tools" aria-hidden="true">
-              <span>{audience === "company" ? "Tier 1" : "Tier 2"}</span>
+              <span>{audience === "company" ? "Get Verified" : "Tier 2"}</span>
               <PiBell />
-              <PiUserCircle />
             </div>
           </div>
-          <div className="product-preview-content">
+          {isDashboard ? <DashboardHome audience={audience} percentage={percentage} /> : <div className="product-preview-content">
             <div className="product-preview-lead">
               <span className="product-preview-icon">
                 <Icon />
@@ -312,7 +316,7 @@ export function ProductPreview({
                 </div>
               ))}
             </div>
-          </div>
+          </div>}
         </div>
       </div>
       <p className="product-preview-replace">Sample data</p>
@@ -325,4 +329,25 @@ export function ProductPreview({
       />
     </div>
   );
+}
+
+function DashboardHome({ audience, percentage }: { audience: Audience; percentage: number }) {
+  const company = audience === "company";
+  const stats = company
+    ? [["Job posts", "7", PiBriefcase], ["Recent applicants", "4", PiUsersThree], ["Talent matches", "7", PiSparkle], ["Profile complete", `${percentage}%`, PiUserCircle]] as const
+    : [["Open roles", "7", PiBriefcase], ["Skills added", "12", PiCheckCircle], ["Skill verification", "Done", PiShieldCheck], ["Profile complete", `${percentage}%`, PiUserCircle]] as const;
+  const actions = company
+    ? [["Post a job", "Create a role and start matching.", PiFileText], ["Review applicants", "Open your jobs and compare talent.", PiUsersThree], ["Talent pool", "Explore verified talent profiles.", PiMagnifyingGlass], ["Messages", "Continue hiring conversations.", PiChatCircleDots]] as const
+    : [["Explore jobs", "Find roles that fit your skills.", PiMagnifyingGlass], ["Messages", "Reply to active conversations.", PiChatCircleDots], ["Skill verification", "Build trust around your strongest role.", PiShieldCheck], ["Contracts", "Review offers and agreed terms.", PiBriefcase]] as const;
+  return <div className="product-preview-dashboard">
+    <section className="product-preview-welcome">
+      <div><h3>Hi, {company ? "John" : "Amina"}</h3><p>{company ? "Welcome back! Manage your job posts and find the best talent." : "Welcome back! Discover new opportunities and manage your career journey."}</p></div>
+      <button>{percentage}% | Account setup <PiArrowRight /></button>
+      <div className="product-preview-search"><span><PiMagnifyingGlass />{company ? "Search by name, role, or skill" : "Search for your perfect job"}</span><span><PiMapPin />Location</span><b><PiMagnifyingGlass /></b></div>
+    </section>
+    <div className="product-preview-dashboard-stats">{stats.map(([label, value, StatIcon]) => <div key={label}><span><small>{label}</small><strong className={label === "Profile complete" ? "is-progress" : ""}>{value}</strong></span><i><StatIcon /></i></div>)}</div>
+    <section className="product-preview-next"><h4>Complete next</h4><div><article><i><PiUserCircle /></i><span><strong>Finish account setup</strong><small>{percentage}% complete</small></span><PiArrowRight /></article>{company && <article><i><PiShieldCheck /></i><span><strong>Verify your account</strong><small>Confirm your identity</small></span><PiArrowRight /></article>}</div></section>
+    <section className="product-preview-actions"><h4>Quick actions</h4><div>{actions.map(([title, description, ActionIcon]) => <article key={title}><header><i><ActionIcon /></i><PiArrowRight /></header><strong>{title}</strong><small>{description}</small></article>)}</div></section>
+    <div className="product-preview-lower"><strong>{company ? "Recent jobs" : "Skill verification · Tier 2"}</strong><span>{company ? "View all" : "1 verified role"}</span></div>
+  </div>;
 }
