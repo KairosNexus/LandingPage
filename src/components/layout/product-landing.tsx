@@ -8,7 +8,6 @@ import {
   PiIdentificationBadge,
   PiMagnifyingGlass,
   PiSealCheck,
-  PiSparkle,
   PiUserCheck,
 } from "react-icons/pi";
 import { useBusinessInquiry } from "@/components/providers/business-inquiry-provider";
@@ -183,44 +182,12 @@ const workflowContent: Record<Audience, Workflow[]> = {
   ],
 };
 
-const transparencyContent: Record<
-  Audience,
-  { eyebrow: string; heading: string; description: string; points: string[] }
-> = {
-  company: {
-    eyebrow: "Platform progress",
-    heading: "Technology where it helps. Human judgment where it matters.",
-    description:
-      "Kairos combines working product features with hands-on matching. Our team can source beyond the professionals visible in public search while the self-service marketplace continues to grow.",
-    points: [
-      "Available features continue to evolve",
-      "Public search may not represent our full sourcing reach",
-      "Verification status varies by account",
-      "Recommendations depend on role requirements and available information",
-      "Your team makes the final hiring decision",
-    ],
-  },
-  talent: {
-    eyebrow: "What to expect",
-    heading: "A growing platform supported by real people.",
-    description:
-      "Kairos provides tools to help you prepare and respond to opportunities. Our team can also review suitable professionals for company requests while the marketplace continues to develop.",
-    points: [
-      "Registration does not guarantee job placement",
-      "Available jobs can change over time",
-      "Skill verification does not guarantee selection",
-      "Companies make final hiring decisions",
-    ],
-  },
-};
-
 export function ProductLanding({ audience }: { audience: Audience }) {
   const { openRequestModal, openScheduleModal } = useBusinessInquiry();
   const signupHref = getAppSignupUrl("talent");
   const company = audience === "company";
   const process = processContent[audience];
   const workflows = workflowContent[audience];
-  const transparency = transparencyContent[audience];
 
   const primaryAction = (
     label: string,
@@ -356,22 +323,6 @@ export function ProductLanding({ audience }: { audience: Audience }) {
               </article>
             ))}
           </div>
-        </section>
-
-        <section id="platform-progress" className="product-transparency scroll-mt-24">
-          <div data-reveal>
-            <p className="product-eyebrow">{transparency.eyebrow}</p>
-            <h2>{transparency.heading}</h2>
-            <p>{transparency.description}</p>
-          </div>
-          <ul data-reveal>
-            {transparency.points.map((item) => (
-              <li key={item}>
-                <PiSparkle aria-hidden="true" />
-                {item}
-              </li>
-            ))}
-          </ul>
         </section>
 
         <TrustSection />

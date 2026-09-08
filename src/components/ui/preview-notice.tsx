@@ -14,7 +14,7 @@ export function PreviewNotice() {
           </div>
         </div>
         <a
-          href="mailto:info@kairosnexusglobal.com?subject=Scope%20of%20Work%20%E2%80%94%20Talent%20Matching%20Request"
+          href="mailto:careers@kairosng.com?subject=Scope%20of%20Work%20%E2%80%94%20Talent%20Matching%20Request"
           className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-amber-950 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-black dark:bg-amber-200 dark:text-amber-950 dark:hover:bg-white"
         >
           <Mail className="h-4 w-4" />

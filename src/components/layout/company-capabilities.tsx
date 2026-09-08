@@ -12,6 +12,7 @@ import {
   PiUser,
 } from "react-icons/pi";
 import { getPublicTalents, type PublicTalent } from "@/lib/api";
+import { formatProfileLabel } from "@/lib/format-profile-label";
 
 const capabilities = [
   {
@@ -42,24 +43,37 @@ const capabilities = [
 
 function selectDistinctRoles(talents: PublicTalent[]) {
   const roles = new Set<string>();
+  const prioritized = [...talents].sort((a, b) => {
+    const score = (talent: PublicTalent) =>
+      (talent.profilePicture?.trim() ? 4 : 0) +
+      (talent.user?.verifiedRoles?.length ? 2 : 0) +
+      (talent.user?.isKycDone ? 1 : 0);
+    return score(b) - score(a);
+  });
 
-  return talents.filter((talent) => {
-    const title = talent.jobTitles?.find((item) => item.trim())?.trim();
-    if (!title) return false;
-
+  const selected = prioritized.filter((talent) => {
+    const title = getTalentTitle(talent);
     const normalizedTitle = title.toLocaleLowerCase();
     if (roles.has(normalizedTitle)) return false;
     roles.add(normalizedTitle);
     return true;
   }).slice(0, 5);
+
+  if (selected.length < 5) {
+    const selectedIds = new Set(selected.map((talent) => talent.id));
+    selected.push(...prioritized.filter((talent) => !selectedIds.has(talent.id)).slice(0, 5 - selected.length));
+  }
+
+  return selected;
+}
+
+function getTalentTitle(talent: PublicTalent) {
+  const title = talent.jobTitles?.find((item) => item.trim()) || talent.jobRole;
+  return formatProfileLabel(title) || "Professional";
 }
 
 function humanize(value?: string) {
-  if (!value) return "";
-  return value
-    .toLocaleLowerCase()
-    .replaceAll("_", " ")
-    .replace(/\b\w/g, (letter) => letter.toLocaleUpperCase());
+  return formatProfileLabel(value);
 }
 
 function getInitials(talent: PublicTalent) {
@@ -74,12 +88,12 @@ export function CompanyCapabilities() {
   useEffect(() => {
     let cancelled = false;
 
-    getPublicTalents({ skillVerified: true, limit: 50 })
+    getPublicTalents({ limit: 50 })
       .then((response) => {
         if (!cancelled) setTalents(selectDistinctRoles(response.data));
       })
       .catch((error) => {
-        console.error("Failed to load skill-verified talent:", error);
+        console.error("Failed to load public talent:", error);
         if (!cancelled) setFailed(true);
       })
       .finally(() => {
@@ -120,7 +134,7 @@ export function CompanyCapabilities() {
 
       <div className="product-verified-header" data-reveal>
         <div>
-          <p className="product-eyebrow">Skill-verified professionals</p>
+          <p className="product-eyebrow">Featured professionals</p>
           <h2>Meet talent ready to be <span>considered.</span></h2>
         </div>
         <Link href="/talents" className="product-button product-button-secondary">
@@ -140,9 +154,14 @@ export function CompanyCapabilities() {
           ))}
 
         {!loading && talents.map((talent) => {
-          const title = talent.jobTitles.find((item) => item.trim())?.trim();
+          const title = getTalentTitle(talent);
           const verifiedRole = humanize(talent.user?.verifiedRoles?.[0]);
-          const skills = talent.user?.skillSet?.slice(0, 3) ?? [];
+          const badgeLabel = verifiedRole
+            ? "Skill verified"
+            : talent.user?.isKycDone
+              ? "Identity verified"
+              : "Talent profile";
+          const skills = talent.user?.skillSet?.filter((skill) => skill.title.trim()).slice(0, 3) ?? [];
 
           return (
             <Link
@@ -163,7 +182,7 @@ export function CompanyCapabilities() {
                 ) : (
                   <span>{getInitials(talent) || <PiUser aria-hidden="true" />}</span>
                 )}
-                <b><PiCheckCircle aria-hidden="true" /> Skill verified</b>
+                <b><PiCheckCircle aria-hidden="true" /> {badgeLabel}</b>
               </div>
               <div className="product-talent-body">
                 <p>{title}</p>
@@ -171,7 +190,7 @@ export function CompanyCapabilities() {
                 {verifiedRole && <small>Verified for {verifiedRole}</small>}
                 {skills.length > 0 && (
                   <ul aria-label="Skills">
-                    {skills.map((skill) => <li key={skill.title}>{skill.title}</li>)}
+                    {skills.map((skill) => <li key={skill.title}>{skill.title.trim()}</li>)}
                   </ul>
                 )}
                 <span>View profile <PiArrowRight aria-hidden="true" /></span>

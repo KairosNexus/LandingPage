@@ -172,8 +172,9 @@ export function Header() {
                 priority
                 className="h-10 w-9 shrink-0 object-contain"
               />
-              <span aria-hidden="true" className="kairos-header-wordmark text-[0.95rem] font-semibold tracking-[-0.025em] text-[#171717] dark:text-[#F5F5F2]">
-                Kairos<span className="hidden sm:inline"> Nexus Global</span>
+              <span aria-hidden="true" className="kairos-header-wordmark text-[#171717] dark:text-[#F5F5F2]">
+                <span className="kairos-header-wordmark-primary">kairos</span>
+                <span className="kairos-header-wordmark-secondary">NEXUS GLOBAL</span>
               </span>
             </Link>
           )}

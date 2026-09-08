@@ -183,14 +183,13 @@
 .product-preview {
   --preview-sidebar: #121532;
   --preview-sidebar-active: #2c3177;
-  --preview-hero: #171b3e;
-  --preview-hero-border: #272d59;
   --preview-main: #ffffff;
   --preview-border: #e5e7eb;
   --preview-text: #111827;
   --preview-muted: #667085;
   --preview-icon-surface: #eef0ff;
   --preview-icon-ink: #30377d;
+  --preview-app-gradient: linear-gradient(90deg, #2c3177 0%, #581c87 50%, #de028e 100%);
   position: relative;
   container-type: inline-size;
   overflow: hidden;
@@ -240,12 +239,12 @@
 .product-preview-tools span { border: 1px solid var(--preview-border); border-radius: 999px; padding: 0.3rem 0.55rem; color: var(--preview-muted); font-size: 0.52rem; font-weight: 700; }
 .product-preview-tools svg { box-sizing: content-box; width: 1rem; height: 1rem; border: 1px solid var(--preview-border); border-radius: 50%; padding: 0.45rem; color: var(--preview-muted); }
 .product-preview-content { padding: clamp(1.2rem, 3vw, 2.2rem); }
-.product-preview-lead { display: flex; align-items: center; gap: 1rem; border: 1px solid var(--preview-hero-border); border-radius: 1rem; padding: 1.25rem; background: var(--preview-hero); color: white; }
-.product-preview-lead small { color: #b9c0ff; }
-.product-preview-icon { display: grid; width: 3.25rem; height: 3.25rem; flex: 0 0 auto; place-items: center; border-radius: 0.9rem; background: var(--preview-icon-surface); color: var(--preview-icon-ink); }
+.product-preview-lead { display: flex; align-items: center; gap: 1rem; border: 1px solid rgba(255,255,255,.18); border-radius: 0.75rem; padding: 1.25rem; background: var(--preview-app-gradient); color: white; box-shadow: 0 2px 4px rgba(18,21,50,.1); }
+.product-preview-lead small { color: rgba(255,255,255,.75); }
+.product-preview-icon { display: grid; width: 3.25rem; height: 3.25rem; flex: 0 0 auto; place-items: center; border-radius: 0.75rem; background: rgba(255,255,255,.14); color: white; box-shadow: inset 0 0 0 1px rgba(255,255,255,.14); }
 .product-preview-icon svg { width: 1.45rem; height: 1.45rem; }
 .product-preview-lead h3 { margin-top: 0.28rem; font-size: clamp(0.9rem, 1.5vw, 1.25rem); }
-.product-preview-lead p { margin-top: 0.3rem; color: #d7daf1; font-size: 0.7rem; line-height: 1.5; }
+.product-preview-lead p { margin-top: 0.3rem; color: rgba(255,255,255,.8); font-size: 0.7rem; line-height: 1.5; }
 .product-preview-metrics { display: grid; margin-top: 1.25rem; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
 .product-preview-metrics span { display: flex; min-height: 5.7rem; flex-direction: column; justify-content: space-between; border: 1px solid var(--preview-border); border-radius: 0.8rem; padding: 1rem; background: white; box-shadow: 0 2px 7px rgba(17,24,39,0.06); }
 .product-preview-metrics small { color: var(--preview-muted); font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.08em; }
@@ -292,7 +291,7 @@
 .product-preview-account em { margin-top: 0.45rem; color: white; font-size: 0.52rem; font-style: normal; font-weight: 650; }
 .product-preview-account strong { overflow: hidden; margin: 0.55rem -0.8rem -0.8rem; border-top: 1px solid rgba(255,255,255,.08); padding: 0.65rem 0.8rem; text-overflow: ellipsis; white-space: nowrap; }
 .product-preview-dashboard { padding: 0 1.35rem 1.4rem; }
-.product-preview-welcome { display: grid; grid-template-columns: 1fr auto; gap: 1rem; border-radius: 0.75rem; padding: 1.25rem; background: linear-gradient(105deg,#30377d 0%,#6b168f 52%,#de028e 100%); color: white; }
+.product-preview-welcome { display: grid; grid-template-columns: 1fr auto; gap: 1rem; border: 1px solid rgba(255,255,255,.18); border-radius: 0.75rem; padding: 1.25rem; background: var(--preview-app-gradient); color: white; box-shadow: 0 2px 4px rgba(18,21,50,.1); }
 .product-preview-welcome h3 { font-size: 1.05rem; }
 .product-preview-welcome p { margin-top: 0.22rem; color: rgba(255,255,255,.72); font-size: 0.62rem; }
 .product-preview-welcome > button { align-self: start; border: 0; border-radius: 0.55rem; padding: 0.7rem 0.85rem; background: #ef1733; color: white; font-size: 0.56rem; font-weight: 700; }
@@ -425,8 +424,8 @@
 .product-talent-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 360ms ease; }
 .product-talent-photo > span { display: grid; width: 100%; height: 100%; place-items: center; color: var(--product-accent-soft); font-family: Georgia, serif; font-size: 2rem; }
 .product-talent-photo > span svg { width: 2rem; height: 2rem; }
-.product-talent-photo b { display: inline-flex; position: absolute; bottom: 0.75rem; left: 0.75rem; min-height: 1.8rem; align-items: center; gap: 0.35rem; border: 1px solid rgba(255,255,255,0.22); border-radius: 999px; padding: 0.35rem 0.55rem; background: rgba(18,21,50,0.88); color: white; font-size: 0.58rem; font-weight: 720; backdrop-filter: blur(8px); }
-.product-talent-photo b svg { width: 0.8rem; height: 0.8rem; color: var(--product-accent-soft); }
+.product-talent-photo b { display: inline-flex; position: absolute; bottom: 0.75rem; left: 0.75rem; min-height: 1.8rem; align-items: center; gap: 0.35rem; border: 1px solid #e8c66a; border-radius: 999px; padding: 0.35rem 0.55rem; background: #fff7d6; color: #8a5a00; font-size: 0.58rem; font-weight: 720; box-shadow: 0 5px 18px rgba(138,90,0,.16); backdrop-filter: blur(8px); }
+.product-talent-photo b svg { width: 0.8rem; height: 0.8rem; color: #b77900; }
 .product-talent-body { display: flex; min-height: 15rem; padding: 1.15rem; flex-direction: column; }
 .product-talent-body > p { overflow: hidden; color: var(--product-accent-text); font-size: 0.62rem; font-weight: 750; letter-spacing: 0.1em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
 .product-talent-body h3 { margin-top: 0.55rem; font-size: 1.1rem; font-weight: 700; line-height: 1.2; }
@@ -690,14 +689,6 @@
   [data-hero-reveal], [data-reveal], [data-product-frame] { opacity: 1 !important; visibility: visible !important; transform: none !important; }
   .product-hero-cursor-glow { display: none; }
 }
-
-/* Hero satellites share dashboard gradient instead of legacy navy. */
-.product-hero-detail .product-preview-lead {
-  border-color: rgba(255,255,255,.2);
-  background: linear-gradient(105deg,#30377d 0%,#6b168f 52%,#de028e 100%);
-}
-.product-hero-detail .product-preview-lead small,
-.product-hero-detail .product-preview-lead p { color: rgba(255,255,255,.82); }
 
 @container (max-width: 560px) {
   .product-preview-dashboard .product-preview-shell { min-height: 0; grid-template-columns: 3.4rem minmax(0,1fr); }

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, MapPin, Award, Briefcase, Star, Mail, ExternalLink, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, MapPin, Award, Briefcase, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getTalentById, PublicTalent } from "@/lib/api";
+import { formatProfileLabel } from "@/lib/format-profile-label";
 
 export default function TalentDetailPage() {
   const params = useParams();
@@ -69,99 +70,88 @@ export default function TalentDetailPage() {
     );
   }
 
+  const role = talent.jobTitles.filter((title) => title.trim()).map(formatProfileLabel).join(", ") ||
+    formatProfileLabel(talent.jobRole) || "Professional";
+  const initials = `${talent.firstName?.[0] || ""}${talent.lastName?.[0] || ""}`.toUpperCase();
+  const skills = talent.user?.skillSet?.filter((skill) => skill.title.trim()) ?? [];
+
   return (
-    <div className="pt-32 pb-20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <Link href={backHref} className="inline-flex items-center text-zinc-500 hover:text-[#C2185B] transition-colors mb-8 group">
-            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-            Back to all talents
-          </Link>
+    <main className="kds-page">
+      <div className="kds-narrow">
+        <Link href={backHref} className="kds-back">
+          <ArrowLeft /> Back to all talents
+        </Link>
 
-          <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] p-8 shadow-sm border border-zinc-100 dark:border-zinc-800">
-            <div className="flex flex-col sm:flex-row items-start gap-6 mb-8">
-              <div className="relative">
-                {talent.profilePicture ? (
-                  <img
-                    src={talent.profilePicture}
-                    alt={`${talent.firstName} ${talent.lastName}`}
-                    className="w-24 h-24 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-24 h-24 bg-pink-50 dark:bg-pink-900/10 rounded-full flex items-center justify-center">
-                    <Award className="w-12 h-12 text-[#C2185B]" />
-                  </div>
-                )}
+        <section className="kds-panel kds-profile-hero">
+          <div className="kds-profile-banner" aria-hidden="true" />
+          <div className="kds-profile-header">
+            <div className="kds-avatar relative">
+              {talent.profilePicture ? (
+                // Public profile images can come from user-configured storage hosts.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={talent.profilePicture} alt={`${talent.firstName} ${talent.lastName}`} />
+              ) : (
+                <span>{initials || <Award aria-hidden="true" />}</span>
+              )}
+              {talent.user?.isKycDone && (
+                <div className="talent-gold-icon absolute -bottom-1 -right-1">
+                  <CheckCircle2 />
+                </div>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="kds-profile-name">{talent.firstName} {talent.lastName}</h1>
                 {talent.user?.isKycDone && (
-                  <div className="absolute -bottom-2 -right-2 bg-white dark:bg-zinc-800 rounded-full p-1">
-                    <CheckCircle2 className="w-7 h-7 text-green-500" />
-                  </div>
+                  <span className="talent-gold-badge"><CheckCircle2 /> Verified</span>
                 )}
               </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl font-bold dark:text-white">
-                    {talent.firstName} {talent.lastName}
-                  </h1>
-                  {talent.user?.isKycDone && (
-                    <CheckCircle2 className="w-6 h-6 text-green-500" />
-                  )}
-                </div>
-                <p className="text-zinc-500 dark:text-zinc-400 mb-4">
-                  {talent.jobTitles.join(", ")}
-                </p>
-                <div className="flex flex-wrap gap-4 text-sm text-zinc-500 dark:text-zinc-400">
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4" />
-                                          {'Nigeria'}
-
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Award className="w-4 h-4" />
-                    {talent.experienceLevel}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Briefcase className="w-4 h-4" />
-                    {talent.employmentType}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {talent.bio && (
-              <div className="mb-8">
-                <h2 className="text-xl font-bold dark:text-white mb-4">About</h2>
-                <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed">{talent.bio}</p>
-              </div>
-            )}
-
-            <div className="mb-8">
-              <h2 className="text-xl font-bold dark:text-white mb-4">Skills</h2>
-              <div className="flex flex-wrap gap-2">
-                {talent.user?.skillSet?.map((skill, index) => (
-                  <span
-                    key={index}
-                    className="px-4 py-2 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-sm rounded-full"
-                  >
-                    {skill.title}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <a 
-                href="https://app.kairosng.com/auth/login" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="bg-[#C2185B] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#A3154D] transition-all shadow-lg shadow-pink-500/10 inline-flex items-center justify-center"
-              >
-                Contact Talent
-              </a>
+              <p className="kds-profile-role">{role}</p>
             </div>
           </div>
+        </section>
+
+        <div className="kds-profile-layout">
+          <div className="kds-panel kds-profile-section">
+            <section>
+              <p className="kds-eyebrow">Profile</p>
+              <h2 className="kds-section-title">About</h2>
+              <p className="kds-profile-copy">{talent.bio || "This professional has not added a profile summary yet."}</p>
+            </section>
+
+            <section className="mt-10 border-t border-black/10 pt-8 dark:border-white/10">
+              <p className="kds-eyebrow">Expertise</p>
+              <h2 className="kds-section-title">Skills</h2>
+              {skills.length ? (
+                <div className="kds-chip-row">
+                  {skills.map((skill, index) => (
+                    <span className="kds-chip" key={`${skill.title}-${index}`}>{skill.title.trim()}</span>
+                  ))}
+                </div>
+              ) : (
+                <p className="kds-profile-copy">No skills listed yet.</p>
+              )}
+            </section>
+          </div>
+
+          <aside className="kds-panel kds-profile-section self-start">
+            <p className="kds-eyebrow">At a glance</p>
+            <div className="kds-facts">
+              <div className="kds-fact"><MapPin aria-hidden="true" /> <span>{talent.location || "Nigeria"}</span></div>
+              <div className="kds-fact"><Award aria-hidden="true" /> <span>{formatProfileLabel(talent.experienceLevel) || "Experience not specified"}</span></div>
+              <div className="kds-fact"><Briefcase aria-hidden="true" /> <span>{formatProfileLabel(talent.employmentType) || "Work type not specified"}</span></div>
+            </div>
+            <a
+              href="https://app.kairosng.com/auth/login"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="kds-button kds-button-primary mt-6 w-full"
+            >
+              Contact Talent
+            </a>
+          </aside>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

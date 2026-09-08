@@ -5,7 +5,7 @@ import { Search, ArrowLeft, MapPin, ArrowRight, User, Award, CheckCircle2 } from
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getPublicTalents, PublicTalent } from "@/lib/api";
-import { PreviewNotice } from "@/components/ui/preview-notice";
+import { formatProfileLabel } from "@/lib/format-profile-label";
 
 const shuffle = <T,>(items: T[]) => {
   const shuffled = [...items];
@@ -39,6 +39,9 @@ const getRandomSkills = (talents: PublicTalent[], limit = 9) => {
 
   return selected;
 };
+
+const prioritizeProfilesWithImages = (talents: PublicTalent[]) =>
+  [...talents].sort((a, b) => Number(Boolean(b.profilePicture?.trim())) - Number(Boolean(a.profilePicture?.trim())));
 
 export default function TalentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -95,7 +98,7 @@ export default function TalentsPage() {
           limit: 20,
         });
         if (!cancelled) {
-          setPublicTalents(response.data);
+          setPublicTalents(prioritizeProfilesWithImages(response.data));
           setRandomSkills(getRandomSkills(response.data));
           setPagination({
             total: response.pagination.total,
@@ -166,56 +169,55 @@ export default function TalentsPage() {
   const filteredTalents = publicTalents;
 
   return (
-    <div className="pt-32 pb-20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <PreviewNotice />
+    <main className="kds-page">
+      <div className="kds-container">
         {/* Header */}
-        <div className="mb-12">
-          <Link href="/" className="inline-flex items-center text-zinc-500 hover:text-[#C2185B] transition-colors mb-8 group">
-            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+        <div>
+          <Link href="/" className="kds-back">
+            <ArrowLeft />
             Back to Home
           </Link>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <span className="text-[#C2185B] font-bold text-xs uppercase tracking-widest mb-2 block">Global Talent</span>
-              <h1 className="text-4xl lg:text-6xl font-bold dark:text-white leading-tight">Discover exceptional talent</h1>
-              <p className="text-zinc-500 dark:text-zinc-400 mt-4 max-w-2xl text-lg">
+              <span className="kds-eyebrow">Global Talent</span>
+              <h1 className="kds-display">Discover <em>exceptional talent.</em></h1>
+              <p className="kds-lead">
                 Browse our network of pre-vetted professionals ready to join your team.
               </p>
             </div>
-            <div className="text-sm text-zinc-500">
+            <div className="kds-eyebrow">
               {filteredTalents.length} talented professionals available
             </div>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white dark:bg-zinc-900 rounded-[2.5rem] p-6 mb-12 shadow-xl shadow-pink-500/5 border border-zinc-100 dark:border-zinc-800">
+        <div className="kds-panel kds-search-panel">
           <div className="flex flex-col gap-6">
             {/* Search Bar */}
-            <div className="flex items-center gap-3 pl-6 pr-2 py-2 border border-zinc-100 dark:border-zinc-800 rounded-2xl bg-zinc-50 dark:bg-zinc-950/50">
-              <Search className="w-5 h-5 text-zinc-400" />
+            <div className="kds-search-row">
+              <Search />
               <input 
                 type="text" 
                 placeholder="Search by name, skills, or expertise..."
-                className="w-full bg-transparent border-none focus:ring-0 text-zinc-900 dark:text-white placeholder:text-zinc-400 py-4"
+                aria-label="Search talents"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
               <button 
                 onClick={handleSearch}
-                className="hidden sm:block bg-[#C2185B] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#A3154D] transition-all"
+                className="kds-button kds-button-primary"
               >
                 Search Talents
               </button>
             </div>
 
             {/* Filter Tags */}
-            <div className="flex flex-col sm:flex-row gap-8">
-              <div className="flex-1">
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3 block">Skills</span>
-                <div className="flex flex-wrap gap-2">
+            <div className="kds-filter-grid">
+              <div>
+                <span className="kds-filter-label">Skills</span>
+                <div className="kds-chip-row">
                   {skills.map((skill) => (
                     <button
                       key={skill}
@@ -223,20 +225,17 @@ export default function TalentsPage() {
                         setSelectedSkills(skill);
                         setCurrentPage(1);
                       }}
-                      className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                        selectedSkills === skill 
-                          ? "bg-[#C2185B] text-white shadow-md shadow-pink-500/10" 
-                          : "bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                      }`}
+                      className="kds-chip"
+                      aria-pressed={selectedSkills === skill}
                     >
                       {skill}
                     </button>
                   ))}
                 </div>
               </div>
-              <div className="w-full sm:w-auto">
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-3 block">Experience</span>
-                <div className="flex flex-wrap gap-2">
+              <div>
+                <span className="kds-filter-label">Experience</span>
+                <div className="kds-chip-row">
                   {experienceLevels.map(level => (
                     <button
                       key={level}
@@ -244,11 +243,8 @@ export default function TalentsPage() {
                         setSelectedExperience(level);
                         setCurrentPage(1);
                       }}
-                      className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                        selectedExperience === level 
-                          ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md" 
-                          : "bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                      }`}
+                      className="kds-chip"
+                      aria-pressed={selectedExperience === level}
                     >
                       {level}
                     </button>
@@ -260,7 +256,7 @@ export default function TalentsPage() {
         </div>
 
         {/* Talents List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="kds-talent-grid">
           {loading ? (
             // Loading skeletons
             Array.from({ length: 6 }).map((_, index) => (
@@ -290,54 +286,53 @@ export default function TalentsPage() {
                 href={`/talents/${talent.id}?returnTo=${encodeURIComponent(talentListHref)}`}
                 className="block"
               >
-                <div className="bg-white dark:bg-zinc-900 p-6 rounded-[2rem] shadow-sm border border-zinc-100 dark:border-zinc-800 hover:shadow-lg hover:border-pink-100 dark:hover:border-pink-900/30 transition-all group cursor-pointer">
+                <article className="kds-talent-card group">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="relative">
                       {talent.profilePicture ? (
-                        <img 
-                          src={talent.profilePicture} 
+                        <div className="kds-avatar"><img
+                          src={talent.profilePicture}
                           alt={`${talent.firstName} ${talent.lastName}`}
-                          className="w-16 h-16 rounded-full object-cover"
-                        />
+                        /></div>
                       ) : (
-                        <div className="w-16 h-16 bg-pink-50 dark:bg-pink-900/10 rounded-full flex items-center justify-center">
-                          <User className="w-8 h-8 text-[#C2185B]" />
+                        <div className="kds-avatar">
+                          <User className="w-8 h-8" />
                         </div>
                       )}
                       {talent.user?.isKycDone && (
-                        <div className="absolute -bottom-1 -right-1 bg-white dark:bg-zinc-800 rounded-full p-0.5">
-                          <CheckCircle2 className="w-5 h-5 text-green-500" />
+                        <div className="talent-gold-icon absolute -bottom-1 -right-1">
+                          <CheckCircle2 className="h-4 w-4 text-[#9a6700]" />
                         </div>
                       )}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-xl font-bold dark:text-white group-hover:text-[#C2185B] transition-colors">
+                        <h3 className="kds-card-title">
                           {talent.firstName} {talent.lastName}
                         </h3>
                         {talent.user?.isKycDone && (
-                          <CheckCircle2 className="w-4 h-4 text-green-500" />
+                          <span className="talent-gold-badge"><CheckCircle2 /> Verified</span>
                         )}
                       </div>
-                      <p className="text-zinc-500 dark:text-zinc-400 text-sm">
-                        {talent.jobTitles[0]}
+                      <p className="kds-card-role">
+                        {formatProfileLabel(talent.jobTitles[0] || talent.jobRole) || "Professional"}
                       </p>
                     </div>
                   </div>
 
                   {talent.bio && (
-                    <p className="text-zinc-600 dark:text-zinc-300 mb-4 line-clamp-3">
+                    <p className="kds-card-copy line-clamp-3">
                       {talent.bio}
                     </p>
                   )}
 
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {talent.user?.skillSet?.slice(0, 4).map((skill, index) => (
+                    {talent.user?.skillSet?.filter((skill) => skill.title.trim()).slice(0, 4).map((skill, index) => (
                       <span
                         key={index}
                         className="px-3 py-1 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 text-xs rounded-full"
                       >
-                        {skill.title}
+                        {skill.title.trim()}
                       </span>
                     ))}
                     {talent.user?.skillSet && talent.user.skillSet.length > 4 && (
@@ -347,7 +342,7 @@ export default function TalentsPage() {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="kds-card-footer">
                     <div className="flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
                       <div className="flex items-center gap-1.5">
                         <MapPin className="w-4 h-4" />
@@ -355,15 +350,15 @@ export default function TalentsPage() {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Award className="w-4 h-4" />
-                        {talent.experienceLevel}
+                        {formatProfileLabel(talent.experienceLevel)}
                       </div>
                     </div>
 
-                    <span className="text-[#C2185B] font-bold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                    <span className="kds-card-link">
                       View Profile <ArrowRight className="w-4 h-4" />
                     </span>
                   </div>
-                </div>
+                </article>
               </Link>
             ))
           ) : (
@@ -378,7 +373,7 @@ export default function TalentsPage() {
               <button
                 type="button"
                 onClick={handleViewAll}
-                className="inline-flex items-center gap-2 bg-[#C2185B] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#A3154D] transition-colors"
+                className="kds-button kds-button-primary"
               >
                 View all talents
                 <ArrowRight className="w-4 h-4" />
@@ -413,6 +408,6 @@ export default function TalentsPage() {
           </nav>
         )}
       </div>
-    </div>
+    </main>
   );
 }
