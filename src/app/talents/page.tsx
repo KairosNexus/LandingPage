@@ -5,7 +5,7 @@ import { Search, ArrowLeft, MapPin, ArrowRight, User, Award, CheckCircle2 } from
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getPublicTalents, PublicTalent } from "@/lib/api";
-import { formatProfileLabel } from "@/lib/format-profile-label";
+import { formatProfileLabel, formatProfileLocation } from "@/lib/format-profile-label";
 
 const shuffle = <T,>(items: T[]) => {
   const shuffled = [...items];
@@ -287,8 +287,8 @@ export default function TalentsPage() {
                 className="block"
               >
                 <article className="kds-talent-card group">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="relative">
+                  <div className="kds-card-header">
+                    <div className="kds-card-avatar">
                       {talent.profilePicture ? (
                         <div className="kds-avatar"><img
                           src={talent.profilePicture}
@@ -305,8 +305,8 @@ export default function TalentsPage() {
                         </div>
                       )}
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
                         <h3 className="kds-card-title">
                           {talent.firstName} {talent.lastName}
                         </h3>
@@ -343,18 +343,19 @@ export default function TalentsPage() {
                   </div>
 
                   <div className="kds-card-footer">
-                    <div className="flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
-                      <div className="flex items-center gap-1.5">
+                    {(formatProfileLocation(talent.location) || formatProfileLabel(talent.experienceLevel)) && (
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
+                      {formatProfileLocation(talent.location) && <div className="flex items-center gap-1.5">
                         <MapPin className="w-4 h-4" />
-                        {talent.location || "Location not specified"}
-                      </div>
-                      <div className="flex items-center gap-1.5">
+                        {formatProfileLocation(talent.location)}
+                      </div>}
+                      {formatProfileLabel(talent.experienceLevel) && <div className="flex items-center gap-1.5">
                         <Award className="w-4 h-4" />
                         {formatProfileLabel(talent.experienceLevel)}
-                      </div>
-                    </div>
+                      </div>}
+                    </div>)}
 
-                    <span className="kds-card-link">
+                    <span className="kds-card-link ml-auto">
                       View Profile <ArrowRight className="w-4 h-4" />
                     </span>
                   </div>

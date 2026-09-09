@@ -5,7 +5,7 @@ import { ArrowLeft, MapPin, Award, Briefcase, CheckCircle2 } from "lucide-react"
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getTalentById, PublicTalent } from "@/lib/api";
-import { formatProfileLabel } from "@/lib/format-profile-label";
+import { formatProfileLabel, formatProfileLocation } from "@/lib/format-profile-label";
 
 export default function TalentDetailPage() {
   const params = useParams();
@@ -74,6 +74,10 @@ export default function TalentDetailPage() {
     formatProfileLabel(talent.jobRole) || "Professional";
   const initials = `${talent.firstName?.[0] || ""}${talent.lastName?.[0] || ""}`.toUpperCase();
   const skills = talent.user?.skillSet?.filter((skill) => skill.title.trim()) ?? [];
+  const location = formatProfileLocation(talent.location);
+  const experienceLevel = formatProfileLabel(talent.experienceLevel);
+  const employmentType = formatProfileLabel(talent.employmentType);
+  const hasAtAGlanceDetails = Boolean(location || experienceLevel || employmentType);
 
   return (
     <main className="kds-page">
@@ -134,22 +138,24 @@ export default function TalentDetailPage() {
             </section>
           </div>
 
-          <aside className="kds-panel kds-profile-section self-start">
-            <p className="kds-eyebrow">At a glance</p>
-            <div className="kds-facts">
-              <div className="kds-fact"><MapPin aria-hidden="true" /> <span>{talent.location || "Nigeria"}</span></div>
-              <div className="kds-fact"><Award aria-hidden="true" /> <span>{formatProfileLabel(talent.experienceLevel) || "Experience not specified"}</span></div>
-              <div className="kds-fact"><Briefcase aria-hidden="true" /> <span>{formatProfileLabel(talent.employmentType) || "Work type not specified"}</span></div>
-            </div>
-            <a
-              href="https://app.kairosng.com/auth/login"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="kds-button kds-button-primary mt-6 w-full"
-            >
-              Contact Talent
-            </a>
-          </aside>
+          {hasAtAGlanceDetails && (
+            <aside className="kds-panel kds-profile-section self-start">
+              <p className="kds-eyebrow">At a glance</p>
+              <div className="kds-facts">
+                {location && <div className="kds-fact"><MapPin aria-hidden="true" /> <span>{location}</span></div>}
+                {experienceLevel && <div className="kds-fact"><Award aria-hidden="true" /> <span>{experienceLevel}</span></div>}
+                {employmentType && <div className="kds-fact"><Briefcase aria-hidden="true" /> <span>{employmentType}</span></div>}
+              </div>
+              <a
+                href="https://app.kairosng.com/auth/login"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="kds-button kds-button-primary mt-6 w-full"
+              >
+                Contact Talent
+              </a>
+            </aside>
+          )}
         </div>
       </div>
     </main>
