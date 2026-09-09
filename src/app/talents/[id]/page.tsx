@@ -89,14 +89,16 @@ export default function TalentDetailPage() {
         <section className="kds-panel kds-profile-hero">
           <div className="kds-profile-banner" aria-hidden="true" />
           <div className="kds-profile-header">
-            <div className="kds-avatar relative">
-              {talent.profilePicture ? (
-                // Public profile images can come from user-configured storage hosts.
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={talent.profilePicture} alt={`${talent.firstName} ${talent.lastName}`} />
-              ) : (
-                <span>{initials || <Award aria-hidden="true" />}</span>
-              )}
+            <div className="kds-profile-avatar">
+              <div className="kds-avatar">
+                {talent.profilePicture ? (
+                  // Public profile images can come from user-configured storage hosts.
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={talent.profilePicture} alt={`${talent.firstName} ${talent.lastName}`} />
+                ) : (
+                  <span>{initials || <Award aria-hidden="true" />}</span>
+                )}
+              </div>
               {talent.user?.isKycDone && (
                 <div className="talent-gold-icon absolute -bottom-1 -right-1">
                   <CheckCircle2 />

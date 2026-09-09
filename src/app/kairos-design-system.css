@@ -143,7 +143,9 @@
 .kds-profile-hero { overflow: hidden; }
 .kds-profile-banner { height: 9rem; background: linear-gradient(120deg, var(--kds-blue) 0%, #70148a 58%, var(--kds-brand) 100%); }
 .kds-profile-header { display: flex; align-items: end; gap: 1.5rem; padding: 0 clamp(1.25rem, 3vw, 2.5rem) 2rem; }
+.kds-profile-avatar { position: relative; z-index: 1; flex: 0 0 auto; }
 .kds-profile-header .kds-avatar { width: 8rem; height: 8rem; margin-top: -4rem; border: 5px solid var(--kds-surface); font-family: var(--kds-serif); font-size: 2.4rem; }
+.kds-profile-header .kds-avatar img { object-position: 50% 20%; }
 .kds-profile-name { font-family: var(--kds-serif); font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 500; letter-spacing: -0.05em; line-height: 1; }
 .kds-profile-role { margin-top: 0.55rem; color: var(--kds-muted); }
 .kds-profile-layout { display: grid; grid-template-columns: minmax(0, 1fr) 18rem; gap: 1rem; margin-top: 1rem; }
@@ -200,18 +202,20 @@
 @media (max-width: 960px) {
   .kds-talent-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .kds-profile-layout { grid-template-columns: 1fr; }
-  .kds-profile-layout aside { order: -1; }
 }
 
 @media (max-width: 640px) {
-  .kds-page { padding-inline: 1rem; }
+  .kds-page { padding: 6.5rem 1rem 3.5rem; }
+  .kds-back { margin-bottom: 1.5rem; }
   .kds-display { font-size: clamp(3rem, 16vw, 4.3rem); }
   .kds-filter-grid, .kds-talent-grid { grid-template-columns: 1fr; }
   .kds-search-row { flex-wrap: wrap; }
   .kds-search-row .kds-button { width: 100%; }
-  .kds-profile-banner { height: 6.5rem; }
-  .kds-profile-header { align-items: flex-start; flex-direction: column; }
-  .kds-profile-header .kds-avatar { width: 6.5rem; height: 6.5rem; margin-top: -3.25rem; }
+  .kds-profile-banner { height: 5.5rem; }
+  .kds-profile-header { align-items: flex-start; flex-direction: column; gap: 0.8rem; padding-bottom: 1.5rem; }
+  .kds-profile-header .kds-avatar { width: 5.75rem; height: 5.75rem; margin-top: -2.875rem; }
+  .kds-profile-name { font-size: clamp(2rem, 10vw, 2.65rem); line-height: 1.05; }
+  .kds-profile-role { font-size: 0.92rem; line-height: 1.5; }
 }
 
 @media (prefers-reduced-motion: reduce) {
