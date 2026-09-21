@@ -359,8 +359,8 @@ export function BusinessRequestModal({
                     <label htmlFor="business-request-message" className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
                       Message
                     </label>
-                    <button type="button" onClick={listening ? stopDictation : startDictation} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-zinc-300 px-3 py-2 text-sm font-bold text-zinc-800 dark:border-zinc-700 dark:text-zinc-100" aria-pressed={listening}>
-                      <Microphone className="h-4 w-4" />
+                    <button type="button" onClick={listening ? stopDictation : startDictation} className="inline-flex h-12 items-center gap-3 rounded-lg border border-zinc-300 px-4 py-3 text-base font-bold text-zinc-800 dark:border-zinc-700 dark:text-zinc-100" aria-pressed={listening}>
+                      <Microphone className="h-5 w-5" />
                       {listening ? "Stop dictation" : "Dictate"}
                     </button>
                   </div>
