@@ -301,6 +301,7 @@ export interface PublicJob {
 }
 
 export interface PublicTalentUser {
+  id: string;
   skillSet: { title: string }[];
   isKycDone?: boolean;
   verifiedRoles?: string[];

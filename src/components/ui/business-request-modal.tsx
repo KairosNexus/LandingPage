@@ -1,10 +1,11 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   PiCheckCircle as CheckCircle2,
   PiFileText as FileText,
+  PiMicrophone as Microphone,
   PiPaperclip as Paperclip,
   PiShieldWarning as ShieldAlert,
   PiSpinnerGap as Loader2,
@@ -14,7 +15,28 @@ import {
 } from "react-icons/pi";
 import { submitBusinessRequest } from "@/lib/api";
 
-type SubmissionState = "form" | "loading" | "success" | "error";
+type SubmissionState = "form" | "review" | "loading" | "success" | "error";
+
+interface SpeechResult {
+  isFinal: boolean;
+  0: { transcript: string };
+}
+
+interface SpeechRecognitionInstance {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: ((event: { resultIndex: number; results: ArrayLike<SpeechResult> }) => void) | null;
+  onerror: ((event: { error: string }) => void) | null;
+  onend: (() => void) | null;
+  start(): void;
+  stop(): void;
+}
+
+type SpeechRecognitionWindow = Window & {
+  SpeechRecognition?: new () => SpeechRecognitionInstance;
+  webkitSpeechRecognition?: new () => SpeechRecognitionInstance;
+};
 
 interface BusinessRequestModalProps {
   isOpen: boolean;
@@ -42,13 +64,70 @@ export function BusinessRequestModal({
   const [attachments, setAttachments] = useState<File[]>([]);
   const [state, setState] = useState<SubmissionState>("form");
   const [fileError, setFileError] = useState("");
+  const [listening, setListening] = useState(false);
+  const [speechError, setSpeechError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+
+  useEffect(() => {
+    return () => recognitionRef.current?.stop();
+  }, []);
+
+  const stopDictation = () => recognitionRef.current?.stop();
+
+  const startDictation = () => {
+    const browser = window as SpeechRecognitionWindow;
+    const Recognition = browser.SpeechRecognition || browser.webkitSpeechRecognition;
+    if (!Recognition) {
+      setSpeechError("Dictation is unavailable in this browser. Type your description instead.");
+      return;
+    }
+
+    setSpeechError("");
+    const recognition = new Recognition();
+    recognition.lang = "en-NG";
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.onresult = (event) => {
+      const spoken = Array.from(event.results)
+        .slice(event.resultIndex)
+        .filter((result) => result.isFinal)
+        .map((result) => result[0].transcript.trim())
+        .filter(Boolean)
+        .join(" ");
+      if (spoken) {
+        setForm((current) => ({
+          ...current,
+          message: `${current.message.trim()} ${spoken}`.trim().slice(0, 10000),
+        }));
+      }
+    };
+    recognition.onerror = (event) => {
+      if (event.error !== "no-speech" && event.error !== "aborted") {
+        setSpeechError("Dictation stopped. Check microphone permission or type your description.");
+      }
+    };
+    recognition.onend = () => {
+      setListening(false);
+      recognitionRef.current = null;
+    };
+    recognitionRef.current = recognition;
+    try {
+      recognition.start();
+      setListening(true);
+    } catch {
+      recognitionRef.current = null;
+      setSpeechError("Could not start dictation. Type your description instead.");
+    }
+  };
 
   const reset = () => {
+    stopDictation();
     setForm(initialForm);
     setAttachments([]);
     setState("form");
     setFileError("");
+    setSpeechError("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -87,6 +166,12 @@ export function BusinessRequestModal({
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (state === "form") {
+      stopDictation();
+      setState("review");
+      return;
+    }
+    if (state !== "review") return;
     setState("loading");
 
     try {
@@ -105,6 +190,16 @@ export function BusinessRequestModal({
       }}
     >
       <Dialog.Portal>
+        <style>{`
+          @keyframes business-request-voice-wave {
+            0%, 100% { transform: scaleY(0.45); }
+            50% { transform: scaleY(1); }
+          }
+          .voice-wave-bar { animation: business-request-voice-wave 800ms ease-in-out infinite; }
+          @media (prefers-reduced-motion: reduce) {
+            .voice-wave-bar { animation: none; }
+          }
+        `}</style>
         <Dialog.Overlay className="fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm" />
         <Dialog.Content className="fixed left-1/2 top-1/2 z-[120] max-h-[92vh] w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[2rem] border border-zinc-200 bg-white p-6 shadow-2xl focus:outline-none dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
           <Dialog.Close
@@ -134,6 +229,32 @@ export function BusinessRequestModal({
                 Done
               </button>
             </div>
+          ) : state === "review" ? (
+            <form onSubmit={submit} className="space-y-5">
+              <Dialog.Title className="pr-10 text-3xl font-bold text-zinc-950 dark:text-white">
+                Review Your Request
+              </Dialog.Title>
+              <Dialog.Description className="text-zinc-600 dark:text-zinc-300">
+                Check these exact details before sending. Edit anything missing or incorrect.
+              </Dialog.Description>
+              <div className="break-words rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm dark:border-zinc-800 dark:bg-zinc-900">
+                <p><strong>From:</strong> {form.fullName} · {form.workEmail}</p>
+                {form.company && <p><strong>Organization:</strong> {form.company}</p>}
+                <p><strong>Subject:</strong> {form.subject}</p>
+                <p><strong>Attachments:</strong> {attachments.length ? attachments.map((file) => file.name).join(", ") : "None"}</p>
+              </div>
+              <pre className="max-h-80 overflow-y-auto whitespace-pre-wrap break-words rounded-xl border border-zinc-200 bg-white p-4 font-sans text-sm leading-relaxed text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200">
+                {form.message}
+              </pre>
+              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <button type="button" onClick={() => setState("form")} className="min-h-12 rounded-xl border border-zinc-300 px-6 py-3 font-bold text-zinc-800 dark:border-zinc-700 dark:text-zinc-100">
+                  Edit Details
+                </button>
+                <button type="submit" className="min-h-12 rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079]">
+                  Confirm and Send
+                </button>
+              </div>
+            </form>
           ) : state === "error" ? (
             <div className="py-8 text-center">
               <AlertCircle className="mx-auto h-14 w-14 text-red-600" />
@@ -233,8 +354,18 @@ export function BusinessRequestModal({
                   />
                 </Field>
 
-                <Field label="Message">
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <label htmlFor="business-request-message" className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
+                      Message
+                    </label>
+                    <button type="button" onClick={listening ? stopDictation : startDictation} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-zinc-300 px-3 py-2 text-sm font-bold text-zinc-800 dark:border-zinc-700 dark:text-zinc-100" aria-pressed={listening}>
+                      <Microphone className="h-4 w-4" />
+                      {listening ? "Stop dictation" : "Dictate"}
+                    </button>
+                  </div>
                   <textarea
+                    id="business-request-message"
                     required
                     minLength={20}
                     maxLength={10000}
@@ -243,10 +374,21 @@ export function BusinessRequestModal({
                     onChange={(event) =>
                       setForm({ ...form, message: event.target.value })
                     }
-                    placeholder="Tell us about the project or role, required skills, expected hours, timeline, budget, and any other important details."
+                    placeholder="Tell us about the project or role, required skills, expected hours, timeline, budget, and any other important details. You can type or dictate your message."
                     className={`${inputClass} resize-y`}
                   />
-                </Field>
+                  {listening && (
+                    <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[#C00079]" role="status" aria-label="Recording. Your words will appear in the message field.">
+                      <span className="flex h-6 items-center gap-1" aria-hidden="true">
+                        {[9, 17, 23, 14, 20, 11, 18].map((height, index) => (
+                          <span key={index} className="voice-wave-bar w-1 rounded-full bg-current" style={{ height, animationDelay: `${index * 110}ms` }} />
+                        ))}
+                      </span>
+                      <span>Listening. Your words will appear here.</span>
+                    </div>
+                  )}
+                  {speechError && <p className="mt-2 text-sm text-red-600" role="alert">{speechError}</p>}
+                </div>
 
                 <div>
                   <div className="flex items-center justify-between gap-3">
@@ -337,7 +479,7 @@ export function BusinessRequestModal({
                     )}
                     {state === "loading"
                       ? "Sending your message…"
-                      : "Send Message"}
+                      : "Review Request"}
                   </button>
                 </div>
               </form>

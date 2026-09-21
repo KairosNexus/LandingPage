@@ -299,7 +299,7 @@ export default function TalentsPage() {
                           <User className="w-8 h-8" />
                         </div>
                       )}
-                      {talent.user?.isKycDone && (
+                      {Boolean(talent.user?.verifiedRoles?.length) && (
                         <div className="talent-gold-icon absolute -bottom-1 -right-1">
                           <CheckCircle2 className="h-4 w-4 text-[#9a6700]" />
                         </div>
@@ -310,8 +310,8 @@ export default function TalentsPage() {
                         <h3 className="kds-card-title">
                           {talent.firstName} {talent.lastName}
                         </h3>
-                        {talent.user?.isKycDone && (
-                          <span className="talent-gold-badge"><CheckCircle2 /> Verified</span>
+                        {Boolean(talent.user?.verifiedRoles?.length) && (
+                          <span className="talent-gold-badge"><CheckCircle2 /> Skill Verified</span>
                         )}
                       </div>
                       <p className="kds-card-role">

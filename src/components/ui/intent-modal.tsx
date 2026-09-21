@@ -62,26 +62,6 @@ export function IntentModal({ isOpen, onClose, onSelect }: IntentModalProps) {
 
               {/* Options */}
               <div className="px-4 pb-4 space-y-3">
-                {/* Company Option */}
-                <button
-                  onClick={() => onSelect("company")}
-                  className="w-full group p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-[#DE028E] hover:bg-[#FEC2E8]/30 dark:hover:bg-[#DE028E]/10 transition-all duration-200"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-[#FEC2E8]/60 dark:bg-[#DE028E]/25 flex items-center justify-center group-hover:scale-105 transition-transform">
-                      <Users className="w-5 h-5 text-[#DE028E]" />
-                    </div>
-                    <div className="text-left">
-                      <h4 className="font-semibold text-sm dark:text-white">
-                        I need talent
-                      </h4>
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                        Request concierge matching now
-                      </p>
-                    </div>
-                  </div>
-                </button>
-
                 {/* Talent Option */}
                 <button
                   onClick={() => onSelect("talent")}
@@ -97,6 +77,26 @@ export function IntentModal({ isOpen, onClose, onSelect }: IntentModalProps) {
                       </h4>
                       <p className="text-xs text-zinc-500 dark:text-zinc-400">
                         Join early for future opportunities
+                      </p>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Company Option */}
+                <button
+                  onClick={() => onSelect("company")}
+                  className="w-full group p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:border-[#DE028E] hover:bg-[#FEC2E8]/30 dark:hover:bg-[#DE028E]/10 transition-all duration-200"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-[#FEC2E8]/60 dark:bg-[#DE028E]/25 flex items-center justify-center group-hover:scale-105 transition-transform">
+                      <Users className="w-5 h-5 text-[#DE028E]" />
+                    </div>
+                    <div className="text-left">
+                      <h4 className="font-semibold text-sm dark:text-white">
+                        I need talent
+                      </h4>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                        Request concierge matching now
                       </p>
                     </div>
                   </div>

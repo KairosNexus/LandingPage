@@ -146,6 +146,21 @@
 .kds-profile-avatar { position: relative; z-index: 1; flex: 0 0 auto; }
 .kds-profile-header .kds-avatar { width: 8rem; height: 8rem; margin-top: -4rem; border: 5px solid var(--kds-surface); font-family: var(--kds-serif); font-size: 2.4rem; }
 .kds-profile-header .kds-avatar img { object-position: 50% 20%; }
+.kds-avatar-button { position: relative; cursor: zoom-in; }
+.kds-avatar-view {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  background: rgba(18, 21, 50, 0.58);
+  color: white;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+.kds-avatar-view svg { width: 1.5rem; height: 1.5rem; }
+.kds-avatar-button:hover .kds-avatar-view,
+.kds-avatar-button:focus-visible .kds-avatar-view { opacity: 1; }
 .kds-profile-name { font-family: var(--kds-serif); font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 500; letter-spacing: -0.05em; line-height: 1; }
 .kds-profile-role { margin-top: 0.55rem; color: var(--kds-muted); }
 .kds-profile-layout { display: grid; grid-template-columns: minmax(0, 1fr) 18rem; gap: 1rem; margin-top: 1rem; }
