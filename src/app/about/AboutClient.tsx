@@ -87,7 +87,7 @@ export function AboutClient() {
       <section id="about-mission" className={`${styles.mission} ${styles.container}`} aria-labelledby="mission-title">
         <div data-about-reveal><p className={styles.eyebrow}>01 / Our mission</p><h2 id="mission-title">Opening global opportunity<br /><em>to African talent.</em></h2></div>
         <div className={styles.missionCopy} data-about-reveal>
-          <p>Talent is everywhere. Access is not-and hiring equivalent roles in the U.S. can be expensive. We started Kairos to help close both gaps, beginning in Nigeria.</p>
+          <p>Talent is everywhere. Access is not. And hiring equivalent roles in the U.S. can be expensive. We started Kairos to help close both gaps, beginning in Nigeria.</p>
           <p>We bring companies and skilled African professionals together through human-led introductions, visible skill evidence, and clear expectations. Companies can save up to 70% compared with equivalent U.S. hiring costs. Nigeria is our starting point, Africa is our focus, and a more open global talent market is the future we are building toward.</p>
           <Link href="/how-it-works" className={styles.textLink}>See how Kairos works <ArrowUpRight aria-hidden="true" /></Link>
         </div>
