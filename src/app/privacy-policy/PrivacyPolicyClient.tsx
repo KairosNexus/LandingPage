@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export function PrivacyPolicyClient() {
+export function PrivacyPolicyClient({ embedded = false }: { embedded?: boolean }) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -31,17 +31,17 @@ export function PrivacyPolicyClient() {
   ];
 
   return (
-    <div className="pt-24 pb-20 bg-white dark:bg-zinc-950 min-h-screen">
+    <div className={`${embedded ? "py-5 sm:py-8" : "pt-24 pb-20"} bg-white dark:bg-zinc-950 min-h-screen`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="max-w-4xl mx-auto mb-16">
-          <Link
+          {!embedded && <Link
             href="/"
             className="inline-flex items-center text-zinc-500 hover:text-[#C2185B] transition-colors mb-8 group"
           >
             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
             Back to Home
-          </Link>
+          </Link>}
 
           <div className="text-center">
             <div className="flex flex-wrap justify-center gap-3 mb-4">
@@ -55,7 +55,7 @@ export function PrivacyPolicyClient() {
                 NDPR Compliant
               </span>
             </div>
-            <h1 className="text-4xl lg:text-6xl font-bold dark:text-white leading-tight mb-6">
+            <h1 className={`${embedded ? "text-3xl sm:text-4xl" : "text-4xl lg:text-6xl"} font-bold dark:text-white leading-tight mb-6`}>
               Privacy Policy
             </h1>
             <div className="flex flex-wrap justify-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">

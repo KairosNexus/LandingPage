@@ -16,6 +16,7 @@ import {
 import { submitBusinessRequest } from "@/lib/api";
 
 type SubmissionState = "form" | "review" | "loading" | "success" | "error";
+type ActivePolicy = "terms" | "privacy" | null;
 
 interface SpeechResult {
   isFinal: boolean;
@@ -66,12 +67,28 @@ export function BusinessRequestModal({
   const [fileError, setFileError] = useState("");
   const [listening, setListening] = useState(false);
   const [speechError, setSpeechError] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [consentError, setConsentError] = useState("");
+  const [activePolicy, setActivePolicy] = useState<ActivePolicy>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const modalContentRef = useRef<HTMLDivElement>(null);
+  const policyFrameRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     return () => recognitionRef.current?.stop();
   }, []);
+
+  useEffect(() => {
+    if (!activePolicy) return;
+
+    modalContentRef.current?.scrollTo({ top: 0, behavior: "instant" });
+  }, [activePolicy]);
+
+  const openPolicy = (policy: Exclude<ActivePolicy, null>) => {
+    setActivePolicy(policy);
+    modalContentRef.current?.scrollTo({ top: 0, behavior: "instant" });
+  };
 
   const stopDictation = () => recognitionRef.current?.stop();
 
@@ -128,6 +145,9 @@ export function BusinessRequestModal({
     setState("form");
     setFileError("");
     setSpeechError("");
+    setTermsAccepted(false);
+    setConsentError("");
+    setActivePolicy(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -166,6 +186,13 @@ export function BusinessRequestModal({
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!termsAccepted) {
+      setConsentError(
+        "You must accept the Terms of Service and Privacy Policy before submitting your Scope of Work.",
+      );
+      return;
+    }
+    setConsentError("");
     if (state === "form") {
       stopDictation();
       setState("review");
@@ -201,7 +228,73 @@ export function BusinessRequestModal({
           }
         `}</style>
         <Dialog.Overlay className="fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-[120] max-h-[92vh] w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[2rem] border border-zinc-200 bg-white p-6 shadow-2xl focus:outline-none dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
+        <Dialog.Content ref={modalContentRef} className="fixed left-1/2 top-1/2 z-[120] max-h-[92vh] w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[2rem] border border-zinc-200 bg-white p-6 shadow-2xl focus:outline-none dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
+          {activePolicy && (
+            <div className="absolute inset-0 z-20 flex min-h-full flex-col rounded-[2rem] bg-white dark:bg-zinc-950">
+              <div className="flex shrink-0 items-center justify-between gap-4 border-b border-zinc-200 px-5 py-4 dark:border-zinc-800 sm:px-7">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#C00079] dark:text-[#FEC2E8]">
+                    Legal document
+                  </p>
+                  <h2 className="mt-1 text-xl font-bold text-zinc-950 dark:text-white">
+                    {activePolicy === "terms"
+                      ? "Terms of Service"
+                      : "Privacy Policy"}
+                  </h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActivePolicy(null)}
+                  className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-zinc-300 text-zinc-700 transition-colors hover:border-[#DE028E] hover:bg-pink-50 hover:text-[#C00079] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DE028E] focus-visible:ring-offset-2 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800 dark:hover:text-[#FEC2E8] dark:focus-visible:ring-offset-zinc-950"
+                  aria-label="Close legal document"
+                  title="Close"
+                >
+                  <X className="h-7 w-7" aria-hidden="true" />
+                </button>
+              </div>
+              <iframe
+                key={activePolicy}
+                ref={policyFrameRef}
+                src={
+                  activePolicy === "terms"
+                    ? "/embed/terms-of-service"
+                    : "/embed/privacy-policy"
+                }
+                title={
+                  activePolicy === "terms"
+                    ? "Terms of Service"
+                    : "Privacy Policy"
+                }
+                onLoad={() =>
+                  policyFrameRef.current?.contentWindow?.scrollTo(0, 0)
+                }
+                className="min-h-[68vh] w-full flex-1 rounded-b-[2rem] bg-white dark:bg-zinc-950 sm:min-h-[72vh]"
+              />
+              <div className="flex shrink-0 justify-end border-t border-zinc-200 bg-white px-5 py-4 dark:border-zinc-800 dark:bg-zinc-950 sm:px-7">
+                {activePolicy === "terms" ? (
+                  <button
+                    type="button"
+                    onClick={() => openPolicy("privacy")}
+                    className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-[#DE028E] px-6 py-3 font-bold text-white transition-colors hover:bg-[#C00079] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DE028E] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 sm:w-auto"
+                  >
+                    Next: Privacy Policy
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTermsAccepted(true);
+                      setConsentError("");
+                      setActivePolicy(null);
+                    }}
+                    className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-[#DE028E] px-6 py-3 font-bold text-white transition-colors hover:bg-[#C00079] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#DE028E] focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-950 sm:w-auto"
+                  >
+                    Agree &amp; Continue
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
           <Dialog.Close
             disabled={state === "loading"}
             className="absolute right-5 top-5 rounded-full p-2 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-950 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-zinc-800 dark:hover:text-white"
@@ -242,6 +335,7 @@ export function BusinessRequestModal({
                 {form.company && <p><strong>Organization:</strong> {form.company}</p>}
                 <p><strong>Subject:</strong> {form.subject}</p>
                 <p><strong>Attachments:</strong> {attachments.length ? attachments.map((file) => file.name).join(", ") : "None"}</p>
+                <p><strong>Terms and policies:</strong> Accepted</p>
               </div>
               <pre className="max-h-80 overflow-y-auto whitespace-pre-wrap break-words rounded-xl border border-zinc-200 bg-white p-4 font-sans text-sm leading-relaxed text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200">
                 {form.message}
@@ -250,8 +344,8 @@ export function BusinessRequestModal({
                 <button type="button" onClick={() => setState("form")} className="min-h-12 rounded-xl border border-zinc-300 px-6 py-3 font-bold text-zinc-800 dark:border-zinc-700 dark:text-zinc-100">
                   Edit Details
                 </button>
-                <button type="submit" className="min-h-12 rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079]">
-                  Confirm and Send
+                <button type="submit" disabled={!termsAccepted} className="min-h-12 rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079] disabled:cursor-not-allowed disabled:opacity-50">
+                  Submit Scope of Work
                 </button>
               </div>
             </form>
@@ -460,6 +554,51 @@ export function BusinessRequestModal({
                   </div>
                 </div>
 
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900">
+                  <label className="flex cursor-pointer items-start gap-3">
+                    <input
+                      type="checkbox"
+                      required
+                      checked={termsAccepted}
+                      onChange={(event) => {
+                        setTermsAccepted(event.target.checked);
+                        if (event.target.checked) setConsentError("");
+                      }}
+                      className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-[#DE028E]"
+                    />
+                    <span className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                      I have reviewed and agree to the{" "}
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          openPolicy("terms");
+                        }}
+                        className="font-bold text-[#C00079] underline-offset-2 hover:underline dark:text-[#FEC2E8]"
+                      >
+                        Terms of Service
+                      </button>{" "}
+                      and{" "}
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.preventDefault();
+                          openPolicy("privacy");
+                        }}
+                        className="font-bold text-[#C00079] underline-offset-2 hover:underline dark:text-[#FEC2E8]"
+                      >
+                        Privacy Policy
+                      </button>
+                      .
+                    </span>
+                  </label>
+                  {consentError && (
+                    <p className="mt-2 text-sm font-medium text-red-600" role="alert">
+                      {consentError}
+                    </p>
+                  )}
+                </div>
+
                 <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
                   <button
                     type="button"
@@ -471,7 +610,7 @@ export function BusinessRequestModal({
                   </button>
                   <button
                     type="submit"
-                    disabled={state === "loading"}
+                    disabled={state === "loading" || !termsAccepted}
                     className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {state === "loading" && (
@@ -479,7 +618,7 @@ export function BusinessRequestModal({
                     )}
                     {state === "loading"
                       ? "Sending your message…"
-                      : "Review Request"}
+                      : "Review Scope of Work"}
                   </button>
                 </div>
               </form>

@@ -15,26 +15,29 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
   const isDashboard = pathname.startsWith("/dashboard");
+  const isEmbedded = pathname.startsWith("/embed/");
 
   return (
     <div className={`min-h-screen flex flex-col bg-[var(--background)] dark:bg-black transition-colors duration-300${pathname === "/" ? " product-site-shell" : ""}`}>
-      <Header />
+      {!isEmbedded && <Header />}
       
       <main className="flex-1">
         {children}
       </main>
 
-      {!isDashboard && <Footer />}
+      {!isDashboard && !isEmbedded && <Footer />}
 
-      <ScrollToTop />
+      {!isEmbedded && <ScrollToTop />}
 
-      <ClientIntentModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onSelect={setIntent}
-      />
+      {!isEmbedded && (
+        <ClientIntentModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          onSelect={setIntent}
+        />
+      )}
 
-      {!isDashboard && <CookieConsent />}
+      {!isDashboard && !isEmbedded && <CookieConsent />}
     </div>
   );
 }
