@@ -8,12 +8,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getTalentById, PublicTalent } from "@/lib/api";
 import { formatProfileLabel, formatProfileLocation } from "@/lib/format-profile-label";
+import { useBusinessInquiry } from "@/components/providers/business-inquiry-provider";
 
 export default function TalentDetailPage() {
   const params = useParams();
   const [talent, setTalent] = useState<PublicTalent | null>(null);
   const [loading, setLoading] = useState(true);
   const [backHref, setBackHref] = useState("/talents");
+  const { openTalentRequestModal } = useBusinessInquiry();
 
   useEffect(() => {
     const requestedBackHref = new URLSearchParams(window.location.search).get("returnTo");
@@ -100,8 +102,14 @@ export default function TalentDetailPage() {
                       className="kds-avatar kds-avatar-button"
                       aria-label={`View ${talent.firstName} ${talent.lastName}'s profile photo`}
                     >
-                      <img src={talent.profilePicture} alt={`${talent.firstName} ${talent.lastName}`} />
+                      <img className="kds-avatar-blur" src={talent.profilePicture} alt="" aria-hidden="true" />
+                      <img className="kds-avatar-image" src={talent.profilePicture} alt={`${talent.firstName} ${talent.lastName}`} />
                       <span className="kds-avatar-view" aria-hidden="true"><ZoomIn /></span>
+                    </button>
+                  </Dialog.Trigger>
+                  <Dialog.Trigger asChild>
+                    <button type="button" className="kds-media-button">
+                      <ZoomIn aria-hidden="true" /> View media
                     </button>
                   </Dialog.Trigger>
                   <Dialog.Portal>
@@ -172,14 +180,18 @@ export default function TalentDetailPage() {
                 {experienceLevel && <div className="kds-fact"><Award aria-hidden="true" /> <span>{experienceLevel}</span></div>}
                 {employmentType && <div className="kds-fact"><Briefcase aria-hidden="true" /> <span>{employmentType}</span></div>}
               </div>
-              <a
-                href={`https://app.kairosng.com/jobs/talent-pool/${talent.user?.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() =>
+                  openTalentRequestModal(
+                    talent.id,
+                    `${talent.firstName} ${talent.lastName}`.trim(),
+                  )
+                }
                 className="kds-button kds-button-primary mt-6 w-full"
               >
                 Contact Talent
-              </a>
+              </button>
             </aside>
           )}
         </div>

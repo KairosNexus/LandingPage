@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { PiArrowRight, PiCheckCircle } from "react-icons/pi";
 import { useBusinessInquiry } from "@/components/providers/business-inquiry-provider";
-import { getAppSignupUrl } from "@/lib/app-links";
+import { getAppLoginUrl, getAppSignupUrl } from "@/lib/app-links";
 import { HeroParticles } from "./hero-particles";
 import { ProductPreview } from "./product-preview";
 
@@ -118,9 +118,31 @@ export function LandingHero({ audience }: LandingHeroProps) {
             {content.exploreLabel}
           </a>
           {audience === "talent" && (
-            <p className="product-hero-disclaimer" data-hero-reveal>
-              Registration and verification do not guarantee immediate placement.
-            </p>
+            <aside className="product-talent-verification-notice" data-hero-reveal>
+              <p>
+                Sign in to complete your verification. Our team currently matches
+                verified talent with companies manually. Stay tuned for our
+                self-service platform launch in 2027.
+              </p>
+              <a href={getAppLoginUrl()} target="_blank" rel="noopener noreferrer">
+                Sign in to complete verification
+                <PiArrowRight aria-hidden="true" />
+              </a>
+            </aside>
+          )}
+          {audience === "company" && (
+            <aside className="product-talent-verification-notice" data-hero-reveal>
+              <p>
+                Our self-service platform is still in development. Submit your
+                scope of work, and our team will manually match you with vetted
+                talent and coordinate the introduction. Stay tuned for our
+                self-service platform launch in 2027.
+              </p>
+              <button type="button" onClick={openRequestModal}>
+                Submit your scope of work
+                <PiArrowRight aria-hidden="true" />
+              </button>
+            </aside>
           )}
         </div>
 

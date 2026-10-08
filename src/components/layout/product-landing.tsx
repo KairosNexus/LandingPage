@@ -11,12 +11,12 @@ import {
   PiUserCheck,
 } from "react-icons/pi";
 import { useBusinessInquiry } from "@/components/providers/business-inquiry-provider";
-import { getAppSignupUrl } from "@/lib/app-links";
+import { getAppLoginUrl, getAppSignupUrl } from "@/lib/app-links";
 import { Cofounders } from "./cofounders";
 import { GsapScrollExperience } from "./gsap-scroll-experience";
 import { LandingHero } from "./landing-hero";
+import { CredibilityRail, TopCredibilityRail } from "./credibility-rail";
 import { ProductPreview, type PreviewKind } from "./product-preview";
-import { TrustSection } from "./trust-section";
 import { CompanyCapabilities } from "./company-capabilities";
 
 type Audience = "company" | "talent";
@@ -213,7 +213,9 @@ export function ProductLanding({ audience }: { audience: Audience }) {
   return (
     <GsapScrollExperience>
       <div className="product-landing">
+        <TopCredibilityRail />
         <LandingHero audience={audience} />
+        <CredibilityRail />
 
         <section
           id="how-it-works"
@@ -278,17 +280,39 @@ export function ProductLanding({ audience }: { audience: Audience }) {
                   ? "Review skilled professionals in one place, with our team ready to support sourcing and introductions."
                   : "Set up your account, complete available verification, explore jobs, and manage each next step in one workspace."}
               </p>
-              <a
-                className="product-horizontal-cta"
-                href={getAppSignupUrl(audience)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Platform preview
-              </a>
+              <aside className="product-preview-notice" aria-labelledby="platform-preview-notice-title">
+                <p className="product-preview-notice-label">Platform preview notice</p>
+                <h3 id="platform-preview-notice-title">Our self-service platform is still in development and is not ready for use.</h3>
+                <p>
+                  You can explore our progress on the technology here. In the meantime,
+                  our team is actively matching founders with vetted talent manually.
+                </p>
+                <div className="product-preview-notice-actions">
+                  <a className="product-button product-button-primary" href="#platform-preview">
+                    Explore our progress
+                    <PiArrowRight aria-hidden="true" />
+                  </a>
+                  <a
+                    className="product-button product-button-secondary"
+                    href={getAppLoginUrl()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Log in
+                  </a>
+                  <a
+                    className="product-button product-button-secondary"
+                    href={getAppSignupUrl(audience)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Sign up
+                  </a>
+                </div>
+              </aside>
             </div>
           </header>
-          <div className="product-workflow-stack" data-stack-section>
+          <div id="platform-preview" className="product-workflow-stack scroll-mt-24" data-stack-section>
             <div className="product-horizontal-progress" aria-hidden="true">
               <span data-stack-count>01 / 03</span>
               <i>
@@ -325,7 +349,7 @@ export function ProductLanding({ audience }: { audience: Audience }) {
           </div>
         </section>
 
-        <TrustSection />
+        {/* Lower credibility section hidden because partner credibility is shown above the hero. */}
         <Cofounders />
 
         <section className="product-final-cta" data-reveal>

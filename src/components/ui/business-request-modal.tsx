@@ -2,6 +2,7 @@
 
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import axios from "axios";
 import {
   PiCheckCircle as CheckCircle2,
   PiFileText as FileText,
@@ -13,7 +14,12 @@ import {
   PiWarningCircle as AlertCircle,
   PiX as X,
 } from "react-icons/pi";
-import { submitBusinessRequest } from "@/lib/api";
+import {
+  parseSowDictation,
+  parseSowTranscript,
+  submitBusinessRequest,
+  type ParsedSowDictation,
+} from "@/lib/api";
 
 type SubmissionState = "form" | "review" | "loading" | "success" | "error";
 type ActivePolicy = "terms" | "privacy" | null;
@@ -27,9 +33,8 @@ interface SpeechRecognitionInstance {
   lang: string;
   continuous: boolean;
   interimResults: boolean;
-  onresult: ((event: { resultIndex: number; results: ArrayLike<SpeechResult> }) => void) | null;
+  onresult: ((event: { results: ArrayLike<SpeechResult> }) => void) | null;
   onerror: ((event: { error: string }) => void) | null;
-  onend: (() => void) | null;
   start(): void;
   stop(): void;
 }
@@ -42,6 +47,8 @@ type SpeechRecognitionWindow = Window & {
 interface BusinessRequestModalProps {
   isOpen: boolean;
   onClose: () => void;
+  selectedTalentId?: string | null;
+  selectedTalentName?: string | null;
 }
 
 const initialForm = {
@@ -60,23 +67,41 @@ const acceptedFileTypes =
 export function BusinessRequestModal({
   isOpen,
   onClose,
+  selectedTalentId,
+  selectedTalentName,
 }: BusinessRequestModalProps) {
   const [form, setForm] = useState(initialForm);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [state, setState] = useState<SubmissionState>("form");
   const [fileError, setFileError] = useState("");
   const [listening, setListening] = useState(false);
+  const [parsingDictation, setParsingDictation] = useState(false);
   const [speechError, setSpeechError] = useState("");
+  const [dictationWarnings, setDictationWarnings] = useState<string[]>([]);
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [dictationTranscript, setDictationTranscript] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [consentError, setConsentError] = useState("");
   const [activePolicy, setActivePolicy] = useState<ActivePolicy>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const audioStreamRef = useRef<MediaStream | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const liveTranscriptRef = useRef("");
+  const messageBeforeDictationRef = useRef("");
+  const discardRecordingRef = useRef(false);
   const modalContentRef = useRef<HTMLDivElement>(null);
   const policyFrameRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    return () => recognitionRef.current?.stop();
+    return () => {
+      discardRecordingRef.current = true;
+      if (recorderRef.current?.state === "recording")
+        recorderRef.current.stop();
+      recognitionRef.current?.stop();
+      audioStreamRef.current?.getTracks().forEach((track) => track.stop());
+    };
   }, []);
 
   useEffect(() => {
@@ -90,61 +115,151 @@ export function BusinessRequestModal({
     modalContentRef.current?.scrollTo({ top: 0, behavior: "instant" });
   };
 
-  const stopDictation = () => recognitionRef.current?.stop();
+  const applyDraft = (draft: ParsedSowDictation) => {
+    setForm((current) => ({
+      ...current,
+      subject: draft.subject,
+      message: draft.message,
+    }));
+    setDictationWarnings(draft.warnings);
+    setShowRecommendations(false);
+    setDictationTranscript(draft.transcript);
+  };
 
-  const startDictation = () => {
-    const browser = window as SpeechRecognitionWindow;
-    const Recognition = browser.SpeechRecognition || browser.webkitSpeechRecognition;
-    if (!Recognition) {
-      setSpeechError("Dictation is unavailable in this browser. Type your description instead.");
+  const parseRecording = async (audio: Blob) => {
+    setParsingDictation(true);
+    try {
+      const transcript = [
+        messageBeforeDictationRef.current,
+        liveTranscriptRef.current.trim(),
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+      const draft =
+        transcript.length >= 10
+          ? await parseSowTranscript(transcript)
+          : await parseSowDictation(audio);
+      applyDraft(draft);
+    } catch (error: unknown) {
+      setSpeechError(
+        (axios.isAxiosError(error) && error.response?.data?.message) ||
+          "Could not parse dictation. Try again or type your description.",
+      );
+    } finally {
+      setParsingDictation(false);
+    }
+  };
+
+  const stopDictation = (parse = true) => {
+    discardRecordingRef.current = !parse;
+    recognitionRef.current?.stop();
+    recognitionRef.current = null;
+    if (recorderRef.current?.state === "recording") recorderRef.current.stop();
+    setListening(false);
+  };
+
+  const startDictation = async () => {
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+      setSpeechError(
+        "Dictation is unavailable in this browser. Type your description instead.",
+      );
       return;
     }
-
     setSpeechError("");
-    const recognition = new Recognition();
-    recognition.lang = "en-NG";
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.onresult = (event) => {
-      const spoken = Array.from(event.results)
-        .slice(event.resultIndex)
-        .filter((result) => result.isFinal)
-        .map((result) => result[0].transcript.trim())
-        .filter(Boolean)
-        .join(" ");
-      if (spoken) {
-        setForm((current) => ({
-          ...current,
-          message: `${current.message.trim()} ${spoken}`.trim().slice(0, 10000),
-        }));
-      }
-    };
-    recognition.onerror = (event) => {
-      if (event.error !== "no-speech" && event.error !== "aborted") {
-        setSpeechError("Dictation stopped. Check microphone permission or type your description.");
-      }
-    };
-    recognition.onend = () => {
-      setListening(false);
-      recognitionRef.current = null;
-    };
-    recognitionRef.current = recognition;
+    setDictationWarnings([]);
+    setShowRecommendations(false);
+    setDictationTranscript("");
+    liveTranscriptRef.current = "";
+    messageBeforeDictationRef.current = form.message.trim();
+    discardRecordingRef.current = false;
     try {
-      recognition.start();
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const preferredTypes = [
+        "audio/webm;codecs=opus",
+        "audio/mp4",
+        "audio/ogg;codecs=opus",
+      ];
+      const mimeType = preferredTypes.find((type) =>
+        MediaRecorder.isTypeSupported(type),
+      );
+      const recorder = new MediaRecorder(stream, {
+        ...(mimeType ? { mimeType } : {}),
+        audioBitsPerSecond: 48_000,
+      });
+      recorderRef.current = recorder;
+      audioStreamRef.current = stream;
+      audioChunksRef.current = [];
+      recorder.ondataavailable = (event) => {
+        if (event.data.size) audioChunksRef.current.push(event.data);
+      };
+      recorder.onstop = () => {
+        const audio = new Blob(audioChunksRef.current, {
+          type: recorder.mimeType || "audio/webm",
+        });
+        stream.getTracks().forEach((track) => track.stop());
+        audioStreamRef.current = null;
+        if (!discardRecordingRef.current && audio.size) {
+          window.setTimeout(() => void parseRecording(audio), 300);
+        }
+      };
+
+      const browser = window as SpeechRecognitionWindow;
+      const Recognition =
+        browser.SpeechRecognition || browser.webkitSpeechRecognition;
+      if (Recognition) {
+        const recognition = new Recognition();
+        recognition.lang = "en-NG";
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.onresult = (event) => {
+          const finalParts: string[] = [];
+          const interimParts: string[] = [];
+          Array.from(event.results).forEach((result) => {
+            const text = result[0].transcript.trim();
+            if (!text) return;
+            (result.isFinal ? finalParts : interimParts).push(text);
+          });
+          liveTranscriptRef.current = finalParts.join(" ").trim();
+          const visibleTranscript = [...finalParts, ...interimParts]
+            .join(" ")
+            .trim();
+          setForm((current) => ({
+            ...current,
+            message: [messageBeforeDictationRef.current, visibleTranscript]
+              .filter(Boolean)
+              .join("\n\n")
+              .slice(0, 10_000),
+          }));
+        };
+        recognition.onerror = (event) => {
+          if (!["no-speech", "aborted"].includes(event.error)) {
+            setSpeechError(
+              "Live transcription unavailable. Audio will still be processed.",
+            );
+          }
+        };
+        recognitionRef.current = recognition;
+        recognition.start();
+      }
+      recorder.start(1000);
       setListening(true);
     } catch {
-      recognitionRef.current = null;
-      setSpeechError("Could not start dictation. Type your description instead.");
+      setSpeechError(
+        "Could not access microphone. Check permission or type your description.",
+      );
     }
   };
 
   const reset = () => {
-    stopDictation();
+    stopDictation(false);
     setForm(initialForm);
     setAttachments([]);
     setState("form");
     setFileError("");
     setSpeechError("");
+    setDictationWarnings([]);
+    setShowRecommendations(false);
+    setDictationTranscript("");
     setTermsAccepted(false);
     setConsentError("");
     setActivePolicy(null);
@@ -180,7 +295,7 @@ export function BusinessRequestModal({
 
   const removeFile = (indexToRemove: number) => {
     setAttachments((current) =>
-      current.filter((_, index) => index !== indexToRemove)
+      current.filter((_, index) => index !== indexToRemove),
     );
   };
 
@@ -194,7 +309,11 @@ export function BusinessRequestModal({
     }
     setConsentError("");
     if (state === "form") {
-      stopDictation();
+      if (listening) {
+        stopDictation();
+        return;
+      }
+      if (parsingDictation) return;
       setState("review");
       return;
     }
@@ -202,7 +321,14 @@ export function BusinessRequestModal({
     setState("loading");
 
     try {
-      await submitBusinessRequest({ ...form, attachments });
+      await submitBusinessRequest({
+        ...form,
+        selectedTalentId: selectedTalentId || undefined,
+        message: selectedTalentName
+          ? `Selected talent: ${selectedTalentName}\n\n${form.message}`
+          : form.message,
+        attachments,
+      });
       setState("success");
     } catch {
       setState("error");
@@ -228,7 +354,10 @@ export function BusinessRequestModal({
           }
         `}</style>
         <Dialog.Overlay className="fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm" />
-        <Dialog.Content ref={modalContentRef} className="fixed left-1/2 top-1/2 z-[120] max-h-[92vh] w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[2rem] border border-zinc-200 bg-white p-6 shadow-2xl focus:outline-none dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
+        <Dialog.Content
+          ref={modalContentRef}
+          className="fixed left-1/2 top-1/2 z-[120] max-h-[92vh] w-[calc(100%-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[2rem] border border-zinc-200 bg-white p-6 shadow-2xl focus:outline-none dark:border-zinc-800 dark:bg-zinc-950 sm:p-8"
+        >
           {activePolicy && (
             <div className="absolute inset-0 z-20 flex min-h-full flex-col rounded-[2rem] bg-white dark:bg-zinc-950">
               <div className="flex shrink-0 items-center justify-between gap-4 border-b border-zinc-200 px-5 py-4 dark:border-zinc-800 sm:px-7">
@@ -328,23 +457,52 @@ export function BusinessRequestModal({
                 Review Your Request
               </Dialog.Title>
               <Dialog.Description className="text-zinc-600 dark:text-zinc-300">
-                Check these exact details before sending. Edit anything missing or incorrect.
+                Check these exact details before sending. Edit anything missing
+                or incorrect.
               </Dialog.Description>
+              {selectedTalentName && (
+                <p className="rounded-xl border border-pink-200 bg-pink-50 p-4 text-sm text-zinc-800 dark:border-pink-900/60 dark:bg-pink-950/30 dark:text-zinc-100">
+                  <strong>Selected talent:</strong> {selectedTalentName}
+                </p>
+              )}
               <div className="break-words rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm dark:border-zinc-800 dark:bg-zinc-900">
-                <p><strong>From:</strong> {form.fullName} · {form.workEmail}</p>
-                {form.company && <p><strong>Organization:</strong> {form.company}</p>}
-                <p><strong>Subject:</strong> {form.subject}</p>
-                <p><strong>Attachments:</strong> {attachments.length ? attachments.map((file) => file.name).join(", ") : "None"}</p>
-                <p><strong>Terms and policies:</strong> Accepted</p>
+                <p>
+                  <strong>From:</strong> {form.fullName} · {form.workEmail}
+                </p>
+                {form.company && (
+                  <p>
+                    <strong>Organization:</strong> {form.company}
+                  </p>
+                )}
+                <p>
+                  <strong>Subject:</strong> {form.subject}
+                </p>
+                <p>
+                  <strong>Attachments:</strong>{" "}
+                  {attachments.length
+                    ? attachments.map((file) => file.name).join(", ")
+                    : "None"}
+                </p>
+                <p>
+                  <strong>Terms and policies:</strong> Accepted
+                </p>
               </div>
               <pre className="max-h-80 overflow-y-auto whitespace-pre-wrap break-words rounded-xl border border-zinc-200 bg-white p-4 font-sans text-sm leading-relaxed text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200">
                 {form.message}
               </pre>
               <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                <button type="button" onClick={() => setState("form")} className="min-h-12 rounded-xl border border-zinc-300 px-6 py-3 font-bold text-zinc-800 dark:border-zinc-700 dark:text-zinc-100">
+                <button
+                  type="button"
+                  onClick={() => setState("form")}
+                  className="min-h-12 rounded-xl border border-zinc-300 px-6 py-3 font-bold text-zinc-800 dark:border-zinc-700 dark:text-zinc-100"
+                >
                   Edit Details
                 </button>
-                <button type="submit" disabled={!termsAccepted} className="min-h-12 rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079] disabled:cursor-not-allowed disabled:opacity-50">
+                <button
+                  type="submit"
+                  disabled={!termsAccepted}
+                  className="min-h-12 rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079] disabled:cursor-not-allowed disabled:opacity-50"
+                >
                   Submit Scope of Work
                 </button>
               </div>
@@ -383,11 +541,22 @@ export function BusinessRequestModal({
                   Tell Us What You Need
                 </Dialog.Title>
                 <Dialog.Description className="mt-3 leading-relaxed text-zinc-600 dark:text-zinc-300">
-                  Share your project, role, or staffing need. Our customer
-                  success team will review your request, identify relevant
-                  talent, and contact you about the next step.
+                  {selectedTalentName
+                    ? "Submit your scope of work, and our team will coordinate the match and introduction."
+                    : "Share your project, role, or staffing need. Our customer success team will review your request, identify relevant talent, and contact you about the next step."}
                 </Dialog.Description>
               </div>
+
+              {selectedTalentName && (
+                <div className="mt-6 rounded-xl border border-pink-200 bg-pink-50 p-4 dark:border-pink-900/60 dark:bg-pink-950/30">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#C00079] dark:text-[#FEC2E8]">
+                    Selected talent
+                  </p>
+                  <p className="mt-1 text-lg font-bold text-zinc-950 dark:text-white">
+                    {selectedTalentName}
+                  </p>
+                </div>
+              )}
 
               <form onSubmit={submit} className="mt-8 space-y-5">
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -450,12 +619,31 @@ export function BusinessRequestModal({
 
                 <div>
                   <div className="flex flex-wrap items-center justify-between gap-3">
-                    <label htmlFor="business-request-message" className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
+                    <label
+                      htmlFor="business-request-message"
+                      className="text-sm font-bold text-zinc-800 dark:text-zinc-200"
+                    >
                       Message
                     </label>
-                    <button type="button" onClick={listening ? stopDictation : startDictation} className="inline-flex h-12 items-center gap-3 rounded-lg border border-zinc-300 px-4 py-3 text-base font-bold text-zinc-800 dark:border-zinc-700 dark:text-zinc-100" aria-pressed={listening}>
-                      <Microphone className="h-5 w-5" />
-                      {listening ? "Stop dictation" : "Dictate"}
+                    <button
+                      type="button"
+                      disabled={parsingDictation}
+                      onClick={() =>
+                        listening ? stopDictation() : void startDictation()
+                      }
+                      className="inline-flex h-12 items-center gap-3 rounded-lg border border-zinc-300 px-4 py-3 text-base font-bold text-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:text-zinc-100"
+                      aria-pressed={listening}
+                    >
+                      {parsingDictation ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <Microphone className="h-5 w-5" />
+                      )}
+                      {parsingDictation
+                        ? "Gemini is drafting…"
+                        : listening
+                          ? "Stop & parse"
+                          : "Dictate with AI"}
                     </button>
                   </div>
                   <textarea
@@ -468,20 +656,82 @@ export function BusinessRequestModal({
                     onChange={(event) =>
                       setForm({ ...form, message: event.target.value })
                     }
-                    placeholder="Tell us about the project or role, required skills, expected hours, timeline, budget, and any other important details. You can type or dictate your message."
+                    placeholder="Tell us about the project or role, required skills, expected hours, timeline, budget, and any other important details. You can type or dictate with AI."
                     className={`${inputClass} resize-y`}
                   />
                   {listening && (
-                    <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[#C00079]" role="status" aria-label="Recording. Your words will appear in the message field.">
-                      <span className="flex h-6 items-center gap-1" aria-hidden="true">
+                    <div
+                      className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[#C00079]"
+                      role="status"
+                      aria-label="Recording. Your words will appear in the message field."
+                    >
+                      <span
+                        className="flex h-6 items-center gap-1"
+                        aria-hidden="true"
+                      >
                         {[9, 17, 23, 14, 20, 11, 18].map((height, index) => (
-                          <span key={index} className="voice-wave-bar w-1 rounded-full bg-current" style={{ height, animationDelay: `${index * 110}ms` }} />
+                          <span
+                            key={index}
+                            className="voice-wave-bar w-1 rounded-full bg-current"
+                            style={{
+                              height,
+                              animationDelay: `${index * 110}ms`,
+                            }}
+                          />
                         ))}
                       </span>
-                      <span>Listening. Your words will appear here.</span>
+                      <span>
+                        Recording. Stop when finished; Gemini will structure
+                        your SOW.
+                      </span>
                     </div>
                   )}
-                  {speechError && <p className="mt-2 text-sm text-red-600" role="alert">{speechError}</p>}
+                  {speechError && (
+                    <p className="mt-2 text-sm text-red-600" role="alert">
+                      {speechError}
+                    </p>
+                  )}
+                  {dictationWarnings.length > 0 && (
+                    <div className="mt-3">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowRecommendations((current) => !current)
+                        }
+                        aria-expanded={showRecommendations}
+                        aria-controls="ai-sow-recommendations"
+                        className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-bold text-amber-900 transition hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200 dark:hover:bg-amber-950/70"
+                      >
+                        <AlertCircle className="h-5 w-5" aria-hidden="true" />
+                        AI recommendations ({dictationWarnings.length})
+                      </button>
+                      {showRecommendations && (
+                        <div
+                          id="ai-sow-recommendations"
+                          className="mt-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200"
+                        >
+                          <p className="font-bold">
+                            Consider adding or clarifying:
+                          </p>
+                          <ul className="mt-1 list-inside list-disc">
+                            {dictationWarnings.map((warning) => (
+                              <li key={warning}>{warning}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {dictationTranscript && (
+                    <details className="mt-3 text-sm text-zinc-600 dark:text-zinc-300">
+                      <summary className="cursor-pointer font-bold">
+                        View dictation transcript
+                      </summary>
+                      <p className="mt-2 whitespace-pre-wrap">
+                        {dictationTranscript}
+                      </p>
+                    </details>
+                  )}
                 </div>
 
                 <div>
@@ -593,7 +843,10 @@ export function BusinessRequestModal({
                     </span>
                   </label>
                   {consentError && (
-                    <p className="mt-2 text-sm font-medium text-red-600" role="alert">
+                    <p
+                      className="mt-2 text-sm font-medium text-red-600"
+                      role="alert"
+                    >
                       {consentError}
                     </p>
                   )}
@@ -610,15 +863,22 @@ export function BusinessRequestModal({
                   </button>
                   <button
                     type="submit"
-                    disabled={state === "loading" || !termsAccepted}
+                    disabled={
+                      state === "loading" ||
+                      !termsAccepted ||
+                      listening ||
+                      parsingDictation
+                    }
                     className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#DE028E] px-7 py-3 font-bold text-white hover:bg-[#C00079] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {state === "loading" && (
                       <Loader2 className="h-5 w-5 animate-spin" />
                     )}
-                    {state === "loading"
-                      ? "Sending your message…"
-                      : "Review Scope of Work"}
+                    {parsingDictation
+                      ? "Preparing Scope of Work…"
+                      : state === "loading"
+                        ? "Sending your message…"
+                        : "Review Scope of Work"}
                   </button>
                 </div>
               </form>

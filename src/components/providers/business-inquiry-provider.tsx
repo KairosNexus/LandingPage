@@ -6,6 +6,7 @@ import { ScheduleCallModal } from "@/components/ui/schedule-call-modal";
 
 interface BusinessInquiryContextValue {
   openRequestModal: () => void;
+  openTalentRequestModal: (talentId: string, talentName: string) => void;
   openScheduleModal: () => void;
 }
 
@@ -18,9 +19,20 @@ export function BusinessInquiryProvider({
   children: React.ReactNode;
 }) {
   const [requestOpen, setRequestOpen] = useState(false);
+  const [selectedTalentId, setSelectedTalentId] = useState<string | null>(null);
+  const [selectedTalentName, setSelectedTalentName] = useState<string | null>(null);
   const [scheduleOpen, setScheduleOpen] = useState(false);
 
   const openRequestModal = () => {
+    setSelectedTalentId(null);
+    setSelectedTalentName(null);
+    setScheduleOpen(false);
+    setRequestOpen(true);
+  };
+
+  const openTalentRequestModal = (talentId: string, talentName: string) => {
+    setSelectedTalentId(talentId);
+    setSelectedTalentName(talentName);
     setScheduleOpen(false);
     setRequestOpen(true);
   };
@@ -32,12 +44,18 @@ export function BusinessInquiryProvider({
 
   return (
     <BusinessInquiryContext.Provider
-      value={{ openRequestModal, openScheduleModal }}
+      value={{ openRequestModal, openTalentRequestModal, openScheduleModal }}
     >
       {children}
       <BusinessRequestModal
         isOpen={requestOpen}
-        onClose={() => setRequestOpen(false)}
+        onClose={() => {
+          setRequestOpen(false);
+          setSelectedTalentId(null);
+          setSelectedTalentName(null);
+        }}
+        selectedTalentId={selectedTalentId}
+        selectedTalentName={selectedTalentName}
       />
       <ScheduleCallModal
         isOpen={scheduleOpen}

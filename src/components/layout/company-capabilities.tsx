@@ -172,13 +172,13 @@ export function CompanyCapabilities() {
             >
               <div className="product-talent-photo">
                 {talent.profilePicture ? (
-                  // Public profile images can come from user-configured storage hosts.
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={talent.profilePicture}
-                    alt=""
-                    loading="lazy"
-                  />
+                  <>
+                    {/* Public profile images can come from user-configured storage hosts. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="product-talent-photo-blur" src={talent.profilePicture} alt="" aria-hidden="true" loading="lazy" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="product-talent-photo-image" src={talent.profilePicture} alt="" loading="lazy" />
+                  </>
                 ) : (
                   <span>{getInitials(talent) || <PiUser aria-hidden="true" />}</span>
                 )}
