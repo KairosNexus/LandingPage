@@ -56,8 +56,10 @@
 .product-talent-verification-notice :is(a, button):hover { text-decoration: underline; text-underline-offset: 0.22rem; }
 .product-talent-verification-notice svg { width: 1rem; height: 1rem; }
 
-.product-top-credibility {
-  z-index: 3;
+.product-landing .product-top-credibility {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: flex;
   min-height: 7.5rem;
   align-items: center;
