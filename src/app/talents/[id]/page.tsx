@@ -107,11 +107,6 @@ export default function TalentDetailPage() {
                       <span className="kds-avatar-view" aria-hidden="true"><ZoomIn /></span>
                     </button>
                   </Dialog.Trigger>
-                  <Dialog.Trigger asChild>
-                    <button type="button" className="kds-media-button">
-                      <ZoomIn aria-hidden="true" /> View media
-                    </button>
-                  </Dialog.Trigger>
                   <Dialog.Portal>
                     <Dialog.Overlay className="fixed inset-0 z-[110] bg-black/80 backdrop-blur-md" />
                     <Dialog.Content className="fixed left-1/2 top-1/2 z-[120] flex max-h-[92svh] w-[calc(100%-2rem)] max-w-4xl -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[1.75rem] border border-white/15 bg-zinc-950/95 p-3 shadow-2xl focus:outline-none sm:p-5">
