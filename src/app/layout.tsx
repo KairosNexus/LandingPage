@@ -5,8 +5,15 @@ import { ClientLayout } from "@/components/layout/client-layout";
 import Script from "next/script";
 import "./globals.css";
 
+const previewOrigin =
+  process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : ["deploy-preview", "branch-deploy"].includes(process.env.CONTEXT ?? "")
+      ? process.env.DEPLOY_PRIME_URL
+      : undefined;
+
 const shareImage = {
-  url: "https://www.kairosng.com/kairos-share.png",
+  url: new URL("/kairos-share.png", previewOrigin || "https://kairosng.com").href,
   width: 1200,
   height: 630,
   alt: "Kairos Nexus Global logo",
