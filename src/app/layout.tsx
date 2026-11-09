@@ -5,9 +5,23 @@ import { ClientLayout } from "@/components/layout/client-layout";
 import Script from "next/script";
 import "./globals.css";
 
+const shareImage = {
+  url: "https://www.kairosng.com/kairos-share.png",
+  width: 1200,
+  height: 630,
+  alt: "Kairos Nexus Global logo",
+};
+
 export const metadata: Metadata = {
   title: "Kairos Nexus Global | Skilled African Talent, Starting in Nigeria",
   description: "Kairos connects companies with skilled African professionals through human-led matching, starting in Nigeria, with potential savings of up to 70% compared with equivalent U.S. hiring costs.",
+  openGraph: {
+    images: [shareImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [shareImage],
+  },
 };
 
 export default function RootLayout({
